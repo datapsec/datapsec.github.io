@@ -45,6 +45,9 @@ Reveal.on('ready', function() {
             document.body.offsetHeight;
             setTimeout(function() {
                 centerMathBlocks();
+                // On-screen, size the current slide first (hidden slides can report misleading heights)
+                adjustFontSizeForCurrentSlide();
+                // Still compute defaults for the rest (useful e.g. for first-time layout)
                 adjustFontSizeForAllSlides();
             }, 50);
         });
@@ -52,6 +55,7 @@ Reveal.on('ready', function() {
         // Fallback if Font Loading API is not available
         setTimeout(function() {
             centerMathBlocks();
+            adjustFontSizeForCurrentSlide();
             adjustFontSizeForAllSlides();
         }, 50);
     }
@@ -59,69 +63,92 @@ Reveal.on('ready', function() {
 
 Reveal.on('slidechanged', function() {
     // Re-adjust on slide change (in case of dynamic content)
-    adjustFontSizeForAllSlides();
+    // Only measure the visible slide: hidden slides can report different heights
+    // and overwrite classes with incorrect values.
+    adjustFontSizeForCurrentSlide();
+    // Some slides contain images that load after the slide becomes visible.
+    // Re-run after a short delay so measurements reflect final layout.
+    setTimeout(adjustFontSizeForCurrentSlide, 200);
     // Sync body class for default slides on navigation
     syncBodyClassWithCurrentSlide();
     // Center math blocks on slide change
     setTimeout(centerMathBlocks, 50);
 });
 
-function adjustFontSizeForAllSlides() {
-    // Apply auto-resize to both on-screen normal slides and print-pdf clones
-    const sections = document.querySelectorAll(
-        '.reveal .slides section[data-state~="normal"], .pdf-page > section[data-state~="normal"]'
-    );
-    
-    sections.forEach((section) => {
-        const contentDiv = section.querySelector('.content-center');
-        if (!contentDiv) return;
-        
-        // Remove any existing font size classes first to get accurate measurement
-        section.classList.remove('font-small', 'font-smaller', 'font-smallest');
-        
-        // Use setTimeout to ensure the class removal has taken effect
-        setTimeout(() => {
-            // Check if this is a two-column layout
-            const hasColumns = contentDiv.querySelector('.col') !== null;
-            
-            let contentHeight = 0;
-            if (hasColumns) {
-                // For columns, get the max height of all columns
-                const columns = contentDiv.querySelectorAll('.col');
-                contentHeight = Math.max(...Array.from(columns).map(col => col.scrollHeight));
-            } else {
-                // For single column, sum up the height of all direct children
-                const children = Array.from(contentDiv.children);
-                contentHeight = children.reduce((sum, child) => {
-                    // For pre elements, always use offsetHeight which gives the rendered box height
-                    // This respects max-height constraints while giving consistent measurements
-                    return sum + child.offsetHeight;
-                }, 0);
-            }
+function adjustFontSizeForCurrentSlide() {
+    const current = Reveal.getCurrentSlide();
+    if (current) {
+        adjustFontSizeForSection(current);
+    }
+    // Print-pdf clones must be processed as a whole document
+    if (document.body.classList.contains('print-pdf')) {
+        adjustFontSizeForAllSlides();
+    }
+}
 
-            // Get available height for content (clientHeight excludes padding)
-            const availableHeight = contentDiv.clientHeight;
-            
-            // Debug: log viewport and available height
-            const h2 = section.querySelector('h2');
-            if (h2 && h2.textContent.includes('Long source code')) {
-                console.log('DEBUG - viewport height:', window.innerHeight, 'availableHeight:', availableHeight, 'contentHeight:', contentHeight);
+function adjustFontSizeForSection(section) {
+    const contentDiv = section.querySelector('.content-center');
+    if (!contentDiv) return;
+
+    // If the slide contains images that are not yet loaded, measurements will be wrong.
+    const imgs = Array.from(contentDiv.querySelectorAll('img'));
+    const pendingImgs = imgs.filter(img => !img.complete);
+    if (pendingImgs.length > 0) {
+        if (!section.__fontResizeWaitingForImages) {
+            section.__fontResizeWaitingForImages = true;
+            const onDone = () => {
+                section.__fontResizeWaitingForImages = false;
+                adjustFontSizeForSection(section);
+            };
+            pendingImgs.forEach(img => {
+                img.addEventListener('load', onDone, { once: true });
+                img.addEventListener('error', onDone, { once: true });
+            });
+        }
+        return;
+    }
+
+    // Remove any existing font size classes first to get accurate measurement
+    section.classList.remove('font-small', 'font-smaller', 'font-smallest');
+
+    setTimeout(() => {
+        // Check if this is a two-column layout
+        const hasColumns = contentDiv.querySelector('.col') !== null;
+
+        let contentHeight = 0;
+        if (hasColumns) {
+            const columns = contentDiv.querySelectorAll('.col');
+            contentHeight = Math.max(...Array.from(columns).map(col => col.scrollHeight));
+        } else {
+            const children = Array.from(contentDiv.children);
+            contentHeight = children.reduce((sum, child) => sum + child.offsetHeight, 0);
+        }
+
+        const availableHeight = contentDiv.clientHeight;
+        const heightRatio = contentHeight / availableHeight;
+
+        let appliedClass = 'none';
+        if (hasColumns) {
+            if (heightRatio > 1.05) {
+                section.classList.add('font-smallest');
+                appliedClass = 'font-smallest';
+            } else if (heightRatio > 0.75) {
+                section.classList.add('font-smaller');
+                appliedClass = 'font-smaller';
+            } else if (heightRatio > 0.60) {
+                section.classList.add('font-small');
+                appliedClass = 'font-small';
             }
-            
-            // Calculate height ratio
-            const heightRatio = contentHeight / availableHeight;
-            
-            // Apply font size class based on how much content overflows
-            // Use more aggressive thresholds for columns since they have less horizontal space
-            let appliedClass = 'none';
-            if (hasColumns) {
-                if (heightRatio > 1.15) {
+        } else {
+            const hasCode = contentDiv.querySelector('pre') !== null;
+            if (hasCode) {
+                if (heightRatio > 0.80) {
                     section.classList.add('font-smallest');
                     appliedClass = 'font-smallest';
-                } else if (heightRatio > 0.95) {
+                } else if (heightRatio > 0.70) {
                     section.classList.add('font-smaller');
                     appliedClass = 'font-smaller';
-                } else if (heightRatio > 0.70) {
+                } else if (heightRatio > 0.60) {
                     section.classList.add('font-small');
                     appliedClass = 'font-small';
                 }
@@ -137,10 +164,22 @@ function adjustFontSizeForAllSlides() {
                     appliedClass = 'font-small';
                 }
             }
-            
-            console.log('Slide with h2:', section.querySelector('h2').textContent, 'Height ratio:', heightRatio, 'Applied class:', appliedClass);
+        }
 
-        }, 0);
+        const h2Any = section.querySelector('h2');
+        const h2Text = h2Any ? h2Any.textContent : '(no h2)';
+        console.log('Slide with h2:', h2Text, 'Height ratio:', heightRatio, 'Applied class:', appliedClass);
+    }, 0);
+}
+
+function adjustFontSizeForAllSlides() {
+    // Apply auto-resize to both on-screen normal slides and print-pdf clones
+    const sections = document.querySelectorAll(
+        '.reveal .slides section[data-state~="normal"], .pdf-page > section[data-state~="normal"]'
+    );
+    
+    sections.forEach((section) => {
+        adjustFontSizeForSection(section);
     });
 }
 
