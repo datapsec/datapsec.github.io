@@ -614,20 +614,36 @@ div.multicolumn {
 
 .break-green {
     color: white;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    height: 100% !important;
 }
 
-.break-green h2 {
-    margin-top: -100px;
+.break-green h1 {
     color: white;
     font-weight: bold;
     font-size: 2.7em;
     padding-left: 2.5%;
     padding-bottom: 0;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.break-green h2 {
+    color: white;
+    font-weight: bold;
+    font-size: 2.7em;
+    padding-left: 2.5%;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    text-align: left;
 }
 
 .break-green p {
     padding-top: 0;
-    margin-top: -30px;
+    margin-top: 0.3em;
     font-size: 1.8em;
     padding-left: 2.5%;
 }
@@ -641,20 +657,36 @@ div.multicolumn {
 
 .break-blue {
     color: white;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    height: 100% !important;
 }
 
-.break-blue h2 {
-    margin-top: -100px;
+.break-blue h1 {
     color: white;
     font-weight: bold;
     font-size: 2.7em;
     padding-left: 2.5%;
     padding-bottom: 0;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.break-blue h2 {
+    color: white;
+    font-weight: bold;
+    font-size: 2.7em;
+    padding-left: 2.5%;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    text-align: left;
 }
 
 .break-blue p {
     padding-top: 0;
-    margin-top: -30px;
+    margin-top: 0.3em;
     font-size: 1.8em;
     padding-left: 2.5%;
 }
