@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="front hide-controls" -->
+
+<div id="title">Asymmetric Cryptography</div>
+
+<div id="subtitle">Data Privacy and Security</div>
+
+<div id="date">Data Science and Management (DASMA)</div>
+
+---
+
+## Issues with Symmetric Cryptography
+
+<div class="content-center">
+
+When working with symmetric cryptography, we face two main issues:
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+1. **Key Distribution**, i.e., exchange the key securely between the two parties:
+    - Without the secret shared key, users cannot use symmetric cryptography!
+    - They could exchange it physically, but it is not practical for large-scale deployments.
+
+<br/>
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+2. **Key Management**, i.e., when we have $n$ users, we need to manage $n(n-1)/2$ keys:
+    - There are billions of users accessing the internt, it cannot scale!
+    - For instance, Amazon has over 100M users and would need to manage $100M \\times 100M / 2 = 50$ billion keys!
+    - Even small organizations have thousands of users and may struggle to manage a their keys.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Asymmetric Roles of Keys
+
+<div class="content-center">
+
+Each user has a pair of keys:
+- $k_{private}$ which must be only known to the user
+- $k_{public}$ which can be known to everyone
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Hence:
+
+<img src="img/channel-with-asym-enc.drawio.png" style="width: 1200px;">
+
+<br/>
+
+
+where $kA_{private}$ is the private key of Alice and $kA_{public}$ is the public key of Alice, similarly $kB_{private}$ is the private key of Bob and $kB_{public}$ is the public key of Bob.
+
+</div>
+
+
+
+</div>
+
+---
+
+## How to achieve this *asymmetry*?
+
+<div class="content-center">
+
+Most methods exploit a mathematical problem showing this behavior:
+
+<div style="padding: 10px;">
+
+<img src="img/problem.drawio.png" style="height: 600px">
+
+</div>
+
+<div class="cell-center">
+
+*Easy to compute the result starting from the input parameters  
+but hard to compute the input parameters starting from the result*
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Diffie and Hellman Algorithm for Key Exchange
+
+---
+
+## Key Exchange
+
+<div class="content-center">
+
+Alice and Bob wants to encrypt their messages using symmetric cryptography:
+
+- They need to exchange the symmetric key
+- They don't know each other and cannot meet in person
+- They cannot exchange the key over an insecure channel
+- They want to agree on the key without revealing it to an eavesdropper
+- They can exchange messages over an insecure channel but not the key
+
+
+
+</div>
+
+---
+
+## Intuition of Diffie-Hellman Key Exchange Algorithm
+
+<div class="content-center">
+
+Visually*:
+
+<img src="img/dh-exchange.jpg" style="width: 500px">
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> In this example, we are assuming that mixture separation is hard to perform. It is not the case in real life.
+
+</div>
+
+---
+
+## Instead of colors we use power of numbers
+
+<div class="content-center">
+
+Diffie-Hellman key exchange protocol exploits the Discrete Logarithm Problem (DLP):
+- Given $a$, $p$, and $g$, it is easy to compute $g^a \\mod p$
+- Given the result of $g^a \\mod p$, it is hard to compute $a$ even when $p$ and $g$ are known.
+
+<img src="img/dh.drawio.png" style="width: 700px">
+
+<div class="alert alert-recall"><b>REMARK</b>: $x \mod p $ operation means taking the remainder of the division of $x$ by $p$.</div>
+
+
+
+</div>
+
+---
+
+## But computing the logarithm is easy!
+
+<div class="content-center">
+
+Given a **real** number, any calculator can compute:
+
+<div class="columns-container columns-top">
+
+<div class="col">
+
+<div class="cell-center">
+
+$\\log_g(g^a) = a~~~~~~~~~~~~~~~\\Longrightarrow$
+
+</div>
+
+</div>
+
+<div class="col">
+
+$\\log_{7}(7^8) = \\log_{7}(5764801) = 8$
+
+<br/>
+
+
+</div>
+
+</div>
+
+Indeed, if $g$ is known, the larger the value of $g^a$, the larger the value of $a$ will be:
+
+- $7^0 = 1$
+- $7^1 = 7$
+- $7^2 = 49$
+- $7^3 = 343$
+- $7^4 = 2401$
+- $7^5 = 16807$
+
+<br/>
+
+
+The logarithm is a *monotonic* function and we can find its approximate value by hand with *some* attempts*.
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> We are oversimplifying the problem to get the intuition. However, there exists numerical methods to quickly get the solution.
+
+</div>
+
+---
+
+## But moving to the discrete world changes everything
+
+<div class="content-center">
+
+However, when we move to the **discrete** logarithm, we do not know how to do it efficiently:
+
+<br/>
+
+
+- Even if $g$ and $p$ are known, as $g^a \\bmod p$ increases, $a$ does **not** necessarily increase.
+
+<br/>
+
+
+- Assuming $g=7$, $p = 97$, then:
+    - $7^0 \\mod 97 = 1 \\mod 97 = 1$ 
+    - $7^1 \\mod 97 = 7 \\mod 97 = 7$ 
+    - $7^2 \\mod 97 = 49 \\mod 97 = 49$ 
+    - $7^3 \\mod 97 = 343 \\mod 97 = 52$ 
+    - $7^4 \\mod 97 = 2401 \\mod 97 = 73$ 
+    - $7^5 \\mod 97 = 16807 \\mod 97 = 26$
+    - $7^6 \\mod 97 = 117649 \\mod 97 = 85$
+
+
+
+</div>
+
+---
+
+## Diffie-Hellman Key Exchange Algorithm (1976)
+
+<div class="content-center">
+
+Public parameters:
+- Prime number p
+- Generator g
+
+<br/>
+<br/>
+
+
+<div class="columns-container columns-top">
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="cell-center">
+
+Alice:  
+
+$a \\in [1, p-1]$  
+$g^a \\mod p$
+
+<br><br>
+
+</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="cell-center">
+
+$(g^b)^a \\mod p = g^{ab} \\mod b$
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="cell-center">
+
+Exchanged messages:<br><br><br>
+$\\xRightarrow{~~~~~~~~g^a \\mod p~~~~~~~~}$  
+$\\xLeftarrow[~~~~~~~~g^b \\mod p~~~~~~~~]{}$
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="cell-center">
+
+Bob:  
+
+$b \\in [1, p-1]$  
+$g^b \\mod p$
+
+<br><br>
+
+</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="cell-center" style="padding-bottom: 10px;">
+
+$(g^a)^b \\mod p = g^{ab} \\mod p$
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="alert alert-hint"><b>NOTICE</b>: In the end, both parties have the same shared secret key $k = g^{ab} \bmod p$.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## DH provides ***Perfect Forward Secrecy***
+
+<div class="content-center">
+
+If the secrets $(a, b, k)$ of one communication session are compromised, then other (past or future) communication sessions will not be compromised.
+
+<br/>
+
+
+The value of **forward secrecy** is that it protects past communications from being decrypted even if long-term keys are later compromised. As a result, the impact of a key compromise is limited: previously recorded traffic remains confidential, and only sessions established after the compromise are at risk until the key is revoked and replaced.
+
+
+
+</div>
+
+---
+
+## Is DH secure against a <u>passive</u> attacker?
+
+<div class="content-center">
+
+<div class="alert alert-recall"><b>NOTE</b>: A passive attacker can only eavesdrop on the communication.</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Passive attacker:
+- from eavesdropping knows $g, p, g^a \\bmod p, g^b \\bmod p$
+- can compute $g^{a+b} \\bmod p$ which is different from $g^{ab} \\bmod p$
+
+<br/>
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="cell-center">
+
+***Why it cannot compute the shared secret key?***
+
+</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+To build the shared secret key it needs to recover $a$ (or $b$).  One way of breaking DH, it to solve DLP, which is believed to be hard to break. However, there could other ways of breaking DH that do not necessarily need to solve DLP. However, after several years is still believed to be safe.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Is DH secure against an <u>active</u> attacker?
+
+<div class="content-center">
+
+<div class="alert alert-recall"><b>NOTE</b>: An active attacker can both eavesdrop and modify the communication.</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+***Man-in-the-Middle*** attack:
+
+1. Adversary fakes Bob identify and performs DH with Alice
+
+2. Adversary fakes Alice identify and performs DH with Bob
+
+3. Alice and Bob think that they have a common shared key, instead they are sharing a secret key with the adversary.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-error"><b>PROBLEM:</b><br>
+Alice and Bob do not <b><i>authenticate</b></i> the received public keys. We will see how to solve this problem when talking about authentication and the Public Key Infrastructure (PKI).</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# RSA (Rivest–Shamir–Adleman) cryptosystem
+
+---
+
+## RSA
+
+<div class="content-center">
+
+Public-key scheme proposed by Ron Rivest, Adi Shamir, and Leonard Adleman in 1977:
+
+<img src="img/rsa.drawio.png" style="width: 800px;">
+
+<div class="cell-center">
+
+RSA is based on the ***integer factorization problem***.
+
+</div>
+
+
+
+</div>
+
+---
+
+## ***Hard*** only when required
+
+<div class="content-center">
+
+RSA exploits the concept of a ***trapdoor*** function:
+
+<img src="img/rsa-2.drawio.png" style="width: 800px;">
+
+<div class="cell-center">
+
+*The computation in the reverse direction is hard only when not knowing the trapdoor.*
+
+</div>
+
+
+
+</div>
+
+---
+
+## RSA Scheme
+
+<div class="content-center">
+
+What we would like to have in principle:
+
+<table class="table-columns table-columns-top">
+<tbody>
+<tr>
+<td><span class="bullet">•</span> message:</td>
+<td>$x$</td>
+</tr>
+<tr>
+<td><span class="bullet">•</span> public key:</td>
+<td>$e$</td>
+</tr>
+<tr>
+<td><span class="bullet">•</span> private key:</td>
+<td>$d~$ (the trapdoor)</td>
+</tr>
+<tr>
+<td><span class="bullet">•</span> scheme:</td>
+<td>$y = x^e~~~$ such that $~~~y^d = y^{ed} = x$</td>
+</tr>
+<tr>
+<td><span class="bullet">•</span> work with modular arithmetic</td>
+<td>(to work easily with a finite set of numbers)</td>
+</tr>
+</tbody>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="cell-center">
+
+***How to achieve this?***
+
+</div>
+
+
+
+</div>
+
+---
+
+## Euler's Phi Function (or Totient Function)
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-recall"><b>REMARK</b>:<br>
+A number $a$ is <i>coprime</i> to a number $m$ when their greatest common divisor is 1, i.e. $gcd(a, m) = 1$</div>
+
+<br/>
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="cell-center">
+
+When considering $\\mathbb{Z}_m = \\{0, 1, ..., m-1\\}$
+
+</div>
+
+<div class="cell-center">
+
+*How many numbers in it are coprime (relatively prime) to m, i.e., $\\Phi(m)$?*
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+A naive approch to answer the previous question is to verify:
+
+$$
+    gcd(a, m) \\stackrel{?}{=}1\\,\\,\\forall\\,a\\in\\mathbb{Z}_m
+$$
+
+<br/>
+<br/>
+
+
+For instace, let us consider $\\mathbb{Z}_6$:
+
+$$
+    gcd(0, 6) = 6 \\Longrightarrow \\text{✗}\\\\{}
+    gcd(1, 6) = 1 \\Longrightarrow \\checkmark\\\\{}
+    gcd(2, 6) = 2 \\Longrightarrow \\text{✗}\\\\{}
+    gcd(3, 6) = 3 \\Longrightarrow \\text{✗}\\\\{}
+    gcd(4, 6) = 2 \\Longrightarrow \\text{✗}\\\\{}
+    gcd(5, 6) = 1 \\Longrightarrow \\checkmark\\\\{}
+    gcd(6, 6) = 6 \\Longrightarrow \\text{✗}
+$$
+
+Hence:
+
+$$
+    \\Phi(6) = 2
+$$
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+When considering other values for $m$:
+
+<img src="img/phi.jpg" style="width: 100%;">
+
+
+
+</div>
+
+---
+
+## Computing Efficiently the Euler's Phi Function
+
+<div class="content-center">
+
+If we know how to factorize the number $m$:
+
+$$
+    m = p_1^{e_1} \\cdot p_2^{e_2} \\cdot \\ldots \\cdot p_k^{e_k}
+$$
+
+where:
+- $p_1, p_2, \\ldots, p_k$ are distinct prime numbers
+- $e_1, e_2, \\ldots, e_k$ are positive integers
+
+Then:
+
+$$
+    \\Phi(m) = \\prod_{i=1}^{m} (p_i^{e_i}-p_i^{e_i-1})
+$$
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+$$
+    m = 240\\\\{}
+    \\\\{}
+    \\Phi(240)=\\,?
+$$
+
+</div>
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+$$
+    m = 2^4\\cdot3\\cdot5 \\Rightarrow \\Phi(240)=(2^4-2^3)(3^1-3^0)(5^1-5^0) =64
+$$
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+$$
+    p \\text{ is a prime number}\\\\{}
+    \\\\{}
+    \\Phi(p)=\\,?
+$$
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+$$
+    \\phi(p) = (p^1 - p^0) = p - 1
+$$
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+$$
+    n \\text{ is the product of two primes } p \\text{ and } q\\\\{}
+    \\\\{}
+    \\Phi(n)=\\Phi(pq)\\,?
+$$
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+$$
+    \\phi(n) = (p^1 - p^0)(q^1 - q^0) = (p - 1)(q - 1)
+$$
+
+</div>
+
+
+
+</div>
+
+---
+
+## RSA Key Generation
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+1. Choose two large prime numbers $p$ and $q$
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+2. Compute their product: $n = p \\cdot q$
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+3. Compute the totient: $\\phi(n) = (p-1)(q-1)$
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+4. Choose an integer $e$ such that $1 < e < \\phi(n)$ and $e$ is coprime to $\\phi(n)$: 
+    - we can use the Euclidean Algorithm to test if $e$ is coprime to $\\phi(n)$
+    - most implementations use $e = 65537$ (after checking $\\Phi(n)$ isn't divisible by 65537)
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="4">
+
+5. Compute $d$ as the modular inverse of $e$ modulo $\\phi(n)$: $d \\equiv e^{-1} \\bmod \\phi(n)$
+    - we can use the Extended Euclidean algorithm to compute $d$
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## RSA: Private and Public Keys
+
+<div class="content-center">
+
+1. $(n, e)$ will be the public key, i.e., $k_{public} = (n, e)$
+
+<br>
+
+2. $(n, d)$ will be the private key, i.e., $k_{private} = (n, d)$
+
+
+
+</div>
+
+---
+
+## RSA: Encryption
+
+<div class="content-center">
+
+The encryption function is defined as:
+
+$$
+    y = E_{k_{public}}(x) = x^e \\mod n
+$$
+
+<br/>
+
+
+where $x$ is the message, $y$ is the ciphertext, (e, n) is the public key of the person <u>receiving</u> the message. Indeed, only the person with the private key $(d, n)$ can decrypt the message.
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-warning"><b>WARNING</b>:  As it must be, RSA use the public key of the receiver to encrypt the message!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## RSA: Decryption
+
+<div class="content-center">
+
+The decryption function is defined as:
+
+$$
+    x = D_{k_{private}}(y) = y^d = (x^{e})^d = x^{ed} = x^{1} = x \\mod n
+$$
+
+<br/>
+
+
+where $x$ is the message, $y$ is the ciphertext, (d, n) is the private key of the person <u>receiving</u> the message.
+
+<br/>
+<br/>
+
+
+<div class="alert alert-warning"><b>WARNING</b>: As it must be, RSA use the private key of the receiver to decrypt the message.</div>
+
+
+
+</div>
+
+---
+
+## RSA: Why it works?
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note"><b>NOTE</b>: The following slides are painful. We know it. But they explain a bit the math behind RSA.</div>
+
+<br/>
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+To understand why it works, we need to introduce:
+
+1. The Fermat's Little Theorem
+2. The Chinese Remainder Theorem
+
+</div>
+
+
+
+</div>
+
+---
+
+## Fermat's Little Theorem
+
+<div class="content-center">
+
+Given a prime $p$, for any integer $a$, $a^p - a$ is a multiple of $p$, written as:
+
+$$
+    a^p\\equiv a \\bmod p
+$$
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Moreover if $a$ and $p$ are coprime then $a^{p-1} - 1$ is a multiple of $p$, written as:
+
+$$
+    a^{p-1}\\equiv 1 \\bmod p
+$$
+
+<br/>
+<br/>
+
+
+<div class="alert alert-hint"><b>PROOF</b>: Check <a href="https://www.youtube.com/watch?v=hGgwbLAdVM0&list=PLKXdxQAT3tCssgaWOy5vKXAR4WTPpRVYK&index=2">this video</a> to see some examples that give you an intuition behind the proof of the theorem.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Chinese Remainder Theorem (CRT)
+
+<div class="content-center">
+
+Given pairwise coprime positive integers $(n_1, n_2, …, n_k)$ and an arbitrary integers $(a_1, a_2, …, a_k)$, then the system:
+
+$$
+    x \\equiv a_1 \\bmod n_1\\\\{}
+    x \\equiv a_2 \\bmod n_2\\\\{}
+    \\vdots\\\\{}
+    x \\equiv a_k \\bmod n_k
+$$
+
+has a unique solution modulo $n = n_1 \\cdot n_2 \\cdot \\ldots \\cdot n_k$.
+
+<br/>
+<br/>
+
+
+<div class="alert alert-hint"><b>PROOF</b>: Check <a href="https://www.youtube.com/watch?v=oKMYNKbFHBE&list=PLKXdxQAT3tCssgaWOy5vKXAR4WTPpRVYK&index=59">this video</a> to see some examples that give you an intuition behind the proof of CRT.</div>
+
+<br/>
+
+
+<div class="alert alert-hint"><b>NOTE</b>: The practical implication of CRT is that if want to prove something when working with $x \mod n$ and $n = pq$, we can break the reasoning down into two parts: (1) $x \mod p$ and (2) $x \mod q$.</div>
+
+
+
+</div>
+
+---
+
+## RSA: Proof of Correctness
+
+<div class="content-center">
+
+From key generation:
+
+$$
+    ed \\equiv 1 \\bmod \\Phi(n) \\implies ed \\equiv 1 \\bmod (p-1)(q-1)
+$$
+
+Thus:
+
+$$
+    ed \\equiv 1 \\bmod (p-1) \\implies ed - 1 = k(p-1)
+$$
+
+We prove correctness modulo (p) (similarly for (q)).
+
+- If $\\gcd(x,p)=1$, then:
+
+$$
+\\begin{align*}
+  x^{ed} &\\equiv x^{ed - 1} \\cdot x \\equiv x^{k(p-1)} \\cdot x \\bmod p \\\\{}
+  &\\equiv (x^{p-1})^k \\cdot x \\bmod p \\\\{}
+  &\\equiv 1^k \\cdot x \\bmod p \\quad \\text{(Fermat’s Little Theorem)} \\\\{}
+  &\\equiv x \\bmod p
+\\end{align*}
+$$
+
+- Otherwise, it must be $\\gcd(x, p)=p$ since $p$ is prime, i.e., $x \\equiv 0 \\bmod p$, then:
+
+$$
+    x^{ed} \\equiv 0 \\equiv x \\bmod p
+$$
+
+By the CRT, $x^{ed} \\equiv x \\pmod n$.
+
+
+
+</div>
+
+---
+
+## RSA: Is it secure?
+
+<div class="content-center">
+
+The main assumption behind RSA is that, given ($e$, $n$), it should be hard to compute $d$, $p$, $q$ or $\\Phi(n)$.
+
+<br/>
+
+
+To make this hard:
+
+1. $p$ and $q$ should two large (more than 1024 bits) distinct prime numbers  
+
+2. $e$ should be equal or larger than $3$
+
+3. $(p-1)$ and $(q-1)$ should have large prime factors otherwise Pollard’s rho algorithm is able to perform factorization efficiently
+
+<br/>
+<br/>
+
+
+<div class="alert alert-warning"><b>WARNING</b>: Even when recommendations are followed, our <i>textbook</i> implementation of RSA suffers from different problems.</div>
+
+
+
+</div>
+
+---
+
+## RSA: what if two moduli share a common factor p?
+
+<div class="content-center">
+
+$$
+    N_1 = p \\cdot q_1\\\\{}
+    N_2 = p \\cdot q_2\\\\{}
+    gcd(N_1, N_2) = p
+$$
+
+<br/>
+<br/>
+
+
+Then we can easily recover $q_1$ and $q_2$:
+
+$$
+    q_1 = N_1 / p\\\\{}
+    q_2 = N_2 / p
+$$
+
+
+
+</div>
+
+---
+
+## RSA: avoid specific *corner case* messages
+
+<div class="content-center">
+
+Messages such as x=0, x=1, x=(n-1) do not play well with exponentiation:
+
+- $0^e = 0$
+
+- $1^e = 1$
+
+- if $e$ is odd then: $(n-1)^2= 1 \\bmod n$, hence $(n-1)^e=(n-1) \\bmod n$
+
+
+
+</div>
+
+---
+
+## RSA: small message, small exponent e
+
+<div class="content-center">
+
+If $x$ and $e$ are small then: 
+
+$$
+    y = x^e < n
+$$
+
+Adversary can easily get the plaintext by computing:
+
+$$
+    x = \\sqrt[e]{y}
+$$
+
+
+
+</div>
+
+---
+
+## RSA: same message encrypted with same exponent e
+
+<div class="content-center">
+
+Given $e$ ciphertexts of the same message $x$ and the same exponent $e$ is used during encryption but $(p,q)$ different then the message $x$ can be decrypted using the Chinese Remainder Theorem (CRT).
+
+<br/>
+
+
+E.g., $e = 3$
+
+$$
+    y_1 = x^3 \\bmod n_1\\\\{}
+    y_2 = x^3 \\bmod n_2\\\\{}
+    y_3 = x^3 \\bmod n_3
+$$
+
+CRT can build ([here](https://www.youtube.com/watch?v=nrgGU2mUum4&ab_channel=QuickTrixx) a step-by-step example):
+
+$$
+    y = x^3 \\bmod (n_1 \\cdot n_2 \\cdot n_3) 
+$$
+
+And then $x = \\sqrt[3]{y}$ since we know by construction that:
+
+$$
+    x < \\{n_1, n_2, n_3\\}\\\\{}
+    x^3 < n_1 \\cdot n_2 \\cdot n_3
+$$
+
+
+
+</div>
+
+---
+
+## RSA: same message encrypted with different coprime exponents
+
+<div class="content-center">
+
+$$
+    y_1 = x^{e_1} \\bmod n\\\\{}
+    y_2 = x^{e_2} \\bmod n
+$$
+
+If we have that:
+
+$$
+    gcd(e_1, e_2) = 1
+$$
+
+Then using EEA we can compute:
+
+$$
+    s \\cdot e_1 + t \\cdot e_2 = 1
+$$
+
+But then:
+
+$$
+    y_1^{s} \\cdot y_2^{t} = (x^{e_1})^s \\cdot (x^{e_2})^t =x^{s\\cdot e_1+t\\cdot e_2} = x
+$$
+
+[**Here**](https://www.youtube.com/watch?v=uX2z4fZYYkQ&list=PLzYrlvmF004AF0eH_mQFAeprIBkx5SgpU&index=38&ab_channel=QuickTrixx) a step-by-step example.
+
+
+
+</div>
+
+---
+
+## RSA: small message space
+
+<div class="content-center">
+
+Given a ciphertext y, if the message space is small (e.g., k values), then adversary can encrypt all k values and then compare results with the ciphertext y. Textbook RSA has no randomization.
+
+
+
+</div>
+
+---
+
+## RSA: How to mitigate/solve most of these attacks?
+
+<div class="content-center">
+
+Textbook RSA is unsafe. In practice, we should always use a standard that provides rules on how to use a PK scheme for real-world usages:
+
+<br/>
+
+
+<div class="alert alert-hint"><b>SOLUTION</b>: PKCS (Public Key Cryptography Standards)</div>
+
+<br/>
+
+
+For instance:
+- PKCS#1: RSA Cryptography Standard
+- PKCS#3: Diffie Hellman Key Agreement Standard
+- PKCS#11: Elliptic Curve Cryptography Standard
+
+They define how to pad the messages, how to properly generate and validate the keys, etc.
+
+
+
+</div>
+
+---
+
+## How the break improper RSA uses?
+
+<div class="content-center">
+
+Some tools that can be valuable:
+
+<br>
+
+1) [**RsaCtfTool**](https://github.com/RsaCtfTool/RsaCtfTool): utility designed to decrypt data from weak public keys and attempt to recover the corresponding private key.
+
+<br>
+
+2) [**msieve**](https://github.com/aleksey-udovenko/msieve), [**yafu**](https://github.com/aleksey-udovenko/yafu), [**cado-nfs**](https://github.com/aleksey-udovenko/cado-nfs): tools for factoring large numbers.
+
+<br>
+
+This [**blog post**](https://www.sjoerdlangkemper.nl/2019/06/19/attacking-rsa/) provides examples (.pem files, i.e., a format for storing public/private keys) for testing known attacks.
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
