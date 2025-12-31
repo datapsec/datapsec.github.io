@@ -837,6 +837,66 @@ body.normal .reveal .slides section strong {
     align-items: stretch !important;
 }
 
+/* Table-based columns for row alignment */
+.reveal .slides section[data-state~="normal"] .content-center table.table-columns {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 0 !important;
+    border-spacing: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    font-size: 0.95em !important;
+}
+
+.reveal .slides section[data-state~="normal"] .content-center table.table-columns * {
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.reveal .slides section[data-state~="normal"] .content-center table.table-columns tbody {
+    border: 0 !important;
+    background: transparent !important;
+}
+
+.reveal .slides section[data-state~="normal"] .content-center table.table-columns tr {
+    border: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    background: transparent !important;
+}
+
+.reveal .slides section[data-state~="normal"] .content-center table.table-columns td {
+    border: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    padding: 0.3em 0 !important;
+    padding-right: 1em !important;
+    vertical-align: middle !important;
+    background: transparent !important;
+    font-size: inherit !important;
+    text-indent: 0 !important;
+}
+
+.reveal .slides section[data-state~="normal"] .content-center table.table-columns td .bullet {
+    display: inline !important;
+    margin-right: 0.3em !important;
+    font-weight: normal !important;
+}
+
+.reveal .slides section[data-state~="normal"] .content-center table.table-columns.table-columns-top td {
+    vertical-align: top !important;
+}
+
+.reveal .slides section[data-state~="normal"] .content-center table.table-columns.table-columns-center td {
+    vertical-align: middle !important;
+}
+
 .reveal .slides section[data-state~="normal"] .content-center .col {
     flex: 1 1 0% !important;
     display: flex !important;
@@ -1072,6 +1132,14 @@ body.normal .reveal .slides section strong {
     font-size: 0.80em !important;
 }
 
+.reveal .slides section[data-state~="normal"].font-tinier .content-center {
+    font-size: 0.78em !important;
+}
+
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center {
+    font-size: 0.72em !important;
+}
+
 .reveal .slides section[data-state~="normal"].font-small .content-center > p,
 .reveal .slides section[data-state~="normal"].font-small .content-center > ul,
 .reveal .slides section[data-state~="normal"].font-small .content-center > ol,
@@ -1111,6 +1179,32 @@ body.normal .reveal .slides section strong {
     font-size: inherit !important;
 }
 
+.reveal .slides section[data-state~="normal"].font-tinier .content-center > p,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center > ul,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center > ol,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center > pre,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center > table,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center .col > p,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center .col > ul,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center .col > ol,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center .col > pre,
+.reveal .slides section[data-state~="normal"].font-tinier .content-center .col > table {
+    font-size: inherit !important;
+}
+
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center > p,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center > ul,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center > ol,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center > pre,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center > table,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center .col > p,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center .col > ul,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center .col > ol,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center .col > pre,
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center .col > table {
+    font-size: inherit !important;
+}
+
 /* Ensure font-small applies to list items inside columns */
 .reveal .slides section[data-state~="normal"].font-small .content-center .col li {
     font-size: inherit !important;
@@ -1121,6 +1215,14 @@ body.normal .reveal .slides section strong {
 }
 
 .reveal .slides section[data-state~="normal"].font-smallest .content-center .col li {
+    font-size: inherit !important;
+}
+
+.reveal .slides section[data-state~="normal"].font-tinier .content-center .col li {
+    font-size: inherit !important;
+}
+
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center .col li {
     font-size: inherit !important;
 }
 
@@ -1137,6 +1239,14 @@ body.normal .reveal .slides section strong {
     font-size: 0.75em !important;
 }
 
+.reveal .slides section[data-state~="normal"].font-tinier .content-center pre code {
+    font-size: 0.72em !important;
+}
+
+.reveal .slides section[data-state~="normal"].font-tiniest .content-center pre code {
+    font-size: 0.68em !important;
+}
+
 /* Print-pdf clones */
 .pdf-page > section[data-state~="normal"].font-small .content-center {
     font-size: 0.90em !important;
@@ -1148,6 +1258,14 @@ body.normal .reveal .slides section strong {
 
 .pdf-page > section[data-state~="normal"].font-smallest .content-center {
     font-size: 0.80em !important;
+}
+
+.pdf-page > section[data-state~="normal"].font-tinier .content-center {
+    font-size: 0.78em !important;
+}
+
+.pdf-page > section[data-state~="normal"].font-tiniest .content-center {
+    font-size: 0.72em !important;
 }
 
 /* Nested list font size reduction for normal slides */
@@ -1589,6 +1707,66 @@ body.print-pdf.front {
 
 .pdf-page > section[data-state~="normal"] .content-center .columns-container.columns-center {
   align-items: stretch !important;
+}
+
+/* Table-based columns for row alignment in print-pdf mode */
+.pdf-page > section[data-state~="normal"] .content-center table.table-columns {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border: 0 !important;
+  border-spacing: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-size: 0.95em !important;
+}
+
+.pdf-page > section[data-state~="normal"] .content-center table.table-columns * {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.pdf-page > section[data-state~="normal"] .content-center table.table-columns tbody {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.pdf-page > section[data-state~="normal"] .content-center table.table-columns tr {
+  border: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  background: transparent !important;
+}
+
+.pdf-page > section[data-state~="normal"] .content-center table.table-columns td {
+  border: 0 !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  padding: 0.3em 0 !important;
+  padding-right: 1em !important;
+  vertical-align: middle !important;
+  background: transparent !important;
+  font-size: inherit !important;
+  text-indent: 0 !important;
+}
+
+.pdf-page > section[data-state~="normal"] .content-center table.table-columns td .bullet {
+  display: inline !important;
+  margin-right: 0.3em !important;
+  font-weight: normal !important;
+}
+
+.pdf-page > section[data-state~="normal"] .content-center table.table-columns.table-columns-top td {
+  vertical-align: top !important;
+}
+
+.pdf-page > section[data-state~="normal"] .content-center table.table-columns.table-columns-center td {
+  vertical-align: middle !important;
 }
 
 .pdf-page > section[data-state~="normal"] .content-center .col {
