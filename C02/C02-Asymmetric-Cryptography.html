@@ -86,7 +86,7 @@ When working with symmetric cryptography, we face two main issues:
 
 <div class="content-center">
 
-Each user has a pair of keys:
+Each user has a **pair** of keys:
 - $k_{private}$ which must be only known to the user
 - $k_{public}$ which can be known to everyone
 
@@ -277,6 +277,11 @@ However, when we move to the **discrete** logarithm, we do not know how to do it
     - $7^5 \\mod 97 = 16807 \\mod 97 = 26$
     - $7^6 \\mod 97 = 117649 \\mod 97 = 85$
 
+<br/>
+
+
+- The naive approach to solve DLP is by attempting all possible values of $x$ and checking if $g^x \\equiv h \\mod p$. There are some smarter approaches but they do not scale well when the input parameters are large and chosen carefully.
+
 
 
 </div>
@@ -459,7 +464,7 @@ To build the shared secret key it needs to recover $a$ (or $b$).  One way of bre
 
 <div class="fragment" data-fragment-index="0">
 
-***Man-in-the-Middle*** attack:
+***Man-in-the-Middle (MITM)*** attack:
 
 1. Adversary fakes Bob identify and performs DH with Alice
 
@@ -491,6 +496,23 @@ Alice and Bob do not <b><i>authenticate</b></i> the received public keys. We wil
 
 ---
 
+## Solving the Key Management Problem
+
+<div class="content-center">
+
+To avoid to have and distribute $n(n-1)/2$ keys, we can use asymmetric cryptography:
+
+- each user has a public key and a private key
+- the public key can be distributed to everyone, even on the internet
+- the private key must be kept secret
+- each user can send an encrypted message to another user using the recipient's public key
+
+
+
+</div>
+
+---
+
 ## RSA
 
 <div class="content-center">
@@ -506,6 +528,12 @@ RSA is based on the ***integer factorization problem***.
 </div>
 
 
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> A nice and non-technical video about RSA is this [**one**](https://www.youtube.com/watch?v=Pq8gNbvfaoM)
 
 </div>
 
@@ -630,12 +658,12 @@ $$
 For instace, let us consider $\\mathbb{Z}_6$:
 
 $$
-    gcd(0, 6) = 6 \\Longrightarrow \\text{✗}\\\\{}
-    gcd(1, 6) = 1 \\Longrightarrow \\checkmark\\\\{}
-    gcd(2, 6) = 2 \\Longrightarrow \\text{✗}\\\\{}
-    gcd(3, 6) = 3 \\Longrightarrow \\text{✗}\\\\{}
-    gcd(4, 6) = 2 \\Longrightarrow \\text{✗}\\\\{}
-    gcd(5, 6) = 1 \\Longrightarrow \\checkmark\\\\{}
+    gcd(0, 6) = 6 \\Longrightarrow \\text{✗} \\\\{}
+    gcd(1, 6) = 1 \\Longrightarrow \\checkmark \\\\{}
+    gcd(2, 6) = 2 \\Longrightarrow \\text{✗} \\\\{}
+    gcd(3, 6) = 3 \\Longrightarrow \\text{✗} \\\\{}
+    gcd(4, 6) = 2 \\Longrightarrow \\text{✗} \\\\{}
+    gcd(5, 6) = 1 \\Longrightarrow \\checkmark \\\\{}
     gcd(6, 6) = 6 \\Longrightarrow \\text{✗}
 $$
 
@@ -795,7 +823,7 @@ $$
 
 <div class="fragment" data-fragment-index="2">
 
-3. Compute the totient: $\\phi(n) = (p-1)(q-1)$
+3. Compute the totient: $\\Phi(n) = (p-1)(q-1)$
 
 <br/>
 
@@ -804,9 +832,13 @@ $$
 
 <div class="fragment" data-fragment-index="3">
 
-4. Choose an integer $e$ such that $1 < e < \\phi(n)$ and $e$ is coprime to $\\phi(n)$: 
-    - we can use the Euclidean Algorithm to test if $e$ is coprime to $\\phi(n)$
-    - most implementations use $e = 65537$ (after checking $\\Phi(n)$ isn't divisible by 65537)
+4. Choose an integer $e$ such that:
+    - must be prime
+    - must be smaller than $\\Phi(n)$, i.e., $1 < e < \\phi(n)$ 
+    - must not be a factor of $\\Phi(n)$, i.e., must be coprime to $\\phi(n)$
+    - in pratice:
+        - we can use the Euclidean Algorithm to test if $e$ is coprime to $\\phi(n)$
+        - most implementations use $e = 65537$ (after checking $\\Phi(n)$ isn't divisible by 65537)
 
 <br/>
 
@@ -815,13 +847,34 @@ $$
 
 <div class="fragment" data-fragment-index="4">
 
-5. Compute $d$ as the modular inverse of $e$ modulo $\\phi(n)$: $d \\equiv e^{-1} \\bmod \\phi(n)$
-    - we can use the Extended Euclidean algorithm to compute $d$
+5. Choose an integer $d$ such that:
+    - The product $e \\cdot d$ divided by $\\Phi(n)$ has a remainder of 1
+    - i.e., $d$ is  modular inverse of $e$ modulo $\\phi(n)$: $d \\equiv e^{-1} \\bmod \\phi(n)$
+    - in pratice: we can use the Extended Euclidean algorithm to compute $d$
 
 <br/>
 
 
 </div>
+
+
+
+</div>
+
+---
+
+## RSA Key Generation: Example
+
+<div class="content-center">
+
+| Input parameter | Value | 
+| --- | :---: |
+| $p$ | $7$ |
+| $q$ | $19$ |
+| $n$ | $7 \\cdot 19 = 133$ |
+| $\\Phi(n)$ | $6 \\cdot 18 = 108$ |
+| $e$ | $29$ |
+| $d$ | $29^{-1} \\mod 108 = 41$ |
 
 
 
@@ -896,6 +949,72 @@ where $x$ is the message, $y$ is the ciphertext, (d, n) is the private key of th
 
 
 <div class="alert alert-warning"><b>WARNING</b>: As it must be, RSA use the private key of the receiver to decrypt the message.</div>
+
+
+
+</div>
+
+---
+
+## RSA Encryption and Decryption: Example
+
+<div class="content-center">
+
+| Input parameter | Value | 
+| --- | :---: |
+| $p$ | $7$ |
+| $q$ | $19$ |
+| $n$ | $133$ |
+| $\\Phi(n)$ | $108$ |
+| $e$ | $29$ |
+| $d$ | $41$ |
+
+<br><br>
+
+| Input | Output |
+| --- | :---: |
+| $x$ | $60$ |
+| $y = E_{(e, n)}(x)$ | $60^{29} \\bmod 133 = 86$ |
+| $x = D_{(d, n)}(y)$ | $86^{41} \\bmod 133 = 60$ |
+
+
+
+</div>
+
+---
+
+## Can we encrypt with private key and decrypt with public key?
+
+<div class="content-center">
+
+| Input | Output |
+| --- | :---: |
+| $x$ | $60$ |
+| $y = E_{(d, n)}(x)$ | $60^{41} \\bmod 133 = 72$ |
+| $x = D_{(e, n)}(y)$ | $72^{29} \\bmod 133 = 60$ |
+
+<br>
+
+Yes, the math will work, but it's not secure. ***Why***?
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-error">You cannot encrypt with your private key... because everyone has your public key... hence, everyone can decrypt your message!</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint"><b>NOTE</b>: There are nonethless some use cases where encryption is done with the private key and decryption with the public key. This is not done to achieve <b>confidentiality</b>, but to achieve <b>authentication</b>. We will see this in another lecture.</div>
+
+</div>
 
 
 
@@ -1038,6 +1157,12 @@ $$
 By the CRT, $x^{ed} \\equiv x \\pmod n$.
 
 
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> A more detailed proof is available in the Wikpedia [**RSA article**](https://en.wikipedia.org/wiki/RSA_cryptosystem#Proofs_of_correctness).
 
 </div>
 
@@ -1249,7 +1374,7 @@ They define how to pad the messages, how to properly generate and validate the k
 
 ---
 
-## How the break improper RSA uses?
+## How to break improper RSA?
 
 <div class="content-center">
 
@@ -1266,6 +1391,504 @@ Some tools that can be valuable:
 <br>
 
 This [**blog post**](https://www.sjoerdlangkemper.nl/2019/06/19/attacking-rsa/) provides examples (.pem files, i.e., a format for storing public/private keys) for testing known attacks.
+
+
+
+</div>
+
+---
+
+## How good we are at factorization?
+
+<div class="content-center">
+
+- In 1991, RSA Laboratory create the RSA Factoring Challenge:
+    - released 54 numbers, awarding people up to 200K for each factorization
+    - the largest number successfully after 30 years has 829 bits
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- Starting from 2002, 1024 bit keys was recommended.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- Starting from 2005, 2048 bit keys was recommended.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+- We should be safe. However, we fear quantum computers may break 2048-bit RSA, hence the world is moving to more sophisticated asymmetric schemes, dubbed ***post-quantum cryptography***.
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# RSA in Python
+
+---
+
+## Barebone RSA in Python [demo only!]
+
+<div class="content-center">
+
+We can define a function to test whether a number is prime or not:
+
+```python
+def is_prime(n):
+    if n < 2: return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+```
+
+which however is extremelly slow :(
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+We can instead use a well-known probabilistic primality test:
+
+```python
+def is_prime(n, k=5):
+    """Miller-Rabin primality test"""
+    if n < 2 or (n > 2 and n % 2 == 0): return False
+    if n == 2 or n == 3: return True
+    
+    import random
+    r, d = 0, n - 1
+    while d % 2 == 0:
+        r, d = r + 1, d // 2
+    
+    for _ in range(k):
+        a = random.randrange(2, n - 1)
+        x = pow(a, d, n)
+        if x == 1 or x == n - 1: continue
+        for _ in range(r - 1):
+            x = pow(x, 2, n)
+            if x == n - 1: break
+        else:
+            return False
+    return True
+```
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> Refer to Wikipedia for more details about the [**Miller-Rabin primality test**](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test).
+
+</div>
+
+---
+
+<div class="content-center">
+
+Then we can validate our input parameters from the example:
+
+```python
+import math
+
+# input p
+p = 7
+q = 19
+n = p * q
+phi_n = (p - 1) * (q - 1)
+e = 29
+d = 41
+
+# check
+assert is_prime(p), "p must be prime"
+assert is_prime(q), "q must be prime"
+assert p != q, "p and q must be different primes"
+assert 1 < e < phi_n, "e must be in range (1, φ(n))"
+assert math.gcd(e, phi_n) == 1, "e must be coprime to φ(n)"
+assert (e * d) % phi_n == 1, "d must be modular inverse of e mod φ(n)"
+```
+
+<br/>
+<br/>
+
+
+Luckely, these assertions do not fail, meaning that our parameters are safe (only for our purposes!).
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+We perform now encryption and decryption:
+
+```python
+# input message
+x = 60
+print("The input message is:", x)
+
+# encryption
+y = x ** e % n
+print("The encrypted message is:", y)
+
+# decryption
+z = y ** d % n
+print("The decrypted message is:", z)
+
+# this must be true!
+assert x == z
+```
+
+<pre class="code-output"><code>The input message is: 60
+The encrypted message is: 86
+The decrypted message is: 60</code></pre>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+However, are parameters are too small and we can factorize `n`:
+
+```python
+def factorize(n):
+    """Trial division factorization"""
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return i, n // i
+    return None, None
+
+# Test it
+p, q = factorize(133)
+print(f"p = {p}, q = {q}")
+```
+
+<pre class="code-output"><code>p = 7, q = 19</code></pre>
+
+<br/>
+<br/>
+
+
+The function `factorize` will not scale to large numbers.
+
+
+
+</div>
+
+---
+
+## RSA with Python [Real World Example]
+
+<div class="content-center">
+
+We need to install the `cryptography` package:
+
+```bash
+pip install cryptography
+```
+
+We can not generate a key pair:
+
+```python
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes, serialization
+
+# Generate a private key (2048 bits is minimum recommended, 4096 is better)
+private_key = rsa.generate_private_key(
+    public_exponent=65537,
+    key_size=2048
+)
+
+# Get the public key
+public_key = private_key.public_key()
+```
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+Get the keys in a human readable format:
+
+```python
+# Serialize private key to PEM format
+private_pem = private_key.private_bytes(
+    encoding=serialization.Encoding.PEM,
+    format=serialization.PrivateFormat.PKCS8,
+    encryption_algorithm=serialization.NoEncryption()
+)
+
+# Serialize public key to PEM format
+public_pem = public_key.public_bytes(
+    encoding=serialization.Encoding.PEM,
+    format=serialization.PublicFormat.SubjectPublicKeyInfo
+)
+
+# you should save them into ".pem" files!
+```
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+```python
+print("Private key:\n", private_pem.decode())
+```
+
+<pre class="code-output"><code>Private key:
+ -----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDEvNnbaiFnfp6V
+NxWS6LRop4V6wghFInIB522KS36ywgb3lAZd8zQZp5Yv1dWCk77UJuFNkZ77SK1e
+W8+tib1zLu+LbBU5q43YB7QnlknBN0zswdEr1QkEMppbgxGyCUEkeOAm8GDdA68v
+N7zfdWkCDx8WIA6kpLh56Xy93rNz7DpR9nG5tiJxMOlgfDTYCY4j+UmRmRDJ/Sdo
+s667qeb4PxARXiiH5YYWePwIujH8AxURMO4ML0Gb1B4AsZGgiRGnhuaFfrq35rKQ
+u7W2uyDjFgPI99n5vvQv1T0xB9Vj88T5tawQqYpHRJxAhgr2YKxlnYhOyEupjbez
+oPpRzjydAgMBAAECggEASASTwXC32rFsrtWzxYv+4qKUR6w4p8okrtK/dBUPw7Mo
+JsAeloy9QTjqTwd5eavI+tNivWj1qCniIPz96JpX6g6/7Ks7l9lXesHTLnyi8iJi
+u/Z1MhTxkIJPo/k2ZJRjrsy6zTZIVw+OtPuz3Z8WugS8DfbdNWMBDsuseLrJuUCW
+U2W53W/24W0JfR/kt8auKXKKTtexg0ZwMwcgeEyPEUYpHVVy+Iwff2maNcGzJ0Hx
+n0w0W87oIVwZoe0F09FAhPRr2jV7xJKGBL3fF/Qm5M6nTf/GaZh3ndPg4hJcLAbV
+oGxub/uk4vKovgLJEGHtaV0mYJYFaBXIxOnPvfRAFwKBgQD9U0Q9KQeczoAIDxst
+N4o1ofVYYM9c1QexuSjNS3xc/liuivQMrEF7m279f2Rezq7dhmbKWyGoMyJVIXCF
+wmbNKwDdLqy9iUW5Rf5KCdsf8EqThpcqGzuh/+wnIor4ErETHkopIHqxG3iV6luU
+EDRfDVSl+NUz8DzgEHApHp8HhwKBgQDG0KEblpRHZhILe3CJSYEMZBuqiNa3t/xi
+qO2r95dXnzzTuDsZrQILsP7N9s21PuRonXBXmvjjQQc/dnbbYYH3P5EWl0uootZH
+faFtYm6ovOlZCwr9cU7w0qLkCuvL51txukaLLVOKpJzALHVaGhelPkNZRACR8Rnm
+Q+CfsIObuwKBgCRkfO4oYc6WH/CIcwgI7ZMM5FlA9ylH9WYDyqfLi180rvrMPYlA
+idu/Fa/XSE0Sdi6e609wziICzpDaT/b3WZtp7SLZXLmR6fFW69QpHFC3TY9qC3di
+GCwKvxtULBC9ZrDvbgoAf3/ICYfH9kYMGen52UpKuB5RCf3KfsJ5grErAoGBALtv
+kZQK4Hx3tGdy1uP3klx2PMcH/zZxlNYG4RuRbvNCwvvv4ngQba9MDM1s8v7+7iPa
+2kEdb6wAcK7aJrApO3g4S7b6qG+yJUZ9IKWZeS5H+87g5FmQa5YLX1qTGT7BPar4
+rO0lrG83Rji/MVvi4Yv+KUyNGeR9Y6d9MtYaedllAoGACpqTU3xB9DaDJd7/zxDs
+P3xXUZGkXEiaorUh4ldXiNDnP5ioLGs9dcqK5MZgGsWq4v8eDI4VmTcvEDUrNNL8
+HnjZbu2sYvqRANIjcw25OUcQzXKLcmbbnGrkRcNxtyBqpU7KnmGN4e55DCPOvoCg
+x2T/T9Zkfy4DB63aB0w6uXw=
+-----END PRIVATE KEY-----</code></pre>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+```python
+print("Public key:\n", public_pem.decode())
+```
+
+<pre class="code-output"><code>Public key:
+ -----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxLzZ22ohZ36elTcVkui0
+aKeFesIIRSJyAedtikt+ssIG95QGXfM0GaeWL9XVgpO+1CbhTZGe+0itXlvPrYm9
+cy7vi2wVOauN2Ae0J5ZJwTdM7MHRK9UJBDKaW4MRsglBJHjgJvBg3QOvLze833Vp
+Ag8fFiAOpKS4eel8vd6zc+w6UfZxubYicTDpYHw02AmOI/lJkZkQyf0naLOuu6nm
++D8QEV4oh+WGFnj8CLox/AMVETDuDC9Bm9QeALGRoIkRp4bmhX66t+aykLu1trsg
+4xYDyPfZ+b70L9U9MQfVY/PE+bWsEKmKR0ScQIYK9mCsZZ2ITshLqY23s6D6Uc48
+nQIDAQAB
+-----END PUBLIC KEY-----</code></pre>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+We can now encrypt a message:
+
+```python
+# Encrypt a message
+message = b"Hello, RSA!"            # b means bytes
+ciphertext = public_key.encrypt(
+    message,
+    padding.OAEP(
+        mgf=padding.MGF1(algorithm=hashes.SHA256()),
+        algorithm=hashes.SHA256(),
+        label=None
+    )
+)
+```
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+Decrypt the message:
+
+```python
+# Decrypt the message
+plaintext = private_key.decrypt(
+    ciphertext,
+    padding.OAEP(
+        mgf=padding.MGF1(algorithm=hashes.SHA256()),
+        algorithm=hashes.SHA256(),
+        label=None
+    )
+)
+```
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+```python
+print(f"Original: {message}")
+print(f"Encrypted: {ciphertext}")
+print(f"Decrypted: {plaintext}")
+assert message == plaintext
+```
+
+<pre class="code-output"><code>Original: b'Hello, RSA!'
+Encrypted: b'\x03\xdc\x84\x06\x86V\x1bK+\xf4\xa7\xb9>C\x1a`\xc5\x9e\xfb\x9b"*9\xeb\xf1=\xaa\x8e\x8dq\x9d \x85\x9229+\xf2,\\\xb3\xaa\\\xc4\x96\xf9hY\r\xa0\xc7\xde\x8eM\x108u\xe2\xe1\x9a\xe1\x9cp\x9f&C`\x04\x15S\xa9\x86\xfc\xd1\x911@\xc2D\xc9y\x03P+Q\x97\x9e\x00\x14\xe4\x04\xbc\xbf\x00\x05\x153\xf0\xf2\x8c\x9a\xa1\xf9\x7f\x92\xdb\x08*l\x13\xb4\x1cp(\xa1\x0c\x18\xb8\x1aGAd\xf3\xde\xa46w\xe1\xac>\xf5\xb5\xc1\x91;\xc3g\x16U\x14#C\xbbt\xcb]\xcb\xe56l@x\xa9\xf2>\xc8w\x02\xa5\x06$_\x81\x8d\xc1jK\xf4\r\xa8\xb1c\xaa#h\x80R\xd9\x13\x14\xea2*}ya\xbf\xd5G\xcb\x14\xa5\\jj:\xbe\x82y\xd2\xaf\x89\x9c9\xd7d\xb2\x9bd\x1cf\x1e\xff\xfe\xb19\xcd\x8d\x94\x15\x96\x85D\x05\x9c\x94B\x9a\xcb\xec\xb5\x17L\'\xeb\xcc/9t\x07B\x9c\xeebrv\xed\x16\xabu\xfeS\x05ks8'
+Decrypted: b'Hello, RSA!'</code></pre>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Hybrid Cryptography
+
+---
+
+## RSA cannot encrypt large messages!
+
+<div class="content-center">
+
+We have two major issues with RSA:
+- the message to be encrypted must be smaller than the modulus
+- the encryption, based on exponentiation, is slow
+- we cannot make the modulus too large, otherwise the encryption would be too slow
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-warning"><b>WARNING</b>: Some implementations of RSA may work around these issues, e.g., by splitting the message into chunks. But this is not a robust solution; the underlying issues are still there. There is no standard for message chunking in RSA since the longer the message, the slower the encryption/decryption process.</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-error"><b>IMPORTANT</b>: we typically cannot encrypt large messages with asymmetric cryptography.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+We can observe this when using a real-world implementation of RSA:
+
+```python
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes
+
+private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+public_key = private_key.public_key()
+
+large_message = b"A" * 1000  # Too large!
+
+try:
+    ciphertext = public_key.encrypt(
+        large_message,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+except ValueError as e:
+    print(f"Error: {e}")  # Message too long for RSA encryption
+```
+
+<pre class="code-output"><code>Error: Encryption failed</code></pre>
+
+
+
+</div>
+
+---
+
+## Meet Hybrid Cryptography
+
+<div class="content-center">
+
+In the real world, we combine the best of both worlds: 
+
+- we use asymmetric cryptography for key exchange, at the beginning of the conversation, where we need to exchange a few messages, which are very short.
+
+- we use symmetric cryptography for data encryption for the rest of the conversation, where we need to exchange a lot of messages, which could even be very long.
+
+<br/>
+<br/>
+
+
+This is called ***hybrid cryptography***.
+
+<br/>
+<br/>
+<br/>
+
+
+<div class="alert alert-hint">NOTE: We will see this in action when considering the Public Key Infrastructure (PKI).</div>
 
 
 
