@@ -64,6 +64,7 @@
 We do not know whether the message $x$ is the same as the message $x'$.
 
 </div>
+
 <br/>
 
 
@@ -102,6 +103,7 @@ We use a **symmetric cipher** to:
 <div class="fragment" data-fragment-index="0">
 
 <div class="alert alert-note"><b>NOTE</b>: We are assuming that the key has been securely shared between Alice and the Bob!</div>
+
 <br/>
 
 
@@ -128,6 +130,7 @@ We use a **symmetric cipher** to:
 <div class="content-center">
 
 <div class="alert alert-hint"><b>IDEA</b>: Shift letters in the alphabet by k position (if k=13 then is called ROT13)</div>
+
 <br/>
 
 
@@ -138,6 +141,7 @@ $$
 $$
     x_i = D_k(y_i) = (y_i - k) \\mod 26
 $$
+
 <br/>
 
 
@@ -166,6 +170,7 @@ For instance, when $k=23$:
 <div class="content-center">
 
 <div class="alert alert-hint"><b>IDEA</b>: Map each letter to a different letter (k is the mapping, chosen randomly)</div>
+
 <br/>
 <br/>
 
@@ -176,6 +181,7 @@ For instance:
 
 - Plain:  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ABCDEFGHIJKLMNOPQRSTUVWXYZ 
 - Cipher: &nbsp;&nbsp;&nbsp;ZEBRASCDFGHIJKLMNOPQTUVWXY
+
 <br/>
 <br/>
 
@@ -206,6 +212,7 @@ For instance:
 - Brute force (or exhaustive key search): 
     - Shift cipher: try values of k in [0, 26]	$\\Longrightarrow$ trivial to break by hand
     - Substitution cipher: try all 26! mapping = 288	$\\Longrightarrow$ it seems to be secure….
+
 <br/>
 <br/>
 
@@ -254,6 +261,7 @@ For instance:
 <div class="content-center">
 
 Two key lessons learned:
+
 <br/>
 <br/>
 
@@ -261,6 +269,7 @@ Two key lessons learned:
 <div class="fragment" data-fragment-index="0">
 
 1. Key space should be large to avoid brute force.
+
 <br/>
 <br/>
 
@@ -285,6 +294,7 @@ Two key lessons learned:
 <div class="content-center">
 
 A cipher over plaintext space $\\lbrace 0,1 \\rbrace^n$, key space $\\mathcal{K}$, and ciphertext space is **perfect** if for all plaintexts $x$ and ciphertexts $y$, when:
+
 <br/>
 <br/>
 
@@ -292,6 +302,7 @@ A cipher over plaintext space $\\lbrace 0,1 \\rbrace^n$, key space $\\mathcal{K}
 $$
     \\Pr[x|y] = \\Pr[x]
 $$
+
 <br/>
 
 
@@ -366,6 +377,7 @@ In computer science, a popular operation is the exclusive or (XOR) operation:
 - Key space: $\\{0,1\\}^n$
 - Symmetric scheme, key chosen using a True Random Number Generator (TRNG)
 - Key is only used once (i.e., two messages must be encrypted with two different keys)
+
 <br/>
 <br/>
 
@@ -376,6 +388,7 @@ $$
     \\text{D}_k(y) &= y \\oplus k = (x \\oplus k) \\oplus k = x \\oplus (k \\oplus k) = x \\oplus 0 = x
 \\end{aligned}
 $$
+
 <br/>
 
 
@@ -384,6 +397,7 @@ $$
 **OTP is a perfect cipher!**
 
 </div>
+
 <br/>
 
 
@@ -425,6 +439,7 @@ $$
 
 <div class="alert alert-recall"><b>Shannon's Theorem</b>:<br>
 A cipher cannot be perfect if the size of its key space is less than the size of its message space.</div>
+
 <br/>
 <br/>
 
@@ -484,6 +499,7 @@ Proof by contradiction:
 <div class="content-center">
 
 Two main approaches:
+
 <br/>
 <br/>
 
@@ -494,6 +510,7 @@ Two main approaches:
     - inspired by OTP
     - given a secret key, generate a byte of stream called *keystream* that has the same length as the message
     - encrypt/decrypt bits from x individually using a XOR operation with the keystream (as in OTP)
+
 <br/>
 <br/>
 
@@ -517,7 +534,7 @@ Two main approaches:
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-## Stream Ciphers
+# Stream Ciphers
 
 ---
 
@@ -541,10 +558,12 @@ $$
 $$
     x_i = D_{s_i}=y_i \\oplus s_i = y_i + s_i\\bmod\\,2
 $$
+
 <br/>
 
 
 The cipher must provide the keystream generator.
+
 <br/>
 
 
@@ -568,6 +587,7 @@ A stream cipher is called:
 
 - **synchronous** when $s_i$ is a function of the key
     - Real-world examples: RC4, ChaCha20, Salsa20, SNOW 3G
+
 <br/>
 <br/>
 
@@ -619,6 +639,7 @@ for i in range(256):
     j = (j + S[i] + key[i % len(key)]) % 256
     S[i], S[j] = S[j], S[i]
 ```
+
 <br/>
 <br/>
 
@@ -690,6 +711,7 @@ Visually:
 <div class="fragment" data-fragment-index="2">
 
 <div class="alert alert-warning"><b>WARNING:</b> Some algorithms are weak to attacks due to an unsecure combination of IV and the key.</div>
+
 <br/>
 
 
@@ -714,7 +736,7 @@ Visually:
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-## Block Ciphers
+# Block Ciphers
 
 ---
 
@@ -734,6 +756,7 @@ Then:
 <img src="img/block-cipher.drawio.png" style="width: 620px;" />
 
 </div>
+
 <br/>
 <br/>
 
@@ -775,6 +798,7 @@ There are several operation modes:
 <div class="content-center">
 
 <div class="alert alert-hint"><b>IDEA</b>: Encrypt each plaintext block independently, then append the ciphertext blocks.</div>
+
 <br/>
 
 
@@ -837,7 +861,9 @@ Plaintext
 
 </div>
 
-<div class="col fragment" data-fragment-index="0">
+<div class="col">
+
+<div class="fragment" data-fragment-index="0">
 
 <div class="cell-center">
 
@@ -848,12 +874,18 @@ Ciphertext
 
 </div>
 
-<div class="col fragment" data-fragment-index="1">
+</div>
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="1">
 
 <div class="cell-center">
 
 <img src="img/ecb-desiderata.jpg" style="height: 350px;" /><br>
 What we would like!
+
+</div>
 
 </div>
 
@@ -975,6 +1007,7 @@ Notice that:
 <div class="content-center">
 
 <div class="alert alert-hint"><b>IDEA</b>: Propagate any (flipper or errored) bit both during encryption and decryption.</div>
+
 <br/>
 
 
@@ -1134,6 +1167,7 @@ Decryption:<br>
 <div class="content-center">
 
 <div class="alert alert-hint"><b>IDEA</b>: Encrypt a nonce+counter and XOR with the plaintext to get a stream cipher.</div>
+
 <br/>
 
 
@@ -1199,7 +1233,7 @@ Decryption:<br>
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-## Advanced Encryption Standard (AES)
+# Advanced Encryption Standard (AES)
 
 ---
 
@@ -1261,6 +1295,7 @@ Decryption:<br>
 <img src="img/aes-1.jpg" style="width: 400px;">
 
 </div>
+
 <br/>
 <br/>
 
@@ -1329,6 +1364,12 @@ Each round consists of four main layers:
 Last round does not have MixColumn layer.
 
 
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> This [**page**](https://legacy.cryptool.org/en/cto/aes-animation) has a nice animation showing the layers in action.
 
 </div>
 
@@ -1425,6 +1466,7 @@ In software implementations, the S-Box is usually realized as a lookup table.
 <div class="content-center">
 
 <img src="img/aes-7.jpg" style="width: 1000px;">
+
 <br/>
 <br/>
 
@@ -1526,7 +1568,7 @@ All these steps are trivial given the key.
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-## Using AES in the real world
+# Using AES in the real world
 
 ...or at least in the Python world!
 
@@ -1544,6 +1586,7 @@ pip install cryptography
 ```
 
 </div>
+
 <br/>
 
 
