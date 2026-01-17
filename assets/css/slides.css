@@ -404,6 +404,7 @@ video,
 iframe {
     max-width: 100%; /* Must be % because of multicolumn, as those are sub-divs */
     max-height: 90vh;
+    height: auto; /* Maintain aspect ratio */
     margin-bottom: var(--content-padding-bottom);
 }
 
@@ -624,9 +625,10 @@ div.multicolumn {
 .break-green h1 {
     color: white;
     font-weight: bold;
-    font-size: 2.7em;
+    font-size: 2.0em;
     padding-left: 2.5%;
     padding-bottom: 0;
+    margin-top: 0;
     margin-bottom: 0;
     text-align: left;
 }
@@ -634,9 +636,10 @@ div.multicolumn {
 .break-green h2 {
     color: white;
     font-weight: bold;
-    font-size: 2.7em;
+    font-size: 2.0em;
     padding-left: 2.5%;
     padding-bottom: 0;
+    margin-top: 0;
     margin-bottom: 0;
     text-align: left;
 }
@@ -667,9 +670,10 @@ div.multicolumn {
 .break-blue h1 {
     color: white;
     font-weight: bold;
-    font-size: 2.7em;
+    font-size: 2.0em;
     padding-left: 2.5%;
     padding-bottom: 0;
+    margin-top: 0;
     margin-bottom: 0;
     text-align: left;
 }
@@ -677,9 +681,10 @@ div.multicolumn {
 .break-blue h2 {
     color: white;
     font-weight: bold;
-    font-size: 2.7em;
+    font-size: 2.0em;
     padding-left: 2.5%;
     padding-bottom: 0;
+    margin-top: 0;
     margin-bottom: 0;
     text-align: left;
 }
@@ -721,12 +726,13 @@ div.multicolumn {
 .toc-blue ol {
     font-weight: normal;
     padding-top: 20px;
+    margin-left: 2.5%;
 }
 
 .toc-blue li {
     font-size: 1.3em;
     font-weight: normal;
-    margin-left: 2.55%;
+    margin-left: 1.75%;
     padding-bottom: 20px;
 }
 
@@ -978,11 +984,17 @@ body.normal .reveal .slides section strong {
     line-height: inherit !important;
 }
 
-/* Images in normal slides should be centered */
+/* Images in normal slides should be centered and maintain aspect ratio */
 .reveal .slides section[data-state~="normal"] .content-center img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    flex-shrink: 0 !important;
+    align-self: center !important;
+    object-fit: contain !important;
+    max-width: 100% !important;
 }
 
 /* Multicolumn layout for images side by side */
@@ -1526,13 +1538,24 @@ body.print-pdf.front {
   justify-content: flex-start !important;
 }
 
-.pdf-page > section[data-state*="break-blue"] h2 {
-  margin-top: -100px !important;
+.pdf-page > section[data-state*="break-blue"] h1 {
+  margin-top: 0px !important;
   color: white !important;
   font-weight: bold !important;
-  font-size: 2.7em !important;
+  font-size: 2.0em !important;
   padding-left: 2.5% !important;
   padding-bottom: 0 !important;
+  text-align: left !important;
+}
+
+.pdf-page > section[data-state*="break-blue"] h2 {
+  margin-top: 0px !important;
+  color: white !important;
+  font-weight: bold !important;
+  font-size: 2.0em !important;
+  padding-left: 2.5% !important;
+  padding-bottom: 0 !important;
+  text-align: left !important;
 }
 
 .pdf-page > section[data-state*="break-blue"] p {
@@ -1555,11 +1578,20 @@ body.print-pdf.front {
   justify-content: flex-start !important;
 }
 
-.pdf-page > section[data-state*="break-green"] h2 {
-  margin-top: -100px !important;
+.pdf-page > section[data-state*="break-green"] h1 {
+  margin-top: 0px !important;
   color: white !important;
   font-weight: bold !important;
-  font-size: 2.7em !important;
+  font-size: 2.0em !important;
+  padding-left: 2.5% !important;
+  padding-bottom: 0 !important;
+}
+
+.pdf-page > section[data-state*="break-green"] h2 {
+  margin-top: 0px !important;
+  color: white !important;
+  font-weight: bold !important;
+  font-size: 2.0em !important;
   padding-left: 2.5% !important;
   padding-bottom: 0 !important;
 }
@@ -1604,12 +1636,14 @@ body.print-pdf.front {
 .pdf-page > section[data-state*="toc-blue"] ol {
   font-weight: normal !important;
   padding-top: 20px !important;
+  padding-left: 0 !important;
+  margin-left: 2.5% !important;
 }
 
 .pdf-page > section[data-state*="toc-blue"] li {
   font-size: 1.3em !important;
   font-weight: normal !important;
-  margin-left: 2.55% !important;
+  margin-left: 1.5em !important;
   padding-bottom: 20px !important;
   color: white !important;
 }

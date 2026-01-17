@@ -143,18 +143,60 @@ function adjustFontSizeForSection(section) {
 
         let appliedClass = 'none';
         if (hasColumns) {
-            if (heightRatio > 1.15) {
-                section.classList.add('font-tiniest');
-                appliedClass = 'font-tiniest';
-            } else if (heightRatio > 1.05) {
-                section.classList.add('font-smallest');
-                appliedClass = 'font-smallest';
-            } else if (heightRatio > 0.75) {
-                section.classList.add('font-smaller');
-                appliedClass = 'font-smaller';
-            } else if (heightRatio > 0.60) {
-                section.classList.add('font-small');
-                appliedClass = 'font-small';
+            // Check if any column contains code blocks
+            const hasCodeInColumns = contentDiv.querySelector('.col pre') !== null;
+            
+            if (hasCodeInColumns) {
+                // For columns with code: count actual content lines more accurately
+                const codeBlocks = contentDiv.querySelectorAll('.col pre code');
+                let maxLines = 0;
+                let totalContentLines = 0;
+                
+                codeBlocks.forEach(code => {
+                    const text = code.textContent || '';
+                    // Count non-empty lines
+                    const lines = text.split('\n').filter(line => line.trim().length > 0);
+                    const lineCount = lines.length;
+                    maxLines = Math.max(maxLines, lineCount);
+                    totalContentLines += lineCount;
+                    console.log('  -> Code block lines:', lineCount, 'chars:', text.length);
+                });
+                
+                // Also count list items and other content in columns
+                const listItems = contentDiv.querySelectorAll('.col li');
+                const listItemCount = listItems.length;
+                totalContentLines += listItemCount;
+                
+                console.log('  -> Total content lines in columns:', totalContentLines, 'max code lines:', maxLines, 'list items:', listItemCount);
+                
+                // Apply aggressive font reduction for columns with code
+                // Base font is too large for column layouts with code - default to tiniest
+                if (totalContentLines <= 3 && maxLines <= 2) {
+                    section.classList.add('font-smaller');
+                    appliedClass = 'font-smaller';
+                } else if (totalContentLines <= 5 && maxLines <= 3) {
+                    section.classList.add('font-smallest');
+                    appliedClass = 'font-smallest';
+                } else {
+                    // For most cases with code in columns, use tiniest
+                    section.classList.add('font-tiniest');
+                    appliedClass = 'font-tiniest';
+                }
+            } else {
+                // Original logic for columns without code
+                if (heightRatio > 1.15) {
+                    section.classList.add('font-tiniest');
+                    appliedClass = 'font-tiniest';
+                } else if (heightRatio > 1.05) {
+                    section.classList.add('font-smallest');
+                    appliedClass = 'font-smallest';
+                } else if (heightRatio > 0.95) {
+                    section.classList.add('font-smaller');
+                    appliedClass = 'font-smaller';
+                } else if (heightRatio > 0.85) {
+                    section.classList.add('font-small');
+                    appliedClass = 'font-small';
+                }
             }
         } else {
             const hasCode = contentDiv.querySelector('pre') !== null;
