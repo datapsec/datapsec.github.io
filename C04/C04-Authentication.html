@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="front hide-controls" -->
+
+<div id="title">Authentication</div>
+
+<div id="subtitle">Data Privacy and Security</div>
+
+<div id="date">Data Science and Management (DASMA)</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Authentication Factors
+
+---
+
+## What is Authentication?
+
+<div class="content-center">
+
+The process of reliably verifying the identity of someone (or something).
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Authentication can change depending on who must be authenticated:
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+A) **Computers** can:
+  - store high-quality secrets (long random numbers)
+  - perform cryptographic operations
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+B) **Humans** typically remember only passwords, which can be used to:
+  - Derive a cryptographic key (e.g., hash of password)
+  - Decrypt a higher quality key locally (e.g., decrypt RSA key)
+
+</div>
+
+
+
+</div>
+
+---
+
+## Authentication Factors
+
+<div class="content-center">
+
+Different approaches to authenticate people:
+
+1. **What you know** (e.g., passwords, PINs)
+2. **What you have** (e.g., tokens, smartphones)
+3. **Who you are** (e.g., biometrics)
+4. **Where you are** (e.g., location-based)
+
+<div class="fragment" data-fragment-index="0">
+
+These approaches can be combined for **multi-factor authentication (MFA)**.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## What You Know
+
+<div class="content-center">
+
+Most common: **passwords** and security questions.
+
+<br/>
+<br/>
+
+
+Challenges:
+- Often guessable (short, not truly random)
+- Can be captured by malware (keyloggers, fake login screens)
+- Vulnerable to social engineering
+- Users reuse passwords across multiple sites
+
+
+
+</div>
+
+---
+
+## What You Have
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+**Authentication tokens:**
+- Physical devices performing cryptographic operations
+- Generate One-Time Passwords (OTP) valid for limited time
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Smartphones:**
+- Software authentication tokens (general purpose, widespread)
+- Receive OTP via SMS (not 100% secure)
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+**Open standards for OTP:**
+- HMAC-based One-Time Password (HOTP)
+- Time-based One-Time Password (TOTP)
+
+</div>
+
+
+
+</div>
+
+---
+
+## Who You Are
+
+<div class="content-center">
+
+Biometric authentication:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- **Fingerprint readers:** Widely available on smartphones, but implementation quality varies
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- **Face recognition:** Used in modern smartphones and laptops. Only secure with depth cameras.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+- **Retina examination:** Accurate but requires expensive hardware
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+- **Voice recognition:** Active research area, but accuracy affected by health issues and vulnerable to ML-based attacks
+
+</div>
+
+
+
+</div>
+
+---
+
+## Where You Are
+
+<div class="content-center">
+
+Location-based authentication is not considered secure on its own since attackers can often fake location.
+
+<br/>
+<br/>
+
+
+However, it can be used as an additional factor:
+- Websites warn about logins from unexpected locations
+- Banks may refuse transactions from unexpected locations or at unexpected times
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Password-Based Authentication
+
+---
+
+## Password Challenges
+
+<div class="content-center">
+
+Common problems:
+
+1. **Robustness:** Human-chosen passwords are weak (short, not random)
+2. **Transmission:** Never send passwords in clear (vulnerable to sniffing)
+3. **Storage:** Must store passwords securely (encrypted/hashed)
+
+
+
+</div>
+
+---
+
+## How a website/application should store a password?
+
+<div class="content-center">
+
+Different approaches:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+1) *Plain text*: the password is stored in plain text in the database. If the database is leaked, the attacker has access to all passwords! This is not a good idea. **NEVER**.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+2) *Hashed*: the password is hashed before being stored, i.e., $\\text{hash}(password)$. The website can still verify if a password is correct by hashing what the user enters and comparing it to the hashed password in the database. However, if the database is leaked, the attacker has access to all hashed passwords, but not the original passwords.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+3) *Salted* and *Hashed*: the password is hashed with a user-specific random salt before being stored, i.e., $hash(password\\,||\\,salt)$. The salt is stored with the password in the database. The website can still verify if a password is correct by hashing what the user enters and comparing it to the hashed password in the database. Why? We will understand this in the next slides!
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="cell-center">
+
+***How can we break a hashed password?***
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Password Attacks
+
+<div class="content-center">
+
+There are three main categories of attacks against passwords:
+
+1. **Brute Force Attack**
+2. **Dictionary Attack**
+3. **Rainbow Tables**
+
+Each has different characteristics, costs, and countermeasures.
+
+
+
+</div>
+
+---
+
+## Brute Force Attack: Definition
+
+<div class="content-center">
+
+Exhaustive key search, i.e., we try all possible combinations systematically.
+
+<br/>
+
+
+Characteristics:
+- Guaranteed to find the password eventually
+- Time depends on password space size
+- No intelligence or optimization
+- Works against any password (weak or strong)
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**EXAMPLE:** For a 4-digit PIN:
+- Password space: $10^4 = 10,000$ combinations
+- Try: 0000, 0001, 0002, ..., 9999
+- Average attempts to find password: $10,000 / 2 = 5,000$
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Brute Force: Password Space
+
+<div class="content-center">
+
+The size of the password space depends on:
+- Character set size (alphabet)
+- Password length
+
+$$
+\\text{Password Space} = |\\text{Alphabet}|^{\\text{Length}}
+$$
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Common character sets:
+
+| Character Set | Size | Example |
+|:--------------|:----:|:--------|
+| Digits only | 10 | 0-9 |
+| Lowercase letters | 26 | a-z |
+| Upper + lowercase | 52 | a-z, A-Z |
+| Alphanumeric | 62 | a-z, A-Z, 0-9 |
+| Alphanumeric + symbols | 94 | a-z, A-Z, 0-9, !@#$... |
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Brute Force: Time Estimates
+
+<div class="content-center">
+
+Assuming 1 billion (10⁹) attempts per second:
+
+<br/>
+<br/>
+
+
+| Length | Lowercase (26) | Alphanumeric (62) | Full ASCII (94) |
+|:------:|:--------------:|:-----------------:|:---------------:|
+| 4 | < 1 second | < 1 second | < 1 second |
+| 6 | < 1 second | 57 seconds | 34 minutes |
+| 8 | 5 minutes | 2.4 days | 60 days |
+| 10 | 3.5 hours | 9.5 years | 1,500 years |
+| 12 | 100 days | 59,000 years | 13 million years |
+
+
+
+</div>
+
+---
+
+## Brute Force: Online vs Offline
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+- Online brute force:
+    - Attack against live authentication system
+    - Limited by network latency and server response time
+    - Typical rate: 10-1,000 attempts/second
+    - Easily detected and blocked
+    - Countermeasures: rate limiting, account lockout, CAPTCHA
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- Offline brute force:
+    - Attack against stolen password database
+    - Limited only by computational power
+    - Modern GPU: billions of hashes/second
+    - Hard to detect (attacker has the data)
+    - Countermeasures: salting, slow hash functions (PBKDF2, Argon2)
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Brute Force: GPU Acceleration
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+Modern GPUs dramatically accelerate password cracking:
+
+- **Hash rates (single GPU, approximate):**
+    - MD5: 200 billion hashes/second
+    - SHA-1: 100 billion hashes/second
+    - SHA-256: 50 billion hashes/second
+    - bcrypt: 100,000 hashes/second
+    - Argon2: 10,000 hashes/second
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- **Why the difference?**
+    - Fast hashes (MD5, SHA) designed for speed
+    - Password hashes (bcrypt, Argon2) intentionally slow
+    - Memory-hard functions resist GPU parallelization
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Dictionary Attack: Definition
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+A *smart* brute force where we try only likely passwords from a *dictionary*. Indeed:
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+A) Humans choose predictable passwords:
+
+- Common words: "password", "admin", "welcome"
+- Names: "john", "maria", "alice"
+- Dates: "2024", "123456"
+- Keyboard patterns: "qwerty", "asdf"
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+B) The search becomes sustainable:
+
+- Much smaller search space
+- Higher success rate per attempt
+- Can crack weak passwords in seconds
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Where do dictionaries come from?
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+1. **Common password lists:**
+   - RockYou breach (32 million passwords)
+   - LinkedIn breach (117 million passwords)
+   - Have I Been Pwned database (billions of passwords)
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+2. **Language dictionaries:**
+   - English, Spanish, Chinese words
+   - Common phrases and expressions
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+3. **Targeted dictionaries:**
+   - Company-specific terms
+   - Industry jargon
+   - Personal information (names, dates)
+
+</div>
+
+
+
+</div>
+
+---
+
+## Dictionary Attack: Variations
+
+<div class="content-center">
+
+Attackers apply **rules** to dictionary words:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- **Common transformations:**
+    - Capitalization: password → Password, PASSWORD
+    - Leetspeak: password → p@ssw0rd, pa55word
+    - Append numbers: password → password1, password123
+    - Append symbols: password → password!, password@
+    - Combinations: password → P@ssw0rd123!
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- **Hybrid attack:** Dictionary + brute force
+    - Use dictionary words as base
+    - Brute force additional characters
+    - Example: "password" + 2 digits = 100 variations
+
+</div>
+
+
+
+</div>
+
+---
+
+## Dictionary Attack: Effectiveness
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+**Statistics from real breaches:**
+
+- Top 10 passwords cover 5% of all users
+- Top 100 passwords cover 10% of all users
+- Top 10,000 passwords cover 25-30% of all users
+- Top 1 million passwords cover 50-60% of all users
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Most common passwords<sup>*</sup> (2026):
+
+1. 123456
+2. 111111
+3. admin
+4. qwerty
+5. password
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> https://www.passwordmanager.com/most-common-passwords-latest-statistics/
+
+</div>
+
+---
+
+## What about *italian* passwords?
+
+<div class="content-center">
+
+<div class="columns-container columns-center">
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="0">
+
+1. admin
+2. password
+3. 123456
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+8. Napoli1926
+9. 123Stella
+10. Perlanera
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+12. ciaociao
+
+</div>
+
+</div>
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="3">
+
+<img src="img/facepalm.png">
+
+</div>
+
+</div>
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> https://nordpass.com/it/most-common-passwords-list/
+
+</div>
+
+---
+
+## Rainbow Tables: Motivation
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+When trying brute force attacks, there is a classic dilemma:
+
+A. **Precompute all hashes:** Fast lookup, but requires massive storage
+
+B. **Compute on-demand:** No storage needed, but very slow
+
+<br/>
+<br/>
+
+
+<div class="alert alert-hint"><b>SOLUTION:</b> Store only chain endpoints, not every hash.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Rainbow Tables: How They Work
+
+<div class="content-center">
+
+**Chain construction:**
+
+1. Start with password, compute hash
+2. Apply reduction function $R$ (maps hash → password space)
+3. Repeat: hash → reduce → hash → reduce...
+4. Store only (start password, end password)
+
+<br/>
+
+
+**Key insight:** One stored pair covers thousands of passwords in the chain.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Example chain:** `pwd1 → H → hash1 → R → pwd2 → H → hash2 → R → pwd3`
+- Store: (pwd1, pwd3)
+- This single entry covers pwd1, pwd2, pwd3 and their hashes.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Rainbow Tables: Lookup
+
+<div class="content-center">
+
+Given hash to crack:
+
+1. Apply reduction function and check if result matches any chain end
+2. If match found, regenerate chain from start to find the password
+3. If no match, apply hash then reduction and check again
+4. Repeat until found or exhausted
+
+<br/>
+
+
+**Trade-off:** Small storage, moderate lookup time.
+
+
+
+</div>
+
+---
+
+## Rainbow Tables: Storage savings
+
+<div class="content-center">
+
+| Method | Storage | Lookup |
+|:-------|:--------|:-------|
+| Full table | 100% | Instant |
+| Rainbow table | 0.1% | Moderate |
+| No precomputation | 0% | Very slow |
+
+
+
+</div>
+
+---
+
+## Rainbow Tables: The Defense
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="cell-center">
+
+Salting before hashing completely defeats rainbow tables!
+
+</div>
+
+<br/>
+
+
+Indeed, when using a salt: 
+
+$$
+    h = H(\\text{password} \\,||\\, \\text{salt})
+$$
+
+<br/>
+
+
+Each unique and user-specific salt requires a different rainbow table, making the precomputation of rainbow tables infeasible.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Why salting works
+
+<div class="content-center">
+
+- 64-bit salt = $2^{64}$ possible salts
+- Would need $2^{64}$ different rainbow tables
+- Storage becomes impractical: 64 GB × $2^{64}$ = $10^{21}$ GB
+
+<br/>
+<br/>
+
+
+<div class="alert alert-hint"><b>CONCLUSION:</b> Always use salting to protect against rainbow tables.</div>
+
+
+
+</div>
+
+---
+
+## Attack Comparison Summary
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+<div style="padding-top: 10px;">
+
+| Attack | Speed | Storage | Success Rate | Defeated By |
+|:-------|:------|:--------|:-------------|:------------|
+| Brute Force | Slow | None | 100% | Long passwords |
+| Dictionary | Fast | Small | 50-60% | Random passwords |
+| Rainbow Tables | Very Fast | Large | High | Salting |
+
+</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Defense strategy:**
+1. Use salting (defeats rainbow tables)
+2. Use slow hash functions (slows brute force)
+3. Enforce strong password policies (defeats dictionary)
+4. Implement rate limiting (slows online attacks)
+5. Use multi-factor authentication (adds extra layer)
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
