@@ -245,7 +245,7 @@ However, a cryptographic hash function requires that should be hard to find coll
 
 <div class="content-center">
 
-Given ($x$, $h(x)$) an adversary can always perform a brute force attack to find ($x'$, $h(x')$) such that $x \\neq x'$ and $h(x) = h(x')$. If he does not exploit any property from the specific hash function $h()$, then adversary can try to compute $h(x')$ for any possible $x'$ until a collision is found.
+Given ($x$, $h(x)$) an adversary can always perform a brute force attack to find ($x'$, $h(x')$) s.t. $x \\neq x'$ and $h(x) = h(x')$. When the adversary does not exploit any property from the specific hash function $h()$, then he can try to compute $h(x')$ for any possible $x'$ until a collision is found.
 
 <br/>
 <br/>
@@ -255,10 +255,13 @@ The expected attack complexity is:
 
 <div class="cell-center">
 
-$2^n$ attempts where $n$ is the number of bits for the output
+$2^n$ attempts
 
 </div>
 
+where $n$ is the number of bits for the output
+
+<br/>
 <br/>
 
 
@@ -300,7 +303,7 @@ This is also called the **Birthday Paradox**.
 <br/>
 
 
-<div class="alert alert-recall"><b>REMARK:</b> In second preimage, the simplified problem would be <i>if we have a party, how many people should I invite to have one people with birthday on a specific date XYZ?</i>. In this case, on average, we expect that the answer is 365 people.</div>
+<div class="alert alert-recall"><b>REMARK:</b> In second preimage, the simplified problem would be <i>if we have a party, how many people should I invite to have one people with birthday on a specific date XYZ?</i> In this case, on average, we expect that the answer is 365 people.</div>
 
 
 
@@ -369,7 +372,7 @@ In practice, we can see that the attack complexity is roughly the square root of
 <br/>
 
 
-E.g., output length is n=80 bits, output space is 280 , the expected number of attempts to find a collision with 0.5 probability is:
+E.g., output length is n=80 bits, output space is $2^{80}$, the expected number of attempts to find a collision with 0.5 probability is:
 
 $$
     \\sqrt{2^{80}} = 2^{40}
@@ -685,6 +688,434 @@ os.unlink(temp_filename)
 
 <pre class="code-output"><code>Received file hash: cabfe67e2c691e017ff43d03cce1afed9dac74eef0c604551ee21cf5bd12fc2a
 ✓ File integrity verified!</code></pre>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Digital Signatures
+
+---
+
+## Motivation
+
+<div class="content-center">
+
+- Alice orders a pink car from the car salesmen Bob 
+- After seeing the pink car, Alice states that she has never ordered it
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="cell-center">
+
+**How can Bob prove towards a judge that Alice has ordered a pink car?**  
+(And that he did not fabricate the order himself)
+
+</div>
+
+<br/>
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- This is security property is called ***non repudiation***
+- Symmetric cryptography fails because both Alice and Bob can be malicious
+- But it can be achieved with public-key cryptography!
+
+</div>
+
+
+
+</div>
+
+---
+
+## Basic Principle of Digital Signatures
+
+<div class="content-center">
+
+1) Bob sends to Alice his own public key:
+
+<br/>
+<br/>
+
+
+<img src="img/digital-signature-1.drawio.png" style="width: 1100px;">
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-warning"><b>WARNING</b>: How to securely share the key is a problem that we need to address: the public key can be seen by everyone but Alice <b>must</b> be sure that the public key is coming from Bob (and not an impostor).</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+2) Bob append a signature $s$, computed with a signature scheme taking as input $(k_{pr}, x)$,<br> to the signed message $x$.
+
+<img src="img/digital-signature-2.drawio.png" style="width: 1100px;">
+
+3) Bob sends $(x, s)$ to Alice
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note"><b>NOTE</b>: In public-key cryptography:
+
+- encryption: the public key is used for encryption and the private key for decryption.
+- digital signature: the private key is used for signing and the public key for verification.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+4) Alice verifies the signature using a verification scheme taking as input the message $x$, the signature $s$, and the public key $k_{pub}$ of Bob.
+
+<img src="img/digital-signature-3.drawio.png" style="width: 1100px;">
+
+
+
+</div>
+
+---
+
+## Implmenting a Digital Signature
+
+<div class="content-center">
+
+We can use any public key crypto system to implement a digital signature:
+
+1) $s = sign(x, p_{priv}) = E_{p_{priv}}(x)$
+
+2) $verify(x, s, p_{pub}) = D_{p_{pub}}(s) = x' \\stackrel{\\text{Do they match?}}{=} x$
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+For instance, when using RSA:
+
+1) $s = sign(x, p_{priv}) = E_{p_{priv}}(x) = x^{d} \\mod n$
+
+2) $verify(x, s, p_{pub}) = D_{p_{pub}}(s) = s^{e} \\mod n = x' \\stackrel{\\text{Do they match?}}{=} x$
+
+<br/>
+
+
+<div class="alert alert-recall"><b>RECALL</b>: In RSA:
+
+- $(n, e)$ is the public key
+- $(n, d)$ is the private key</div>
+
+
+
+</div>
+
+---
+
+## Security Services from Digital Signatures
+
+<div class="content-center">
+
+- **Integrity**: ensures that a message has not been modified in transit.
+
+<br/>
+
+
+- **Message Authentication**: ensures that the sender of a message is authentic. An alternative term is data origin authentication.
+
+<br/>
+
+
+- **Non-repudiation**: ensures that the sender of a message can not deny the creation of the message. (c.f. order of a pink car)
+
+
+
+</div>
+
+---
+
+## Digital Signature Forgery
+
+<div class="content-center">
+
+***Forgery*** is ability to create a pair consisting of a message $x$ and a signature $s$ that is valid for $x$, where $x$ has not been signed in the past by the legitimate signer.
+
+<br/>
+
+
+Types of forgery:
+
+1) Existential Forgery
+2) Selective Forgery
+3) Universal Forgery
+
+We consider the role of a *challenger* that challenges the adversary to correctly sign a message
+
+
+
+</div>
+
+---
+
+## Universal Forgery
+
+<div class="content-center">
+
+- Adversary creates a valid signature $s$ for any given message $x$ (chosen by the adversary or by a challenger).
+
+<br/>
+<br/>
+
+
+- It is the strongest ability in forging and it implies the other types of forgery.
+
+
+
+</div>
+
+---
+
+## Selective Forgery
+
+<div class="content-center">
+
+- Adversary creates a message/signature pair $(x, s)$ where $x$ has been chosen by the challenger prior to the attack
+
+<br/>
+
+
+- $x$ may be chosen to have interesting mathematical properties with respect to the signature algorithm; however, in selective forgery, $x$ must be fixed before the start of the attack
+
+<br/>
+
+
+- The ability to successfully conduct a selective forgery attack implies the ability to successfully conduct an existential forgery attack
+
+
+
+</div>
+
+---
+
+## Existential Forgery
+
+<div class="content-center">
+
+- Adversary creates at least one message/signature pair $(x,s)$, where $s$ was not produced by the legitimate signer.
+
+<br/>
+
+
+- Adversary can choose $x$ freely: $x$ need not have any particular meaning
+
+<br/>
+
+
+- Existential forgery is essentially the weakest adversarial goal
+
+<br/>
+
+
+- Creating an existential forgery is easier than a selective forgery, because the attacker may select $x$ for which a forgery can easily be created, whereas in the case of a selective forgery, the challenger can ask for the signature of a *difficult* message.
+
+<br/>
+
+
+- Therefore the strongest schemes are those which are *existentially unforgeable*
+
+
+
+</div>
+
+---
+
+## Textbook public-key cryptography can be susceptible to existential forgery!
+
+<div class="content-center">
+
+Let us consider RSA:
+
+1) Bob sends his public key $(n, e)$ to Alice
+
+2) Adversary choose any signature $s \\in Z_n$
+
+3) Adversary computes $x = s^e \\mod n$
+
+4) Adversary sends $(x, s)$ to Alice
+
+5) Alice computes $s^e \\mod n = x'$ which is by construction $x$!
+
+6) Alice accepts $(s, x)$ as a valid signature of $x$
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note"><b>NOTE</b>: The attacker can choose $s$, but he cannot freely choose $x$!</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint"><b>IMPORANT</b>: the problem can be mitigated by requiring that $x$ must follow a formatting <i>rule</i>, e.g., a valid $x$ must start with a specific prefix and ends with a specific suffix. Imposing such a rule, makes unlikely that the adversary can find a valid $x$ that satisfies the rule. This is exactly why we need a digital signature protocol, such as <b>PKCS#1 Digital Signature</b>, that defines such a rule.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Another attack: ciphertext malleability
+
+<div class="content-center">
+
+Several public-key schemes, such as RSA, are malleable, i.e., an attacker can transform a ciphertext into another ciphertext which decrypts to a related plaintext without knowing the private key.
+
+<br/>
+
+
+For instance in *textbook* RSA, an attacker can exploit the property that:
+
+$$
+    (x_1 \\cdot x_2)^e \\mod n \\equiv x_1^e \\cdot x_2^e \\mod n
+$$
+
+<br/>
+<br/>
+
+
+<div class="alert alert-hint"><b>HINT</b>: As for encryption, textbook implementations of public-key scheme are not safe for digital signature mechanism. Always use standards that define proper rules (e.g., padding) such as <b>PKCS#1 Digital Signature</b>.</div>
+
+
+
+</div>
+
+---
+
+## Timestamping a document
+
+<div class="content-center">
+
+A ***TimeStamping Authority (TSA)*** is used to guarantee the timestamp of a document.
+
+<br/>
+
+
+For instance, Alice wants to timestamp a document:
+
+- Alice compute hash of document and sends to TSA
+- TSA adds timestamp, computes new hash (of timestamp and received hash) and sign the obtained hash; sends back to Alice
+- Alice keeps TSA's signature as a proof
+
+Everybody can check the signature. TSA does not know Alice's document
+
+
+
+</div>
+
+---
+
+## Two or more parties signing the same document
+
+<div class="content-center">
+
+Multisignature (multi-signature) is a digital signature scheme which allows a group of users to sign a single document. Usually, a multisignature algorithm produces a joint signature that is more compact than a collection of distinct signatures from all users.
+
+Nowadays, multisignature has applications in cryptocurrency transactions. The concept of multisignature systems were by no means created specifically for cryptocurrencies and have actually been around thousands of years:
+
+*Monks at Mt Athos would secure their crypts with multiple keys, with more than one being needed to unlock the crypt. This meant that no single monk could access any precious relics without the awareness of at least one other monk.*
+
+Even a single user may use multisignature: several private keys that are stored in different ways.
+
+
+
+</div>
+
+---
+
+## Common applications of digital signatures
+
+<div class="content-center">
+
+1) **Code signing**: software vendor can easily publish a new release on a website (even from a third-party, e.g., an application store). Users can easily verify that the release has not been modified by an attacker, the code has been written by the software vendor, and the software vendor is only entity that can generate the code.
+
+<br/>
+<br/>
+
+
+<div class="alert alert-warning">Notice that cryptographic hash functions are not enough: anybody can generate the hash of something. They could be useful assuming the availability of <i>small read-only public space</i> from the software vendor, which however cannot be guaranteed (without using other solutions).</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+2) **Verifying the public key of an entity**: we look into this in another lecture (X509)
+
+<br/>
+
+
+3) **Signing emails**: mail providers use protocols, such as DomainKeys Identified Mail (DKIM), to perform email authentication and detect forged sender addresses in emails (email spoofing). For instance, in Gmail, given a message > show original: you can find the X-Google-DKIM-Signature field. The PK is available on a special DNS record.
+
+<br/>
+
+
+<div class="alert alert-note"><b>REMARK</b>: DKIM is different from the <i>Italian PEC</i> (Posta Elettronica Certificata). DKIM is designed to authenticate the server that is sending an email, i.e., the mail infrastructure, and not the actual person that has written the message.</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+5) **Credit-card payments**: e.g., EMV (Europay, Mastercard, and Visa)
+
+<img src="img/card-payment.jpg" style="width: 1200px;">
 
 
 
