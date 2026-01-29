@@ -853,8 +853,6 @@ Given hash to crack:
 
 <div class="content-center">
 
-<div class="fragment" data-fragment-index="0">
-
 <div class="cell-center">
 
 Salting before hashing completely defeats rainbow tables!
@@ -874,8 +872,6 @@ $$
 
 
 Each unique and user-specific salt requires a different rainbow table, making the precomputation of rainbow tables infeasible.
-
-</div>
 
 
 
@@ -907,8 +903,6 @@ Each unique and user-specific salt requires a different rainbow table, making th
 
 <div class="content-center">
 
-<div class="fragment" data-fragment-index="0">
-
 <div style="padding-top: 10px;">
 
 | Attack | Speed | Storage | Success Rate | Defeated By |
@@ -922,9 +916,7 @@ Each unique and user-specific salt requires a different rainbow table, making th
 <br/>
 
 
-</div>
-
-<div class="fragment" data-fragment-index="1">
+<div class="fragment" data-fragment-index="0">
 
 **Defense strategy:**
 1. Use salting (defeats rainbow tables)
@@ -941,6 +933,277 @@ Each unique and user-specific salt requires a different rainbow table, making th
 
 
 </div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Are ~*your*~ *my* passwords secure?
+
+---
+
+## Have I Been Pwned?
+
+<div class="content-center">
+
+<img src="img/pwned.png" style="width: 100%;">
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> https://haveibeenpwned.com/
+
+</div>
+
+---
+
+## YES... SEVERAL TIMES :(
+
+<div class="content-center">
+
+<div style="padding-top: 10px;">
+
+<img src="img/pwned-2.png" style="width: 100%;">
+
+</div>
+
+
+
+</div>
+
+---
+
+## Some of the data breaches where I was involved in
+
+<div class="content-center">
+
+For instance:
+1. **Trello**: a popular project management tool
+2. **Terravision**: airport transportation service
+3. **Deezer**: music streaming service
+4. **MyFitnessPal**: fitness and nutrition tracking app
+5. **Dropbox**: cloud storage service
+
+These are billion-dollar companies. Yet, they have been pwened.
+
+<br/>
+
+
+Now, you can buy my personal data online on multiple services (with free tiers!).
+
+
+
+</div>
+
+---
+
+## But they should be secure!
+
+<div class="content-center">
+
+Yes, but it does not work like that in the real world:
+- applications are becoming too complex
+- they run on cloud infrastructures that are hard to configure
+- companies care about time-to-market, not security
+- security is a cost and they want to minimize it
+- most startups don't have security teams and when they grow, it is often too painful to change stuff
+- there will be always someone smarter than the developers
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-hint"><b>BOTTOMLINE</b>: any service will be compromised... it is only a matter of time. You have to accept it.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## How can we survive?
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="cell-center">
+
+**REPEAT WITH ME**: *use **only** unique random passwords*
+
+</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="cell-center">
+
+No, there is no other safe option.  
+MFA can help and should be used, but it's not a silver bullet.
+
+</div>
+
+<br/>
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## How can remember and type random passwords?
+
+<div class="content-center">
+
+You do not have to! You need to use a password manager:
+
+1) When registering on a website, you let the password manager generate a random password for you.
+
+2) When you visit the website, the password manager automatically fills in the password for you.
+
+It is simple and convenient.
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> Unfortunately, there are cases when you perform the login on a third-party device. Only for these cases, you want to pick a password that is more user-friendly to type. Stil, it should be unique and compose random passphrase.
+
+</div>
+
+---
+
+## Example of a password manager
+
+<div class="content-center">
+
+<br>
+
+<div class="columns-container columns-center">
+
+<div class="col">
+
+<div class="cell-center">
+
+Create a new login:
+<img src="img/bw-1.png" style="width: 400px">
+
+</div>
+
+</div>
+
+<div class="col">
+
+<div class="cell-center">
+
+Generating random password:
+<img src="img/bw-2.png" style="width: 400px">
+
+</div>
+
+</div>
+
+<div class="col">
+
+<div class="cell-center">
+
+Generating random passphrase:
+<img src="img/bw-3.png" style="width: 400px">
+
+</div>
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+Automatic fill-in of the password field:
+<img src="img/bw-4.png" style="width: 600px">
+
+</div>
+
+
+
+</div>
+
+---
+
+## Which password manager?
+
+<div class="content-center">
+
+Different possibile choices:
+
+1) **Bitwarden**: open source, multi-platform
+2) **Apple Keychain**: proprietary, multi-platform
+3) **1Password**: proprietary, multi-platform
+4) **LastPass**: proprietary, multi-platform
+5) **KeePass**: open source, multi-platform
+6) **Dashlane**: proprietary, multi-platform
+7) **Enpass**: proprietary, multi-platform
+
+...and many more!
+
+
+
+</div>
+
+---
+
+## The next generation of password: PassKey
+
+<div class="content-center">
+
+Password managers still require some steps. To make the process even more seamless, the community is working on PassKey, a standard for passwordless authentication based on public-key cryptography.
+
+<br/>
+
+
+Basic idea:
+- The user never touches the password, hence, it is said passwordless
+- The device, when authorized by the user, handles the password registration
+- When needed, the device automatically provides the password when visiting the website
+- It is based on public-key cryptography, hence, it is more secure
+
+<br/>
+
+
+PassKey requires support from the browser and the website, hence, it will take some time to be widely adopted.
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Secure Authentication in the Web
                     </textarea>
                 </section>
             </div>
