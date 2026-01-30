@@ -37,7 +37,7 @@
                     <textarea data-template>
 <!-- .slide: data-state="front hide-controls" -->
 
-<div id="title">Security Essentials</div>
+<div id="title">Cybersecurity Essentials</div>
 
 <div id="subtitle">Data Privacy and Security</div>
 
@@ -47,7 +47,7 @@
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-# Security Properties
+# Cybersecurity Properties
 
 ---
 
@@ -56,6 +56,7 @@
 <div class="content-center">
 
 Security is always about protecting something valuable (an asset) against threats by reducing risk to an acceptable level.
+
 <br/>
 <br/>
 
@@ -64,6 +65,7 @@ Think of it as a continuous balancing act between:
 - What we want to protect (data, systems, reputation, money, lives)
 - Who or what threatens it (attackers, accidents, insider threats, natural disasters)
 - How much protection we can afford (cost, usability, performance trade-offs)
+
 <br/>
 
 
@@ -78,10 +80,12 @@ Think of it as a continuous balancing act between:
 <div class="content-center">
 
 **Security**: protection of assets from both intentional harm (attacks, sabotage) and accidental harm (incidents, failures). Security is about managing risk, not eliminating it completely.
+
 <br/>
 
 
 **Safety**: protection of people and the environment from unintentional harm (e.g., accidents, equipment failures, natural disasters).
+
 <br/>
 <br/>
 
@@ -106,6 +110,7 @@ Think of it as a continuous balancing act between:
 <div class="content-center">
 
 Protection of physical assets (buildings, rooms, hardware, documents) against theft, damage, and unauthorized physical access.
+
 <br/>
 <br/>
 
@@ -115,6 +120,7 @@ Mechanisms include:
 - Guards, security personnel
 - Access badges, biometric scanners
 - CCTV, motion detectors, alarms
+
 <br/>
 <br/>
 
@@ -136,6 +142,7 @@ Mechanisms include:
 <div class="content-center">
 
 Protection of computing resources (hosts, operating systems, applications, data) from unauthorized access, misuse, disruption, and modification.
+
 <br/>
 <br/>
 
@@ -146,6 +153,7 @@ Focus areas:
 - Secure software development
 - Patch management and vulnerability remediation
 - Data protection (encryption, backups)
+
 <br/>
 
 
@@ -160,6 +168,7 @@ Focus areas:
 <div class="content-center">
 
 Computer security plus the broader context of networks, connected systems, users, and cyber-enabled threats.
+
 <br/>
 <br/>
 
@@ -171,6 +180,7 @@ Expands beyond individual computers to include:
 - Human factors (social engineering, phishing, insider threats)
 - Organizational policies and incident response
 - Legal and regulatory compliance (GDPR, HIPAA, etc.)
+
 <br/>
 <br/>
 
@@ -192,6 +202,7 @@ Expands beyond individual computers to include:
 <div class="content-center">
 
 The classical goals of cybersecurity:
+
 <br/>
 <br/>
 
@@ -201,6 +212,7 @@ The classical goals of cybersecurity:
 **<u>C</u>onfidentiality**: ensure that information is accessible only to those authorized to have access
 - Prevents unauthorized disclosure of sensitive data
 - Techniques: encryption, access control, authentication
+
 <br/>
 <br/>
 
@@ -212,6 +224,7 @@ The classical goals of cybersecurity:
 **<u>I</u>ntegrity**: ensure that information and systems are accurate and have not been tampered with
 - Prevents unauthorized or undetected modification
 - Techniques: checksums, digital signatures, version control
+
 <br/>
 <br/>
 
@@ -246,6 +259,7 @@ The CIA triad is often extended with:
 
 **Authenticity**: verify that an entity (user, system, message) is who/what it claims to be
 - Example: digital certificates, multi-factor authentication
+
 <br/>
 <br/>
 
@@ -256,6 +270,7 @@ The CIA triad is often extended with:
 
 **Accountability / Auditability**: ensure that actions can be traced back to responsible entities
 - Example: audit logs, forensic analysis, compliance reporting
+
 <br/>
 <br/>
 
@@ -266,6 +281,7 @@ The CIA triad is often extended with:
 
 **Non-repudiation**: prevent a party from denying that they performed an action
 - Example: digital signatures on contracts, blockchain transactions
+
 <br/>
 <br/>
 
@@ -286,47 +302,6 @@ The CIA triad is often extended with:
 
 ---
 
-## CIA Triad: What Goes Wrong?
-
-<div class="content-center">
-
-**Confidentiality breach**: someone learns a secret they should not know
-- Example: An attacker steals a database containing credit card numbers
-- Example: An employee reads confidential salary information
-- Impact: Loss of competitive advantage, identity theft, privacy violations
-<br/>
-
-
-<div class="fragment" data-fragment-index="0">
-
-<div style="padding-bottom: 10px;">
-
-**Integrity breach**: someone changes something they should not change
-- Example: An attacker modifies a bank transfer from \$100 to \$100,000
-- Example: Malware alters system logs to hide traces of an intrusion
-- Impact: Financial fraud, loss of trust, incorrect decisions
-
-</div>
-
-</div>
-
-<div class="fragment" data-fragment-index="1">
-
-**Availability breach**: authorized users cannot access services or data
-- Example: Ransomware encrypts all company files
-- Example: DDoS attack overwhelms a website
-- Impact: Business disruption, lost revenue, reputational damage
-<br/>
-
-
-</div>
-
-
-
-</div>
-
----
-
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # Data
@@ -338,6 +313,7 @@ The CIA triad is often extended with:
 <div class="content-center">
 
 When we communicate, we exchange data: text messages, images, audio, video, sensor readings, machine learning models, financial transactions…
+
 <br/>
 <br/>
 
@@ -351,87 +327,7 @@ At the lowest level, <b><i>all</b></i> digital data is stored and transmitted as
 - Bytes are just sequences of <b>bits</b> (binary digits: 0 or 1).
 
 - A photo, a song, a database, an encrypted message—they're all ultimately just long strings of 0s and 1s.</div>
-<br/>
 
-
-</div>
-
-
-
-</div>
-
----
-
-## Why Bits? Reliable Physical States
-
-<div class="content-center">
-
-Physical devices naturally offer two stable, distinguishable states:
-
-- Transistors: conducting vs non-conducting
-- Voltage levels: high ($\\sim$5V) vs low ($\\sim$0V)
-- Magnetic domains: north vs south
-- Optical media: reflective vs non-reflective pits
-<br/>
-<br/>
-
-
-<div class="fragment" data-fragment-index="0">
-
-Two-state encoding provides:
-- Noise margins: easier to distinguish "definitely 0" from "definitely 1" even with interference
-- Reliability: less susceptible to errors than multi-level encoding
-- Simplicity: cheaper and faster circuits
-<br/>
-<br/>
-
-
-</div>
-
-<div class="fragment" data-fragment-index="1">
-
-<div class="alert alert-warning">Imagine trying to distinguish 10 different voltage levels reliably!</div>
-
-</div>
-
-
-
-</div>
-
----
-
-## Why Bits? Boolean Logic
-
-<div class="content-center">
-
-<div style="padding-bottom: 10px;">
-
-Binary values map perfectly to Boolean algebra:
-- 0 = False, 1 = True
-- Logical operations: AND, OR, NOT, XOR
-- These operations can be implemented with simple electronic gates
-- Each gate can be implemented with a few transistors
-
-</div>
-
-<div class="fragment" data-fragment-index="0">
-
-<div style="padding: 10px;">
-
-This enables computation:
-- Combine gates → build circuits → perform arithmetic, comparisons, decisions
-- Example: XOR gate is fundamental to encryption (we'll see this later!)
-- Example: Addition of binary numbers uses AND/OR/XOR gates
-
-</div>
-
-</div>
-
-<div class="fragment" data-fragment-index="1">
-
-Binary also maps to arithmetic:
-- Positional notation: $1011_2 = 1×2^3 + 0×2^2 + 1×2^1 + 1×2^0 = 11_{10}$
-- All mathematical operations can be performed in binary
 <br/>
 
 
@@ -448,6 +344,7 @@ Binary also maps to arithmetic:
 <div class="content-center">
 
 Bits enable a powerful hierarchy of abstractions:
+
 <br/>
 <br/>
 
@@ -479,6 +376,7 @@ Applications (web browsers, email clients, streaming services)
 <div class="content-center">
 
 Several approaches to transform bytes with fundamentally different purposes:
+
 <br/>
 <br/>
 
@@ -508,6 +406,7 @@ Encoding changes representation without changing meaning:
 - Purpose: Make data compatible with systems that expect certain formats
 - Example: Email systems historically handled ASCII text, so attachments are Base64-encoded
 - Example: URLs can't contain spaces, so `hello world` becomes `hello%20world`
+
 <br/>
 <br/>
 
@@ -515,6 +414,7 @@ Encoding changes representation without changing meaning:
 <div class="fragment" data-fragment-index="0">
 
 <div class="alert alert-error"><b>NO SECURITY</b>: Anyone can decode it (no secret key needed)</div>
+
 <br/>
 
 
@@ -523,6 +423,7 @@ Encoding changes representation without changing meaning:
 <div class="fragment" data-fragment-index="1">
 
 Examples: UTF-8, Base64, URL-encoding, ASCII, Hex
+
 <br/>
 
 
@@ -541,6 +442,7 @@ Examples: UTF-8, Base64, URL-encoding, ASCII, Hex
 Serialization is an encoding process that converts in-memory data structures to bytes (and back)
 - Purpose: Store objects in files or send them over networks
 - Example: Python dictionary → JSON string → bytes
+
 <br/>
 <br/>
 
@@ -548,6 +450,7 @@ Serialization is an encoding process that converts in-memory data structures to 
 <div class="fragment" data-fragment-index="0">
 
 Examples: JSON, XML, Protobuf, MessagePack, Pickle
+
 <br/>
 <br/>
 
@@ -557,6 +460,7 @@ Examples: JSON, XML, Protobuf, MessagePack, Pickle
 <div class="fragment" data-fragment-index="1">
 
 <div class="alert alert-note"><b>NOTE</b>: Transferring raw bytes back to in-memory data is said to be <b><i>deserialization</b></i>.</div>
+
 <br/>
 <br/>
 
@@ -566,6 +470,7 @@ Examples: JSON, XML, Protobuf, MessagePack, Pickle
 <div class="fragment" data-fragment-index="2">
 
 <div class="alert alert-error"><b>NO SECURITY</b>: Serialized data is often human-readable (JSON, XML)</div>
+
 <br/>
 
 
@@ -587,6 +492,7 @@ Compression reduces size by exploiting patterns and redundancy
 
 - ***Lossless***: Perfect reconstruction
     - Examples: gzip, zstd, bzip2, PNG, ZIP
+
 <br/>
 
 
@@ -596,6 +502,7 @@ Compression reduces size by exploiting patterns and redundancy
 
 - ***Lossy***: Approximate reconstruction, smaller size
     - Examples: JPEG, MP3, H.264, WebP
+
 <br/>
 <br/>
 
@@ -605,6 +512,7 @@ Compression reduces size by exploiting patterns and redundancy
 <div class="fragment" data-fragment-index="2">
 
 <div class="alert alert-error"><b>NO SECURITY</b>: Compressed data can be decompressed by anyone</div>
+
 <br/>
 
 
@@ -627,6 +535,7 @@ Compression reduces size by exploiting patterns and redundancy
 <div class="content-center">
 
 Encryption transforms data so only authorized parties (with the key) can read it
+
 <br/>
 <br/>
 
@@ -634,6 +543,7 @@ Encryption transforms data so only authorized parties (with the key) can read it
 <div class="fragment" data-fragment-index="0">
 
 <div class="alert alert-hint"><b>SECURITY</b>: Without the key, ciphertext should look like random noise</div>
+
 <br/>
 <br/>
 
@@ -646,11 +556,13 @@ It comes in two flavors:
 
 - ***Symmetric***: same key for encryption and decryption
     - Examples: AES, ChaCha20
+
 <br/>
 
 
 - ***Asymmetric***: different keys for encryption and decryption
     - Examples: RSA, Elliptic Curve Cryptography
+
 <br/>
 
 
@@ -662,11 +574,12 @@ It comes in two flavors:
 
 ---
 
-## Encoding != Encryption
+## Encoding $\neq$ Encryption
 
 <div class="content-center">
 
 Even if the data have been encoded and may not be readable, they are not encrypted and can (and will!) be easily decrypted.
+
 <br/>
 <br/>
 
@@ -683,46 +596,6 @@ Even if the data have been encoded and may not be readable, they are not encrypt
 
 ---
 
-## Combining Operations
-
-<div class="content-center">
-
-You can (and often should) combine these operations:
-
-<div class="fragment" data-fragment-index="0">
-
-1. Serialize your data structure → bytes
-2. Compress the bytes → smaller bytes (optional)
-3. Encrypt the bytes → ciphertext (for confidentiality)
-4. Encode the ciphertext as Base64 → text-safe format (if needed)
-<br/>
-<br/>
-
-
-</div>
-
-<div class="fragment" data-fragment-index="1">
-
-**EXAMPLE**: HTTPS does compression → encryption → transmission
-<br/>
-
-
-</div>
-
-
-
-</div>
-
----
-
-<!-- .slide: data-state="break-blue hide-controls" -->
-
-# Base64
-
-Base64 is an encoding scheme, not encryption and not compression.
-
----
-
 ## Why do we need Base64?
 
 <div class="content-center">
@@ -732,6 +605,7 @@ Historically, many systems were designed to handle only *text* (printable ASCII 
 - URLs have restrictions on which characters are allowed
 - JSON and XML are text formats that can't directly contain binary data
 - Configuration files and logs are often text-based
+
 <br/>
 <br/>
 
@@ -743,6 +617,7 @@ Historically, many systems were designed to handle only *text* (printable ASCII 
 - Digits: `0-9` (10 characters)
 - Symbols: `+`, `/` (2 characters)
 - Padding: `=` (used to align to 4-character blocks)
+
 <br/>
 
 
@@ -760,6 +635,7 @@ Historically, many systems were designed to handle only *text* (printable ASCII 
 
 1. Consider the input as sequence of bits
    - Example: `"Cat"` in the ASCII encoding is `01000011 01100001 01110100` (24 bits)
+
 <br/>
 <br/>
 
@@ -768,6 +644,7 @@ Historically, many systems were designed to handle only *text* (printable ASCII 
 
 2. Split the sequence of bits into chunks of 6 bits each
    - Example:`010000 110110 000101 110100` (4 chunks of 6 bits)
+
 <br/>
 <br/>
 
@@ -782,6 +659,7 @@ Historically, many systems were designed to handle only *text* (printable ASCII 
    - `000101` (5) → `F`
    - `110100` (52) → `0`
    - Result: `"Cat"` → `"Q2F0"`
+
 <br/>
 <br/>
 
