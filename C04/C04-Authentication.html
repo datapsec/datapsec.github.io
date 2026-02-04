@@ -1204,6 +1204,225 @@ PassKey requires support from the browser and the website, hence, it will take s
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # Secure Authentication in the Web
+
+---
+
+## How can we verify the identity of a website?
+
+<div class="content-center">
+
+For instance, how can you trust to be on the website of LUISS? We need to verify its identity!
+
+<img src="img/luiss-1.png">
+
+
+
+</div>
+
+---
+
+## Browser verifies the identity of the website
+
+<div class="content-center">
+
+<img src="img/luiss-2.png">
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="cell-center">
+
+**How?**
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<img src="img/luiss-3.png">
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="cell-center">
+
+It checks whether the ***certificate*** from LUISS is valid.
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="columns-container columns-center">
+
+<div class="col">
+
+<img src="img/luiss-4.png" style="width: 700px;">
+
+</div>
+
+<div class="col">
+
+The certificate (see `details` tab):
+- covers any subdomain of luiss.it
+- is based on PKCS #1 **RSA** Encryption
+    - 2048-bit key
+    - it contains the public key `(n, e)`, where `e=65537`
+- has been issued by Amazon
+- expires on August 22, 2026
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## What is a certificate?
+
+<div class="content-center">
+
+A X.509 certificate is a digital document that binds a public key to an identity:
+- it must be signed by a trusted Certificate Authority (CA)
+- it must be valid (not expired)
+- an entity pays a CA to issue a certificate
+- your browser verifies the signature of certificates
+- your browser ships with a list of trusted CAs and their public keys
+
+
+
+</div>
+
+---
+
+## How can we trust a CA?
+
+<div class="content-center">
+
+- We trust a selected set of CAs, dubbed root CAs. 
+- There are only a few root CAs and there strict controls on them. 
+- They are like the police: we assume they are good.
+- Browsers and OSes come with a list of trusted root CAs and their public keys.
+- Root CAs then work with intermediate CAs, which issue certificates to websites.
+- When we see a certificate signed by a CA, we check which root CA signed it.
+- Hence, there is a **chain of trust** from the root CA to the certificate.
+
+
+
+</div>
+
+---
+
+## Chain of trust
+
+<div class="content-center">
+
+Applications, e.g., browsers, contains public keys of a few and selected CAs, which are called *root store*, i.e., a list of trusted root CA certificates. X.509 defines a hierarchy that allows an application to trust a certificate from a CA whenever another CA trust it, proceeding recursively until a root CA is met along the path.
+
+<img src="img/trust-of-chain.png">
+
+Root CAs self-sign their certificate. You can add or remove certificates from an application.
+
+
+
+</div>
+
+---
+
+## <ins>P</ins>ublic <ins>K</ins>ey <ins>I</ins>nfrastructure (PKI)
+
+<div class="content-center">
+
+All the procedurs, systems, and entities that support the issue, revocation, and management of digital certificates  is known as PKI.
+
+<img src="img/PKI.webp" style="width: 1200px;">
+
+
+
+</div>
+
+---
+
+## After verifying a certificate, we get the public key of the website
+
+<div class="content-center">
+
+Now, we can use this public key to encrypt data that only the website can decrypt with its private key.
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-error"><b>PROBLEM</b>: public key cryptography is slow.</div>
+
+<br/>
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint"><b>SOLUTION</b>: use public key cryptography only for exchanging a symmetric session key</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Hybrid Cryptography
+
+<div class="content-center">
+
+1) User visites a website
+2) Website sends its certificate
+3) User checks the certificate and extract the public key
+4) User encrypts a random session key with the public key
+5) User sends the encrypted session key to the website
+6) Website decrypts the session key with its private key
+7) User and website use the session key to encrypt/decrypt messages using, e.g., AES
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-hint"><b>NOTE</b>: These steps are automatically performed by the protocol <b>TLS</b> in the background. TLS is integrated in web browsers in <b>HTTPS</b>, which is HTTP over TLS.</div>
+
+</div>
+
+
+
+</div>
                     </textarea>
                 </section>
             </div>
