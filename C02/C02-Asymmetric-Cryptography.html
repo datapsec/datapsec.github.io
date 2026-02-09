@@ -70,9 +70,9 @@ When working with symmetric cryptography, we face two main issues:
 <div class="fragment" data-fragment-index="1">
 
 2. **Key Management**, i.e., when we have $n$ users, we need to manage $n(n-1)/2$ keys:
-    - There are billions of users accessing the internt, it cannot scale!
+    - There are billions of users accessing the internet, it cannot scale!
     - For instance, Amazon has over 100M users and would need to manage $100M \\times 100M / 2 = 50$ billion keys!
-    - Even small organizations have thousands of users and may struggle to manage a their keys.
+    - Even small organizations have thousands of users and may struggle to manage their keys.
 
 </div>
 
@@ -323,7 +323,7 @@ $g^a \\mod p$
 
 <div class="cell-center">
 
-$(g^b)^a \\mod p = g^{ab} \\mod b$
+$(g^b)^a \\mod p = g^{ab} \\mod p$
 
 </div>
 
@@ -443,7 +443,7 @@ Passive attacker:
 
 <div class="fragment" data-fragment-index="2">
 
-To build the shared secret key it needs to recover $a$ (or $b$).  One way of breaking DH, it to solve DLP, which is believed to be hard to break. However, there could other ways of breaking DH that do not necessarily need to solve DLP. However, after several years is still believed to be safe.
+To build the shared secret key it needs to recover $a$ (or $b$).  One way of breaking DH is to solve DLP, which is believed to be hard to break. However, there could be other ways of breaking DH that do not necessarily need to solve DLP. However, after several years it is still believed to be safe.
 
 </div>
 
@@ -466,9 +466,9 @@ To build the shared secret key it needs to recover $a$ (or $b$).  One way of bre
 
 ***Man-in-the-Middle (MITM)*** attack:
 
-1. Adversary fakes Bob identify and performs DH with Alice
+1. Adversary fakes Bob identity and performs DH with Alice
 
-2. Adversary fakes Alice identify and performs DH with Bob
+2. Adversary fakes Alice identity and performs DH with Bob
 
 3. Alice and Bob think that they have a common shared key, instead they are sharing a secret key with the adversary.
 
@@ -645,7 +645,7 @@ When considering $\\mathbb{Z}_m = \\{0, 1, ..., m-1\\}$
 
 <div class="content-center">
 
-A naive approch to answer the previous question is to verify:
+A naive approach to answer the previous question is to verify:
 
 $$
     gcd(a, m) \\stackrel{?}{=}1\\,\\,\\forall\\,a\\in\\mathbb{Z}_m
@@ -655,7 +655,7 @@ $$
 <br/>
 
 
-For instace, let us consider $\\mathbb{Z}_6$:
+For instance, let us consider $\\mathbb{Z}_6$:
 
 $$
     gcd(0, 6) = 6 \\Longrightarrow \\text{✗} \\\\{}
@@ -836,7 +836,7 @@ $$
     - must be prime
     - must be smaller than $\\Phi(n)$, i.e., $1 < e < \\phi(n)$ 
     - must not be a factor of $\\Phi(n)$, i.e., must be coprime to $\\phi(n)$
-    - in pratice:
+    - in practice:
         - we can use the Euclidean Algorithm to test if $e$ is coprime to $\\phi(n)$
         - most implementations use $e = 65537$ (after checking $\\Phi(n)$ isn't divisible by 65537)
 
@@ -849,7 +849,7 @@ $$
 
 5. Choose an integer $d$ such that:
     - The product $e \\cdot d$ divided by $\\Phi(n)$ has a remainder of 1, i.e., $d$ is  modular inverse of $e$ modulo $\\phi(n)$: $d \\equiv e^{-1} \\bmod \\phi(n)$
-    - in pratice: we can use the Extended Euclidean algorithm to compute $d$
+    - in practice: we can use the Extended Euclidean algorithm to compute $d$
 
 <br/>
 
@@ -918,7 +918,7 @@ where $x$ is the message, $y$ is the ciphertext, (e, n) is the public key of the
 
 <div class="fragment" data-fragment-index="0">
 
-<div class="alert alert-warning"><b>WARNING</b>:  As it must be, RSA use the public key of the receiver to encrypt the message!</div>
+<div class="alert alert-warning"><b>WARNING</b>:  As it must be, RSA uses the public key of the receiver to encrypt the message!</div>
 
 </div>
 
@@ -947,7 +947,7 @@ where $x$ is the message, $y$ is the ciphertext, (d, n) is the private key of th
 <br/>
 
 
-<div class="alert alert-warning"><b>WARNING</b>: As it must be, RSA use the private key of the receiver to decrypt the message.</div>
+<div class="alert alert-warning"><b>WARNING</b>: As it must be, RSA uses the private key of the receiver to decrypt the message.</div>
 
 
 
@@ -1161,7 +1161,7 @@ By the CRT, $x^{ed} \\equiv x \\pmod n$.
 
 <div class="footnotes">
 
-<sup>*</sup> A more detailed proof is available in the Wikpedia [**RSA article**](https://en.wikipedia.org/wiki/RSA_cryptosystem#Proofs_of_correctness).
+<sup>*</sup> A more detailed proof is available in the Wikipedia [**RSA article**](https://en.wikipedia.org/wiki/RSA_cryptosystem#Proofs_of_correctness).
 
 </div>
 
@@ -1410,7 +1410,7 @@ This [**blog post**](https://www.sjoerdlangkemper.nl/2019/06/19/attacking-rsa/) 
 
 <div class="fragment" data-fragment-index="0">
 
-- Starting from 2002, 1024 bit keys was recommended.
+- Starting from 2002, 1024-bit keys were recommended.
 
 <br/>
 
@@ -1419,7 +1419,7 @@ This [**blog post**](https://www.sjoerdlangkemper.nl/2019/06/19/attacking-rsa/) 
 
 <div class="fragment" data-fragment-index="1">
 
-- Starting from 2005, 2048 bit keys was recommended.
+- Starting from 2005, 2048-bit keys were recommended.
 
 <br/>
 
@@ -1459,7 +1459,7 @@ def is_prime(n):
     return True
 ```
 
-which however is extremelly slow :(
+which however is extremely slow :(
 
 
 
@@ -1534,7 +1534,7 @@ assert (e * d) % phi_n == 1, "d must be modular inverse of e mod φ(n)"
 <br/>
 
 
-Luckely, these assertions do not fail, meaning that our parameters are safe (only for our purposes!).
+Luckily, these assertions do not fail, meaning that our parameters are safe (only for our purposes!).
 
 
 
@@ -1575,7 +1575,7 @@ The decrypted message is: 60</code></pre>
 
 <div class="content-center">
 
-However, are parameters are too small and we can factorize `n`:
+However, our parameters are too small and we can factorize `n`:
 
 ```python
 def factorize(n):
@@ -1614,7 +1614,7 @@ We need to install the `cryptography` package:
 pip install cryptography
 ```
 
-We can not generate a key pair:
+We can now generate a key pair:
 
 ```python
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
@@ -1802,7 +1802,7 @@ Decrypted: b'Hello, RSA!'</code></pre>
 
 <div class="content-center">
 
-We have two major issues with RSA:
+We have three major issues with RSA:
 - the message to be encrypted must be smaller than the modulus
 - the encryption, based on exponentiation, is slow
 - we cannot make the modulus too large, otherwise the encryption would be too slow
