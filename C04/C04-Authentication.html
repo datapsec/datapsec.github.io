@@ -1423,6 +1423,260 @@ Now, we can use this public key to encrypt data that only the website can decryp
 
 
 </div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Transport Layer Security (TLS)
+
+---
+
+## What is TLS?
+
+<div class="content-center">
+
+**T**ransport **L**ayer **S**ecurity (TLS) is a cryptographic protocol that provides secure communication over a network.
+
+<div class="fragment" data-fragment-index="0">
+
+It is the successor of SSL (Secure Sockets Layer) and is used to:
+- **Authenticate** the server (and optionally the client)
+- **Encrypt** data in transit
+- **Ensure integrity** of the data exchanged
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+TLS is the protocol behind **HTTPS** (HTTP over TLS), which is the standard for secure web communication.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## TLS: Key Properties
+
+<div class="content-center">
+
+TLS provides three main security properties:
+
+<div class="fragment" data-fragment-index="0">
+
+1. **Authentication**: the server proves its identity using a certificate (X.509) verified through a chain of trust
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+2. **Confidentiality**: data is encrypted using symmetric encryption (e.g., AES), so eavesdroppers cannot read it
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+3. **Integrity**: data is protected by a MAC (Message Authentication Code), so tampering is detected
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## TLS Handshake: Overview
+
+<div class="content-center">
+
+Before any encrypted data is exchanged, TLS performs a **handshake** to establish a secure session. The handshake is a concrete example of **hybrid cryptography**.
+
+<div class="fragment" data-fragment-index="0">
+
+The handshake combines:
+- **Asymmetric cryptography** (RSA or Diffie-Hellman) for authentication and key exchange
+- **Symmetric cryptography** (AES) for fast bulk data encryption
+- **Hash functions** for integrity checks
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## TLS Handshake: Step by Step
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+**Step 1 - Client Hello:** The client sends a message to the server with:
+- Supported TLS versions
+- Supported cipher suites (e.g., `TLS_RSA_WITH_AES_256_CBC_SHA256`)
+- A client random number
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Step 2 - Server Hello:** The server responds with:
+- Chosen TLS version and cipher suite
+- A server random number
+- The server's **X.509 certificate** (containing its public key)
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## TLS Handshake: Step by Step (cont.)
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+**Step 3 - Certificate Verification:** The client verifies the server's certificate:
+- Is it signed by a trusted CA?
+- Is it valid (not expired)?
+- Does the domain match?
+
+If verification fails, the connection is aborted.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Step 4 - Key Exchange:** The client and server agree on a shared secret (**pre-master secret**):
+- **RSA**: client encrypts a random pre-master secret with the server's public key
+- **Diffie-Hellman**: both parties contribute to generating the shared secret
+
+This is the **asymmetric** part of the hybrid approach.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## TLS Handshake: Step by Step (cont.)
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+**Step 5 - Session Keys Derivation:** Both parties derive the same set of symmetric session keys from:
+- The pre-master secret
+- The client random
+- The server random
+
+These keys are used for encryption (AES) and integrity (HMAC<sup>*</sup>).
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Step 6 - Finished:** Both sides send a "Finished" message encrypted with the new session keys. This verifies that the handshake was not tampered with.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+From this point on, all communication is encrypted using **symmetric cryptography** (fast!) with the session keys.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> **HMAC** (Hash-based Message Authentication Code) works like a digital signature but uses a shared secret key instead of a public/private key pair. It combines a hash function with a secret key so that only someone who knows the key can produce (or verify) the correct HMAC for a given message.
+
+</div>
+
+---
+
+## Recap of a TLS Handshake
+
+<div class="content-center">
+
+| Phase | Cryptography | Purpose |
+|:------|:-------------|:--------|
+| Client/Server Hello | None | Negotiate parameters |
+| Certificate Verification | Asymmetric (RSA) | Authenticate server |
+| Key Exchange | Asymmetric (RSA/DH) | Share pre-master secret |
+| Session Keys Derivation | Key Derivation Function | Derive symmetric keys |
+| Data Transfer | Symmetric (AES) + HMAC | Fast encryption + integrity |
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+This is **hybrid cryptography** in action: 
+- asymmetric crypto for authentication and key exchange
+- symmetric crypto for data transfer
+
+<br/>
+
+
+</div>
+
+
+
+</div>
                     </textarea>
                 </section>
             </div>

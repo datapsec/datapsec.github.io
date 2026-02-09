@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="front hide-controls" -->
+
+<div id="title">Computer</div>
+
+<div id="subtitle">Data Privacy and Security</div>
+
+<div id="date">Data Science and Management (DASMA)</div>
+
+---
+
+## What is a Computer?
+
+<div class="content-center">
+
+A computer is a machine that can be programmed to carry out sequences of arithmetic or logical operations automatically.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+To understand how a computer works, we need to understand two main components:
+1. **Hardware**: the physical components of a computer
+2. **Software**: the programs that run on the hardware
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+And to manage the complexity of running multiple programs on the hardware, we need:
+
+3. **Operating Systems**: software that manages hardware and software resources
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+To deploy and manage these systems at scale, we may use:
+
+4. **Virtualization**: creating multiple virtual machines on physical hardware
+5. **Containerization**: packaging applications with their dependencies
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Hardware
+
+---
+
+## What is inside a Computer?
+
+<div class="content-center">
+
+A (still accurate) high-level overview of a computer:
+
+<br/>
+<br/>
+
+
+<div class="cell-center">
+
+<img src="img/computer-architecture-basic.drawio.png" style="width: 70%;">
+<p style="text-align: center;">von Neumann architecture (1945)</p>
+
+</div>
+
+
+
+</div>
+
+---
+
+## A More Detailed Overview
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/computer-architecture.drawio.png" style="width: 60%;">
+
+</div>
+
+
+
+</div>
+
+---
+
+## Motherboard
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/motherboard.jpg" style="width: 900px;">
+
+</div>
+
+
+
+</div>
+
+---
+
+## Modern System On Chip (SoC)
+
+<div class="content-center">
+
+Modern SoCs integrate the CPU, GPU, storage, and other components on a single chip:
+
+<br/>
+
+
+<div class="cell-center">
+
+<img src="img/soc.drawio.png" style="width: 70%;">
+
+</div>
+
+
+
+</div>
+
+---
+
+## CPU (**C**entral **P**rocessing **U**nit)
+
+<div class="content-center">
+
+<div class="cell-center" style="padding-top: 10px;">
+
+<img src="img/cpu-alt.drawio.png" style="width: 1100px;">
+
+</div>
+
+<div class="fragment" data-fragment-index="0">
+
+- The **Arithmetic Logic Unit (ALU)** performs arithmetic operations (such as addition and subtraction) and logical operations (like AND, OR, NOT) on binary data.
+
+- The **Control Unit** coordinates the operations of the CPU, managing the flow of data and instructions (e.g., determining the next instruction to execute, performing the fetch-decode-execute cycle).
+
+- The **Registers** are a few small (up to 64 bits wide), fast (<0.5 nanosecond) volatile memory locations that store data and instructions for processing.
+
+- The **Cache** is a high-speed (1-16 nanoseconds) but limited (e.g., 1-16 MB) volatile memory that stores frequently used data to speed up access.
+
+</div>
+
+
+
+</div>
+
+---
+
+## RAM (**R**andom **A**ccess **M**emory)
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+- The main (volatile) memory of the computer, where data and instructions are stored for processing before being loaded into the CPU.
+
+- Implemented with Dynamic Random Access Memory (DRAM) chips, based on capacitors (require regular refreshes to maintain data).
+
+- The capacity of RAM is nowadays on the order of gigabytes (GB) or terabytes (TB).
+
+- Much faster ($1000-100000\\times$) than secondary storage (e.g., hard drives, SSDs) but significantly slower ($10-100\\times$) than CPU registers.
+
+- Like a huge array of consecutive bytes, each identified by its address (e.g., $0, 1, 2, \\ldots, 2^{64}-1$).
+
+</div>
+
+
+
+</div>
+
+---
+
+## Disks
+
+<div class="content-center">
+
+Permanent storage devices used to store data and programs for long-term use:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- **Hard Drives (HDDs)**: use spinning disks to store data, quite slow speed (~200 MB/s) but large capacity (up to 20 TB).
+
+- **Solid-state disks (SSDs)**: use flash memory to store data, much faster speed (~1-4 GB/s) but smaller capacity (up to 2 TB).
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Disks can be connected to the computer in different ways:
+- USB (Universal Serial Bus): used for external disks.
+- SATA (Serial Advanced Technology Attachment): used for mechanical disks and older SSDs.
+- NVMe (Non-Volatile Memory Express): used for modern SSDs.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Memory Hierarchy
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/Memory-hierarchy.png" style="width: 950px;">
+
+</div>
+
+<br/>
+
+
+Fast memory is expensive, hence a complex hierarchy is used to compromise between cost and performance: larger data is stored in slower, cheaper memory, that, when needed, is loaded into faster, more expensive memory in smaller amounts.
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Software
+
+---
+
+## How can a Computer Execute a Program?
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/cpus.drawio.png" style="width: 80%;">
+
+</div>
+
+<div class="fragment" data-fragment-index="0">
+
+The **CPU** is responsible for executing the program code:
+- It interprets the instructions one by one from the **RAM**
+- The instructions must be written in **machine code**
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+The machine code is:
+- **Low level**: relatively simple operations
+- **CPU specific**: different CPUs have different machine codes
+- **Binary format**: humans struggle to read it
+
+</div>
+
+
+
+</div>
+
+---
+
+## Machine Code: Intel/AMD vs ARM
+
+<div class="content-center">
+
+A simple sequence of instructions to compute the sum of two integer numbers would look like this in machine code:
+<table>
+  <tr>
+    <td>Intel/AMD 64 bit machine code</td>
+    <td></td><td></td>
+    <td>ARM 64-bit machine code</td>
+  </tr>
+  <tr>
+    <td><pre><code>f3 0f 1e fa
+55
+48 89 e5
+89 7d fc
+89 75 f8
+8b 55 fc
+8b 45 f8
+01 d0
+5d
+c3
+</code></pre></td>
+    <td></td><td></td>
+    <td><pre><code>ff 43 00 d1 
+e0 0f 00 b9 
+e8 0f 40 b9 
+e9 0f 40 b9 
+00 7d 09 1b 
+ff 43 00 91 
+c0 03 5f d6 
+</code></pre></td>
+  </tr>
+</table>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- Machine code is binary (shown here in hexadecimal for readability)
+- Intel/AMD processors share the same machine code format
+- Other processors like ARM use entirely different machine code formats
+
+</div>
+
+
+
+</div>
+
+---
+
+## Writing Low Level Code is Impractical
+
+<div class="content-center">
+
+Major problems when working with machine/assembly code are:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+1. Programmers have to write a lot of code to perform simple operations
+2. Code is not portable across different hardware platforms
+3. Programmers have to deal with hardware details
+4. Programming in machine/assembly code is hard and error-prone
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Yet, CPUs only understand and run machine code.**
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="cell-center">
+
+***How can programmers survive?***
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## From Low-Level to High-Level Programming
+
+<div class="content-center">
+
+Most programmers use high-level languages, such as Python, Javascript, or PHP, to write software.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-warning">The CPU does not understand high-level languages. Never!</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Code written in high-level languages must be translated into machine code. Two main strategies:
+
+1. **Compilation**: compilers translate high-level code into machine code at *compile time* (before it is run). One executable for each platform.
+
+2. **Interpretation**: interpreters translate high-level code into machine code at *running time*. The code is portable and platform independent.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Compilation
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/compilation.drawio.png" style="width: 1200px;">
+
+</div>
+
+
+
+</div>
+
+---
+
+## Interpretation
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/interpretation.drawio.png" style="width: 1200px;">
+
+</div>
+
+
+
+</div>
+
+---
+
+## MANY Different High-Level Languages
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/pl.png" style="width: 800px;">
+
+</div>
+
+<div class="fragment" data-fragment-index="0">
+
+There are thousands of high-level languages:
+- They have been designed with different goals in mind
+- Some are general purpose, some are domain specific (e.g., web)
+- Some gives more control to the user, some hide more details
+- Some are compiled, some are interpreted
+
+</div>
+
+
+
+</div>
+
+---
+
+## Computers Run Complex Software Stacks
+
+<div class="content-center">
+
+<br>
+
+Computers are expected to run **MANY** programs at the same time:
+- Browser to visit web pages (e.g., Chrome)
+- Office editor to write documents
+- File manager to organize files
+- Messaging applications (e.g., Telegram)
+- Video streaming client (e.g., Netflix)
+- ...and way more!
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Moreover, computers are expected to:
+- embrace the concept of user accounts
+- provide access only after user authentication
+- protect files across users and prevent hardware damage
+- allow only admin users to install other programs
+- handle network connections, power management
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="cell-center">
+
+This is a **LOT** of **HARD** work: we need an **Operating System (OS)**.
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Operating Systems
+
+---
+
+## Operating Systems
+
+<div class="content-center">
+
+Modern computing systems are based on **operating systems**, which are software designed to allow the execution of applications (programs) on the available hardware.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The main tasks of an operating system are:
+- **Process management** (creation, termination, CPU scheduling, etc.)
+- **Resource allocation** to processes (RAM, storage, network connections)
+- **User management** for multi-user systems (access privileges to files, programs)
+- **Inter-process communication** (locally or across networked systems)
+- **Error handling** during process execution or system operations
+- **Protection and security**, isolating processes to prevent interference with other processes, the OS, or hardware
+
+</div>
+
+
+
+</div>
+
+---
+
+## Overview of an Operating System
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/schema.png" style="width: 1000px;">
+
+</div>
+
+<br/>
+
+
+- The **hardware** is the physical part of the computer, containing CPU, RAM, disks and other devices.
+- The **Instruction Set Architecture (ISA)** defines machine code instruction syntax and semantics.
+- The **Application Binary Interface (ABI)** defines conventions on how different programs can interact, reuse code, and interface with the operating system.
+
+
+
+</div>
+
+---
+
+## Kernel Mode vs User Mode
+
+<div class="content-center">
+
+<br>
+
+<div class="cell-center">
+
+<img src="img/schema.png" style="width: 800px;">
+
+</div>
+
+<br/>
+
+
+<div class="columns-container columns-top">
+
+<div class="col">
+
+The **operating system**:
+- has full control over the hardware: it runs in **supervisor (kernel) execution mode**
+- can execute **ALL** instructions from the ISA
+- controls which applications should run on the CPU cores at any time
+- plays the role of intermediary between applications and the hardware
+
+</div>
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="0">
+
+In **user execution mode**:
+- Code can run only a limited (safe) subset of the ISA
+- Privileged instructions must be delegated to the OS following the ABI
+- Applications use system libraries to avoid reinventing the wheel
+
+</div>
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Processes
+
+<div class="content-center">
+
+A **process** is a running program in memory:
+
+<div class="cell-center">
+
+<img src="img/process-concept.drawio.png" style="width: 75%;">
+
+</div>
+
+<div class="fragment" data-fragment-index="0">
+
+Key Process Concepts:
+- **Process ID (PID)**: Unique identifier for each process
+- **Parent/Child**: Processes can create other processes
+- **Memory**: Each process has its own memory space
+- **CPU Time**: Processes share CPU time
+
+</div>
+
+
+
+</div>
+
+---
+
+## CPU Cores and Multitasking
+
+<div class="content-center">
+
+- CPUs traditionally had only a single core (and many still have few cores)
+- Yet we can run many applications simultaneously
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="cell-center">
+
+***How is this possible?***
+
+</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+The Operating System creates the **illusion of parallel execution**:
+- CPU time is divided into small time slots (milliseconds)
+- Each application gets a turn to use the CPU
+- When a time slot expires, the OS performs *context switching*
+- Applications take turns using the CPU so quickly that users perceive them running simultaneously
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+This technique is called **time-sharing** or **preemptive multitasking** and it is the essential trait of all modern operating systems.
+
+</div>
+
+
+
+</div>
+
+---
+
+## File Systems
+
+<div class="content-center">
+
+Every operating system organizes files in a **hierarchical structure**, like a tree:
+
+<img src="img/file-tree.png" style="width: 700px;">
+
+<div class="fragment" data-fragment-index="0">
+
+Key Concepts:
+- **Root**: The top-level directory (starting point)
+- **Directories/Folders**: Containers that hold files and other directories
+- **Files**: Individual documents, programs, or data
+- **Path**: The route to reach a specific file or directory
+
+</div>
+
+
+
+</div>
+
+---
+
+## Application Installation Methods
+
+<div class="content-center">
+
+Modern software can be installed and deployed in several ways:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+1. **Direct Downloads**: Executable files (.exe, .msi, .dmg)
+
+2. **Application Stores**: Curated marketplaces
+
+3. **Containers & Virtual Machines**: Isolated environments
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Each method has different **goals**, **advantages**, and **trade-offs** depending on:
+- Security requirements
+- Deployment complexity
+- Resource constraints
+- Maintenance needs
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Virtual Machines
+
+---
+
+## Why Virtual Machines?
+
+<div class="content-center">
+
+Sometimes we need to run software that is not compatible with our operating system, or we need to isolate applications from each other.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Key motivations:
+- **Isolation**: Applications run in their own environment without interfering with the host system
+- **Compatibility**: Run software designed for a different OS
+- **Security**: Containment of potential security vulnerabilities within the VM boundary
+- **Reproducibility**: Ensures consistent behavior regardless of where the application runs
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+A **Virtual Machine (VM)** is a software emulation of a physical computer that runs a complete operating system.
+
+</div>
+
+
+
+</div>
+
+---
+
+## How Virtual Machines Work
+
+<div class="content-center">
+
+A **hypervisor** (or Virtual Machine Monitor) is the software layer that creates and manages VMs:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- **Type 1 (Bare-metal)**: Runs directly on hardware (e.g., VMware ESXi, Microsoft Hyper-V, Xen)
+    - Used in data centers and cloud environments
+    - Better performance and security
+
+<br/>
+
+
+- **Type 2 (Hosted)**: Runs on top of a host operating system (e.g., VirtualBox, VMware Workstation, Parallels)
+    - Used for development and testing
+    - Easier to set up
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Each VM includes:
+- Its own **guest operating system** (can be different from the host)
+- **Virtual hardware** (virtual CPU, virtual RAM, virtual disk)
+- **Applications** running inside the guest OS
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Virtual Machines: Pros & Cons
+
+<div class="content-center">
+
+Advantages:
+- **Complete isolation**: Full OS-level separation between VMs
+- **Run any OS**: Linux on Windows, Windows on macOS, etc.
+- **Snapshots**: Save and restore the entire state of a VM
+- **Security testing**: Safely analyze malware or test exploits
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Disadvantages:
+- **Heavy resource usage**: Each VM runs a full OS (GBs of RAM, disk space)
+- **Slow startup**: Minutes to boot a full OS
+- **Performance overhead**: Hypervisor adds a layer of indirection
+- **Portability**: VM images are large and hypervisor-dependent
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Containers
+
+---
+
+## Why Containers?
+
+<div class="content-center">
+
+Virtual machines are powerful but heavy. What if we need isolation without the overhead of a full OS?
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+A **container** is a lightweight, standalone, executable package that includes everything needed to run a piece of software:
+- Application code
+- Runtime and libraries
+- System tools and settings
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Unlike VMs, containers **share the host OS kernel** and isolate the application processes from each other using OS-level features (namespaces, cgroups).
+
+</div>
+
+
+
+</div>
+
+---
+
+## Containers vs Virtual Machines
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/containers-vms.drawio.png" style="width: 65%;">
+
+</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+| Aspect | Virtual Machines | Containers |
+|--------|------------------|------------|
+| **Isolation** | Complete OS isolation | Process-level isolation |
+| **Resource Usage** | Heavy (full OS) | Lightweight (shared kernel) |
+| **Startup Time** | Minutes | Seconds |
+| **Portability** | Hypervisor dependent | Open format (OCI) |
+
+</div>
+
+
+
+</div>
+
+---
+
+## Containers: Pros & Cons
+
+<div class="content-center">
+
+Advantages:
+- **Lightweight**: Share the host OS kernel, minimal overhead
+- **Fast startup**: Seconds instead of minutes
+- **Portability**: Run consistently across different environments
+- **Scalability**: Easy to deploy multiple instances
+- **Dependency management**: Self-contained packages avoid conflicts
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Disadvantages:
+- **Weaker isolation**: Shared kernel means less separation than VMs
+- **Linux-centric**: On macOS and Windows, Docker requires a lightweight Linux VM
+- **Not ideal for GUIs**: Primarily used for non-graphical applications
+- **Security concerns**: A kernel vulnerability could affect all containers
+
+</div>
+
+
+
+</div>
+
+---
+
+## Docker: The De Facto Standard
+
+<div class="content-center">
+
+For most users, containers means using **Docker**:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- **Docker Image**: A read-only template with instructions for creating a container (like a recipe)
+- **Docker Container**: A running instance of an image (like the dish)
+- **Dockerfile**: A text file with instructions to build an image
+- **Docker Hub**: A public registry for sharing images
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Containers have become the industry standard for deploying services in cloud environments, especially web services, due to their lightweight nature and efficient resource utilization.
+
+</div>
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
