@@ -757,6 +757,69 @@ def encrypt(plaintext):
 
 ---
 
+## Entropy Vault II - Exploitation
+
+<div class="content-center">
+
+1. **Encrypt a known plaintext** by submitting a message to the encryption oracle.
+
+<br>
+
+2. **Extract the key** by XOR-ing the known plaintext with the recovered ciphertext:
+```
+   ciphertext ⊕ plaintext = key
+```
+<br>
+
+3. **Decrypt the flag** by XOR-ing the encrypted flag with the recovered key:
+```
+   encrypted_flag ⊕ key = flag
+```
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-warning"><b>NOTE</b>: the plaintext must be <b>long enough</b> to generate a key that covers the full encrypted flag.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-auto-animate -->
+
+<h2 data-id="title">Entropy Vault II - Solution Template</h2>
+
+<div class="content-center">
+
+```python
+from pwn import xor
+
+m1 = b'...'   #put your message here
+c1 = "..."    #put the encrypted message returned by the website here
+c1_bytes = bytes.fromhex(c1)
+
+c_f = "..."   #put the encrypted flag here
+c_f_bytes = bytes.fromhex(c_f)
+
+k = xor(m1,c1_bytes)
+f = xor(k, c_f_bytes)
+
+print(f.decode())
+```
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # ECBuy
@@ -848,6 +911,54 @@ def create_item_token(item_name, price):
 
 ---
 
+<!-- .slide: data-auto-animate -->
+
+<h2 data-id="title">ECBuy - Exploitation</h2>
+
+<div class="content-center">
+
+1. **Register** with any username.
+
+<br>
+
+2. **Retrieve** both the generated voucher (without using it) and the verification token of the flag item.
+
+<br>
+
+3. **Swap** the last block of the voucher with the last block of the verification token.
+
+```python
+#Example: username 'lralli'
+
+#Voucher: [USER:lralli______][CREDIT:10_______]
+#Verification token: [ITEM:flag________][CREDIT:10000____]
+
+#Swap: [USER:lralli______][CREDIT:10000____]
+```
+
+<br/>
+
+
+4. **Redeem** the new token and buy the flag.
+
+```python
+token = "..."   #put here the voucher
+user_token = token[:32]
+voucher_credit_token = token[32:]
+
+flag_token = "..."   #put here the flag item's verification token
+item_token = flag_token[:32]
+flag_credit_token = flag_token[32:]
+
+print("New Token: " + user_token + flag_credit_token)
+```
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # ChainReaction
@@ -910,6 +1021,63 @@ def encrypt_token(username):
 <div class="alert alert-hint">The fixed IV makes the produced token <b>malleable</b>, enabling <b>bit-flip attacks</b>.</div>
 
 </div>
+
+
+
+</div>
+
+---
+
+## ChainReaction - Exploitation
+
+<div class="content-center">
+
+1. **Register** with username xralli, where x can be any character but 'l' (as lralli is already registered).
+
+<br>
+
+2. **Retrieve** the IV from the produced login token
+```
+    IV = token[:BLOCK_SIZE]  #as token = IV + ciphertext
+```
+
+<br>
+
+3. **Bit-flip** the first byte of the IV with the $\\Delta$ needed to login as lralli:
+```
+   new_token = old_token ⊕ ord('x') ⊕ ord('l') 
+   
+   #x = char picked in step 1
+```
+
+<br>
+
+4. **Login** with the forged token and view the legendary NFT details to obtain the flag.
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-auto-animate -->
+
+<h2 data-id="title">ChainReaction - Solution Template</h2>
+
+<div class="content-center">
+
+```python
+username1 = b"xralli"
+admin = b"lralli"
+
+token = "..."   #put here the login token for xralli
+
+token = bytearray(bytes.fromhex(token))
+
+token[0] ^= username1[0] ^ admin[0]
+
+print(token.hex())
+```
 
 
 
