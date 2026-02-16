@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="front hide-controls" -->
+
+<div id="title">Lab on Asymmetric Criptography</div>
+
+<div id="subtitle">Data Privacy and Security</div>
+
+<div id="date">Data Science and Management (DASMA)</div>
+
+---
+
+## RSA baseline
+
+<div class="content-center">
+
+**RSA** is an asymmetric cryptographic algorithm based on the ***integer factorization problem***.
+
+What we would like to have in principle:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+1. $(n, e)$ will be the public key, i.e., $k_{public} = (n, e)$
+
+<br>
+
+2. $(n, d)$ will be the private key, i.e., $k_{private} = (n, d)$
+
+</div>
+
+
+
+</div>
+
+---
+
+## RSA Key Generation
+
+<div class="content-center">
+
+1. Choose two large prime numbers $p$ and $q$
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+2. Compute their product: $n = p \\cdot q$
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+3. Compute the totient: $\\Phi(n) = (p-1)(q-1)$
+
+<br/>
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+4. Choose an integer $e$ such that:
+    - must be prime
+    - must be smaller than $\\Phi(n)$, i.e., $1 < e < \\phi(n)$ 
+    - must not be a factor of $\\Phi(n)$, i.e., must be coprime to $\\phi(n)$
+    - in practice:
+        - we can use the Euclidean Algorithm to test if $e$ is coprime to $\\phi(n)$
+        - most implementations use $e = 65537$ (after checking $\\Phi(n)$ isn't divisible by 65537)
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="4">
+
+5. Choose an integer $d$ such that:
+    - The product $e \\cdot d$ divided by $\\Phi(n)$ has a remainder of 1, i.e., $d$ is  modular inverse of $e$ modulo $\\phi(n)$: $d \\equiv e^{-1} \\bmod \\phi(n)$
+    - in practice: we can use the Extended Euclidean algorithm to compute $d$
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# RSA: Core Functionality
+
+---
+
+## RSA: Encryption
+
+<div class="content-center">
+
+The encryption function is defined as:
+
+$$
+    y = E_{k_{public}}(x) = x^e \\mod n
+$$
+
+where $x$ is the message, $y$ is the ciphertext, (e, n) is the public key of the person <u>receiving</u> the message. Indeed, only the person with the private key $(d, n)$ can decrypt the message.
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint"><b>WARNING</b>:  As it must be, RSA uses the public key of the receiver to encrypt the message!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## RSA Decryption
+
+<div class="content-center">
+
+The decryption function is defined as:
+
+$$
+    x = D_{k_{private}}(y) = y^d = (x^{e})^d = x^{ed} = x^{1} = x \\mod n
+$$
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+where $x$ is the message, $y$ is the ciphertext, (d, n) is the private key of the person <u>receiving</u> the message.
+
+<div class="alert alert-warning"><b>WARNING</b>: As it must be, RSA uses the private key of the receiver to decrypt the message.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## RSA in Python
+
+<div class="content-center">
+
+We perform now encryption and decryption:
+
+```python
+# input message
+x = 60
+print("The input message is:", x)
+
+# encryption
+y = x ** e % n
+print("The encrypted message is:", y)
+
+# decryption
+z = y ** d % n
+print("The decrypted message is:", z)
+
+# this must be true!
+assert x == z
+```
+
+
+
+</div>
+
+---
+
+## Converting strings to numbers and vice versa
+
+<div class="content-center">
+
+RSA works with numbers but usually messages are text. Use this code to convert from number to string.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+```python
+# m is the decrypted message
+
+byte_len = (m.bit_length() + 7) // 8
+flag = m.to_bytes(byte_len, 'big').decode('utf-8')
+
+# flag is a string
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+```python
+# message is the string
+
+data = message.encode('utf-8')
+numeric_message = int.from_bytes(data, 'big')
+
+# numeric_message is the number
+```
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# EasyRSA 1.0
+
+<div class="content-center">
+
+Crypto Challenge 08
+
+</div>
+
+---
+
+## EasyRSA 1.0 - Reconnaissance
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="./img/Screenshot_1.png" style="height: 450px;" />
+
+</div>
+
+<br/>
+
+
+What can we observe? The challenge...
+- claims to implement **RSA** encryption;
+- provides a file to be cracked;
+
+
+
+</div>
+
+---
+
+## EasyRSA 1.0 - Hypothesis
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="1">
+
+We have $n$ and we have $e$. To decrypt the message we need either $p$ or $q$.
+
+If we can factoryze $n$ we should be able to decypher the message.
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-hint">The value of $n$ seems too <b>short</b>. There are online some tools to factorize big umbers</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# EasyRSA 2.0
+
+<div class="content-center">
+
+Crypto Challenge 09
+
+</div>
+
+---
+
+## EasyRSA 2.0 - Reconnaissance
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="./img/Screenshot_2.png" style="height: 400px;" />
+
+</div>
+
+<br/>
+
+
+What can we observe?
+- A **secret document** get signed by two differen authorities.
+- Each signature use a different exponent.
+- Both signatures share the same **modulus** $N$.
+
+
+
+</div>
+
+---
+
+## EasyRSA 2.0 - Hypothesis
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="1">
+
+1. The secret document is signed using the same RSA modulus using different exponents.
+
+<br>
+
+2. This signature is done encrypting the document with the **private** key so that everyone can decipher the document and validate the signature.
+
+<br>
+
+3. Since the goal is just obtain the secret document, we should treat it as it is normal encryption and focus on that.
+
+<br>
+
+<div class="alert alert-hint">How to check if there is a way to decypher the document?</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Satcom Intercept
+
+<div class="content-center">
+
+Crypto Challenge 11
+
+</div>
+
+---
+
+## Satcom Intercept - Reconnaissance
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="./img/Screenshot_3.png" style="height: 400px;" />
+
+</div>
+
+<br/>
+
+
+What can we observe?
+- There was a transmission that was repeted $5$ times, one for each satellite.
+- The encryption was done all with the **same exponent**.
+- All the transmission used different **moduli**.
+- The exponent used is $5$.
+
+
+
+</div>
+
+---
+
+## Satcom Intercept - Hypothesis
+
+<div class="content-center">
+
+The same plaintext is encrypted using RSA with a low public exponent across different moduli:
+
+$$
+c_i = m^e \\bmod n_i
+$$
+
+If the same message is encrypted at least $e$ times using:
+- A small exponent,
+- Different moduli,
+- No padding,
+
+the ciphertexts can be combined using the Chinese Remainder Theorem to recover:
+
+$$
+m^e
+$$
+
+over the integers.
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint">The low $e$ with the same plaintext encrypted at least $e$ times can be used to recover the encryption parameters.</div>
+
+</div>
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
