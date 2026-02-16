@@ -846,6 +846,22 @@ For instance, when using RSA:
 
 ---
 
+## Make digital signature more efficient
+
+<div class="content-center">
+
+Since asymmetric cryptography is slow, we can use a cryptographic hash function to make it faster:
+
+1) $s = sign(x, p_{priv}) = E_{p_{priv}}(H(x))$
+
+2) $verify(x, s, p_{pub}) = D_{p_{pub}}(s) = x' \\stackrel{\\text{Do they match?}}{=} H(x)$
+
+
+
+</div>
+
+---
+
 ## Security Services from Digital Signatures
 
 <div class="content-center">
