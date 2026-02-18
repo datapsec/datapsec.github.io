@@ -37,7 +37,7 @@
                     <textarea data-template>
 <!-- .slide: data-state="front hide-controls" -->
 
-<div id="title">Computer</div>
+<div id="title">Computer Systems</div>
 
 <div id="subtitle">Data Privacy and Security</div>
 
@@ -912,6 +912,373 @@ Disadvantages:
 - **Portability**: VM images are large and hypervisor-dependent
 
 </div>
+
+
+
+</div>
+
+---
+
+## What Happens Inside a VM
+
+<div class="content-center">
+
+The hypervisor creates **virtual hardware** for each VM, abstracting the physical resources:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- **Virtual CPU (vCPU)**: one or more CPU cores allocated from the host's physical cores
+- **Virtual RAM**: a portion of the host's physical RAM dedicated to the VM
+- **Virtual Disk**: a file on the host's storage that appears as a hard drive to the guest OS
+- **Virtual Network Interface**: a software-emulated NIC that connects the VM to the network
+- **Virtual GPU** (optional): a portion of the host's GPU for graphics-intensive tasks
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note">The guest OS is <b>unaware</b> that it is running inside a VM — it behaves as if it has exclusive access to real hardware. The hypervisor transparently intercepts and translates hardware requests.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Snapshots and Cloning
+
+<div class="content-center">
+
+Two powerful features that distinguish VMs from running software directly on hardware:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Snapshots**: capture the entire state of a VM (memory, disk, CPU registers) at a specific point in time.
+- Instantly **roll back** to a previous state if something goes wrong
+- Test risky operations (e.g., OS updates, malware analysis) with a safety net
+- Create multiple snapshots to compare different configurations
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Cloning**: create an exact copy of a VM, including its OS, applications, and configuration.
+- Quickly spin up **identical environments** for testing or deployment
+- Distribute a pre-configured VM image to an entire team
+- Use a **golden image** as a template for new VMs
+
+</div>
+
+
+
+</div>
+
+---
+
+## VM Use Cases in Practice
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+1. **Server Consolidation**: run multiple server workloads on a single physical machine, reducing hardware costs and energy consumption
+
+2. **Development and Testing**: developers can test software on different operating systems without needing separate physical machines
+
+3. **Legacy Application Support**: run old software that requires a discontinued OS (e.g., Windows XP) inside a VM on modern hardware
+
+4. **Security Analysis**: safely analyze malware, test exploits, or perform penetration testing inside an isolated VM — if the VM is compromised, the host remains safe
+
+5. **Disaster Recovery**: VM snapshots and clones enable fast recovery from failures — restore a working state in minutes instead of hours
+
+</div>
+
+
+
+</div>
+
+---
+
+## VMs and Cloud Computing
+
+<div class="content-center">
+
+VMs are the **foundation of cloud computing**. Cloud providers run thousands of physical servers, each hosting many VMs:
+
+<div class="fragment" data-fragment-index="0">
+
+- **Infrastructure as a Service (IaaS)**: rent VMs on-demand from a cloud provider instead of buying physical servers
+    - Amazon Web Services (AWS) → EC2 instances
+    - Microsoft Azure → Azure Virtual Machines
+    - Google Cloud Platform (GCP) → Compute Engine
+
+<br/>
+
+
+- Users can choose VM size (CPU cores, RAM, disk), OS, and geographic region
+- Pay only for what you use (per hour or per second)
+- Scale up or down in minutes
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note">The "cloud" is essentially <b>someone else's computer</b> — running your VMs on their physical hardware.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# VirtualBox (local hypervisor)
+
+---
+
+## VirtualBox (startup screen)
+
+<div class="content-center">
+
+<img src="img/virtualbox-1.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Creating a VM: name and guest OS
+
+<div class="content-center">
+
+<img src="img/virtualbox-2.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Creating a VM: RAM and CPU
+
+<div class="content-center">
+
+<img src="img/virtualbox-3.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Creating a VM: disk
+
+<div class="content-center">
+
+<img src="img/virtualbox-4.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Starting the VM
+
+<div class="content-center">
+
+<img src="img/virtualbox-5.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Initial boot
+
+<div class="content-center">
+
+<img src="img/virtualbox-6.png" style="width: 1200px">
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> The keyboard inputs will be *grabbed* by the VM: use right CTRL to ungrab it.
+
+</div>
+
+---
+
+## Boot of the VM
+
+<div class="content-center">
+
+<img src="img/virtualbox-7.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Installation of the guest OS
+
+<div class="content-center">
+
+<img src="img/virtualbox-8.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Install the *guest additions*
+
+<div class="content-center">
+
+<img src="img/virtualbox-10.png" style="width: 600px">
+
+Guest additions improve the performance and integration of the VM:
+- Shared clipboard
+- Shared folders
+- Better mouse integration
+
+
+
+</div>
+
+---
+
+## Take snapshots and restore them
+
+<div class="content-center">
+
+<img src="img/virtualbox-11.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Most OS can run in a VM...
+
+<div class="content-center">
+
+<img src="img/vm-windows.png" style="width: 1200px">
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> Even Mac OS can be virtualized but it is quite slow.
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+## Amazon Web Services (cloud)
+
+---
+
+## EC2: AWS service to get raw VMs
+
+<div class="content-center">
+
+<img src="img/aws-1.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Select the guest OS
+
+<div class="content-center">
+
+<img src="img/aws-2.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## Select CPU architecture and Instance Type
+
+<div class="content-center">
+
+<img src="img/aws-3.png" style="width: 1200px">
+
+
+
+</div>
+
+---
+
+## MANY instance types...
+
+<div class="content-center">
+
+A well known comparator: [**https://instances.vantage.sh/**](https://instances.vantage.sh/)
+
+<img src="img/aws-4.png" style="width: 800px">
+
+You can pick a VM with up to 896 CPU cores, 32TB of RAM, 36 GPUs, and 100TB of storage...
+
+
+
+</div>
+
+---
+
+## Pay as you use
+
+<div class="content-center">
+
+You pay for everything on the cloud based on:
+- number of CPUs and their type
+- amount of memory
+- amount of storage and their type
+- amount of GPUs and their type
+- outbound traffic (transferred data in GB)
+- ...
+
+<br/>
+
+
+To maximize the cost-effectiveness, AWS has a live auction system where users bid for resources, saving up to 90% of the cost. If the bid is lower than the current price, AWS takes back the resource to sell it to another user.
 
 
 
