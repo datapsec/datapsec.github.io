@@ -729,7 +729,7 @@ Allows users to:
 
 ---
 
-<!-- .slide: data-state="break-blue hide-controls" -->
+<!-- .slide: data-state="break-green hide-controls" -->
 
 # gpg4win
 
@@ -887,6 +887,20 @@ Click *Decrypt/Verify* in the action toolbar → choose the encrypted file to de
 
 ---
 
+## gpg4win: decrypting a file
+
+<div class="content-center">
+
+It may ask you if you want to save it as a .txt file or not...save it as a .txt file (Yes, save as...)!
+
+<img src="img/gpg4win/win18.png" style="height: 700px">
+
+
+
+</div>
+
+---
+
 ## gpg4win: exporting public key
 
 <div class="content-center">
@@ -992,6 +1006,20 @@ Click *Sign/Encrypt* in the action toolbar → select *Encrypt for others* → p
 
 <div class="content-center">
 
+Alerts about not being able to decrypt the file will appear, ignore them by clicking *continue*
+
+<img src="img/gpg4win/win19.png" style="height: 700px">
+
+
+
+</div>
+
+---
+
+## gpg4win: encrypting a file with the imported public key
+
+<div class="content-center">
+
 Success screen:
 
 <img src="img/gpg4win/win17.png" style="height: 700px">
@@ -1002,7 +1030,21 @@ Success screen:
 
 ---
 
-<!-- .slide: data-state="break-blue hide-controls" -->
+## gpg4win: encrypting a file with the imported public key
+
+<div class="content-center">
+
+Alerts about not being able to decrypt the file will appear, ignore them by clicking *continue*
+
+<img src="img/gpg4win/win20.png" style="height: 700px">
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-green hide-controls" -->
 
 # gpgtools
 
@@ -1374,6 +1416,109 @@ What can we observe? The challenge...
 
 ---
 
+## SharedFortune - Exploitation
+
+<div class="content-center">
+
+1. **Download the public parameters** through the *Download All Public Keys* button to obtain:
+   - $N_1, N_2, \\dots$
+   - $e$
+   - The corresponding ciphertexts
+
+<br>
+
+2. **Compute the shared prime**:
+
+$$
+   p = \\gcd(N_1, N_2)
+$$
+
+<br>
+
+3. **Factor the moduli** to recover the other factors:
+
+$$
+   q_1 = \\frac{N_1}{p}, \\quad q_2 = \\frac{N_2}{p}
+$$
+
+
+
+</div>
+
+---
+
+## SharedFortune - Exploitation
+
+<div class="content-center">
+
+4. **Recover the private key**
+
+$$
+   \\varphi(N_1) = (p - 1)(q_1 - 1)
+$$
+
+$$
+   d = e^{-1} \\bmod \\varphi(N_1)
+$$
+
+<br>
+
+5. **Decrypt the ciphertext** which is under *Setting* in the downloaded file: 
+
+$$
+   m = c^d \\bmod N_1
+$$
+
+<br>
+
+6. **Use the recovered secret** to enter the admin panel and set the jackpot probability to 100%.
+
+<br>
+
+7. **Win big** at the slot, and buy the flag from the *Shop*.
+
+
+
+</div>
+
+---
+
+## SharedFortune - Solution Template
+
+<div class="content-center">
+
+```python
+from math import gcd
+
+N1 = ...  # N of settings
+
+N2 = ...  # N of database
+
+p = gcd(N1, N2)
+
+q1 = N1 // p
+q2 = N2 // p
+
+phi_n = (p - 1) * (q1 - 1)
+
+e = 65537
+
+d = pow(e, -1, phi_n)
+
+ctx = ...  # encrypted data within setting
+
+decrypted_message = pow(ctx, d, N1)
+decrypted_bytes = decrypted_message.to_bytes((decrypted_message.bit_length() + 7) // 8, 'big')
+
+print(decrypted_bytes)
+```
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # CryptoBattle
@@ -1428,6 +1573,60 @@ What can we observe? The challenge...
 
 ---
 
+## CryptoBattle - Exploitation
+
+<div class="content-center">
+
+1. **Retrieve** RSA parameters and ciphertext from the chalkboard.
+
+<br>
+
+2. **Recover the plaintext** by computing the modular inverse:
+   
+$$
+   m = c^{-1} \\bmod N
+$$
+
+<br>
+
+3. **Convert the integer to bytes**, then print it to reveal the password.
+
+$$
+   \\text{plaintext} = \\text{long\\_to\\_bytes}(m)
+$$
+
+<br>
+
+4. **Use the password** to activate *GOD MODE*, defeat Prof. Ralli to win the flag!
+
+
+
+</div>
+
+---
+
+## CryptoBattle - Solution Template
+
+<div class="content-center">
+
+```python
+N = ...
+e = -1
+c = ...
+
+decrypted_message = pow(c, e, N)
+
+decrypted_bytes = decrypted_message.to_bytes((decrypted_message.bit_length() + 7) // 8, 'big')
+
+print(decrypted_bytes)
+```
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # SlidingIntoDHs
@@ -1460,6 +1659,73 @@ What can we observe? The challenge...
 
 ---
 
+## SlidingIntoDHs - Exploitation
+
+<div class="content-center">
+
+1. **Download the intercepted values**
+
+<br>
+
+2. **Recompute the shared secret** using Diffie–Hellman:
+
+$$
+   \\text{shared\\_key} = (\\text{public\\_value})^{d} \\bmod p
+$$
+
+<br>
+
+3. **Convert** the shared secret integer into bytes to obtain the XOR keystream.
+
+<br>
+
+4. **Decrypt the message** via XOR to reveal the flag:
+
+$$
+   \\text{plaintext} = \\text{ciphertext} \\oplus \\text{key}
+$$
+
+
+
+</div>
+
+---
+
+## SlidingIntoDHs - Solution Template
+
+<div class="content-center">
+
+```python
+from pwn import xor
+
+p = ...
+
+g = ...
+
+c = ...
+
+d = 
+
+ralli_pub = ...
+
+ctx = "..."
+
+key = pow(ralli_pub, d, p)
+
+key_bytes = key.to_bytes((key.bit_length() + 7) // 8, 'big')
+ctx_bytes = bytes.fromhex(ctx)
+
+decrypted_message = xor(ctx_bytes, key_bytes)
+
+print(decrypted_message)
+```
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # GPGPingPong
@@ -1484,6 +1750,34 @@ Crypto Challenge 14
 What can we observe? The challenge...
 - displays a server-generated message that we must sign;  
 - requires uploading both a signature file and a public key file;
+
+
+
+</div>
+
+---
+
+## GPGPingPong - Exploitation
+
+<div class="content-center">
+
+1. **Create a .txt file** containing the server-generated message to sign.
+
+<br>
+
+2. **Sign the file**, then upload both the signed file as well as the public key from the key pair used to sign it.
+
+<br>
+
+3. **Download** the presented encrypted challenge and the server's public key.
+
+<br>
+
+4. **Decrypt** the downloaded file, then re-encrypt it using the downloaded server key.
+
+<br>
+
+5. **Upload** the newly encrypted file to obtain the flag!
 
 
 
