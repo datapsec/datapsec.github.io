@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="front hide-controls" -->
+
+<div id="title">Lab on Authentication</div>
+
+<div id="subtitle">Data Privacy and Security</div>
+
+<div id="date">Data Science and Management (DASMA)</div>
+
+---
+
+## Authentication Fundamentals
+
+<div class="content-center">
+
+<div class="alert alert-recall">Authentication = the process of reliably verifying identity (user or system).</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Authentication differs depending on who must be authenticated:
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+A) **Computers** can:
+  - store high-quality secrets (long random numbers).
+  - perform cryptographic operations.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+B) **Humans** can only remember weak secrets (passwords), which are used to:
+  - Derive a cryptographic key (e.g., hash of password).
+  - Decrypt a higher quality key locally (e.g., decrypt RSA key).
+
+</div>
+
+
+
+</div>
+
+---
+
+## Authentication Factors
+
+<div class="content-center">
+
+Authentication mechanisms fall into four categories:
+
+<br/>
+
+
+<div class="columns-container columns-top">
+
+<div class="col">
+
+1. **Knowledge** (What you know)
+    - Includes: secrets users remember (passwords, PINs, security questions).
+    - Weakness: vulnerable to guessing, reuse, and phishing; Limited by human memory.
+
+<br>
+
+3. **Inherence** (Who you are)
+    - Includes: biometric traits (fingerprint, face, voice, retina).
+    - Weakness: not secret, hard to revoke, spoofable depending on implementation.
+
+<br/>
+
+
+</div>
+
+<div class="col">
+
+2. **Possession** (What you have)
+    - Includes: hardware tokens, One-Time Passwords (OTP) apps, physical devices performing crypto operations.
+    - Weakness: device loss or theft; SMS containing OTP can be intercepted.
+
+<br>
+
+4. **Location** (Where you are)
+    - Includes: physical or network location, contextual signals.
+    - Weakness: easily spoofed; useful only as an additional risk signal.
+
+<br/>
+
+
+</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note"><b>NOTE</b>: Security increases by combining independent factors → <b>Multi-Factor Authentication</b> (MFA)</div>
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Password-Based Authentication
+
+---
+
+## Password Challenges
+
+<div class="content-center">
+
+Common problems:
+
+1. **Robustness:** Human-chosen passwords are weak (short, not random).
+2. **Transmission:** Never send passwords in clear (vulnerable to sniffing).
+3. **Storage:** Must store passwords securely (encrypted/hashed).
+4. **Reuse**: Users often reuse passwords across multiple sites (if leaked, all accounts are compromised).
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note"><b>Takeaway</b>: passwords alone are fragile; Proper storage and policies are essential.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## How a website/application should store a password?
+
+<div class="content-center">
+
+Different approaches:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+1) *Plain text*: 
+    - The password is stored as-is in the database. 
+    - If the database is leaked, the attacker has access to all clear passwords.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+2) *Hashed*: 
+    - The password is stored as $\\text{hash}(password)$. 
+    - The website verifies if a password is correct by checking if $\\text{hash}(entered\\_password) = \\text{hash}(stored\\_password)$.
+    - If the database is leaked, the attacker gets all hashed passwords, but not the original ones.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+3) *Salted* and *Hashed*: 
+    - The password is stored as $hash(password\\,||\\,salt)$. 
+    - salt = unique random value that is stored with the password in the database. 
+    - The verification process is the same as above.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="cell-center">
+
+***How can we break a hashed password?***
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Password Attacks
+
+<div class="content-center">
+
+There are three main categories of attacks against passwords:
+
+1. **Brute Force Attack**
+2. **Dictionary Attack**
+3. **Rainbow Tables**
+
+Each has different characteristics, costs, and countermeasures.
+
+
+
+</div>
+
+---
+
+## Brute Force Attack: Definition
+
+<div class="content-center">
+
+Exhaustive key search, i.e., we try all possible combinations systematically.
+
+<br/>
+
+
+Characteristics:
+- Guaranteed to find the password eventually.
+- Time depends on password space size.
+- No intelligence or optimization.
+- Works against any password (weak or strong).
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**EXAMPLE:** For a 4-digit PIN:
+- Password space: $10^4 = 10,000$ combinations.
+- Try: 0000, 0001, 0002, ..., 9999.
+- Average attempts to find password: $10,000 / 2 = 5,000$.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Brute Force: Password Space
+
+<div class="content-center">
+
+The size of the password space depends on:
+- Character set size (alphabet).
+- Password length.
+
+$$
+\\text{Password Space} = |\\text{Alphabet}|^{\\text{Length}}
+$$
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Common character sets:
+
+| Character Set | Size | Example |
+|:--------------|:----:|:--------|
+| Digits only | 10 | 0-9 |
+| Lowercase letters | 26 | a-z |
+| Upper + lowercase | 52 | a-z, A-Z |
+| Alphanumeric | 62 | a-z, A-Z, 0-9 |
+| Alphanumeric + symbols | 94 | a-z, A-Z, 0-9, !@#$... |
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Brute Force: Time Estimates
+
+<div class="content-center">
+
+Assuming 1 billion (10⁹) attempts per second:
+
+<br/>
+<br/>
+
+
+| Length | Lowercase (26) | Alphanumeric (62) | Full ASCII (94) |
+|:------:|:--------------:|:-----------------:|:---------------:|
+| 4 | < 1 second | < 1 second | < 1 second |
+| 6 | < 1 second | 57 seconds | 34 minutes |
+| 8 | 5 minutes | 2.4 days | 60 days |
+| 10 | 3.5 hours | 9.5 years | 1,500 years |
+| 12 | 100 days | 59,000 years | 13 million years |
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-auto-animate -->
+
+<h2 data-id="title">Brute Force: Python</h2>
+
+<div class="content-center">
+
+<div class="alert alert-note">The core pattern of a brute force attack is a nested loop over the character space (one loop per character).</div>
+
+<br/>
+
+
+```python
+alphabet = "abcdefghijklmnopqrstuvwxyz"  # a-z
+
+# assuming the target has length 2
+for c1 in alphabet:
+    for c2 in alphabet:
+        guess = c1 + c2
+        ...   # submit guess to system you're trying to break into
+```
+
+<br/>
+
+
+Possible alphabets:
+- Digits only: "0123456789"
+- Lowercase letters: "abcdefghijklmnopqrstuvwxyz"
+- Upper + lowercase: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+- Alphanumeric: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+- Alphanumeric + symbols: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$..."
+
+
+
+</div>
+
+---
+
+## Brute Force: Python
+
+<div class="content-center">
+
+<div class="alert alert-recall">You had already seen an example of brute forcing in the very first lab!</div>
+
+<br/>
+
+
+```python
+# Ceasar Cipher brute force:
+
+def caesar_shift(text, shift):
+    result = ""
+    for char in text:
+        ...
+
+ciphertext = "..."
+
+for shift in range(26):
+    caesar_shift(ciphertext, shift)
+```
+
+<br/>
+
+
+
+
+</div>
+
+---
+
+## Brute Force: Python
+
+<div class="content-center">
+
+<div class="alert alert-note">Sometimes you may know something about the output → use it to stop early.</div>
+
+<br/>
+
+
+```python
+# Text to match: "Password: ..."
+# You know that it starts with Password:
+
+known_text = "..."
+
+# brute-forcing of possible single-bit key values:
+
+for key in range(256):
+    result = ""
+    for n in known_text:
+        result += chr(n ^ key)
+    if result.startswith("Password:"):
+        print(result)
+        break
+```
+
+
+
+</div>
+
+---
+
+## Dictionary Attack: Definition
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+A *smart* brute force where we try only likely passwords from a *dictionary*. Indeed:
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+A) Humans choose predictable passwords:
+
+- Common words: "password", "admin", "welcome".
+- Names: "john", "maria", "alice".
+- Dates: "2024", "123456".
+- Keyboard patterns: "qwerty", "asdf".
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+B) The search becomes sustainable:
+
+- Much smaller search space.
+- Higher success rate per attempt.
+- Can crack weak passwords in seconds.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Where do dictionaries come from?
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="0">
+
+1. **Common password lists:**
+   - RockYou breach (32 million passwords).
+   - LinkedIn breach (117 million passwords).
+   - Have I Been Pwned database (billions of passwords).
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+2. **Language dictionaries:**
+   - English, Spanish, Chinese words.
+   - Common phrases and expressions.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+3. **Targeted dictionaries:**
+   - Company-specific terms.
+   - Industry jargon.
+   - Personal information (names, dates).
+
+</div>
+
+
+
+</div>
+
+---
+
+## Dictionary Attack: Variations
+
+<div class="content-center">
+
+Attackers apply **rules** to dictionary words:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- **Common transformations:**
+    - Capitalization: password → Password, PASSWORD.
+    - Leetspeak: password → p@ssw0rd, pa55word.
+    - Append numbers: password → password1, password123.
+    - Append symbols: password → password!, password@.
+    - Combinations: password → P@ssw0rd123!.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- **Hybrid attack:** Dictionary + brute force
+    - Use dictionary words as base.
+    - Brute force additional characters.
+    - Example: "password" + 2 digits = 100 variations.
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-auto-animate -->
+
+<h2 data-id="title">Dictionary Attack: Python</h2>
+
+<div class="content-center">
+
+<div class="alert alert-note">The core pattern of a dictionary attack is a loop over the possible passwords:</div>
+
+<br/>
+
+
+```python
+dictionary = ["password", "admin", "welcome", "123456"]
+
+for word in dictionary:
+    ...    # submit guess to system you're trying to break into
+```
+
+<br/>
+
+
+<div class="alert alert-note">In pratice, dictionaries are often loaded from files:</div>
+
+<br/>
+
+
+```python
+with open("rockyou.txt") as f:
+    dictionary = f.read().splitlines()
+
+for word in dictionary:
+     ...    # submit guess to system you're trying to break into
+
+# Alternative
+
+with open("rockyou.txt") as f:
+    for word in f.read().splitlines()
+        ... # submit guess to system you're trying to break into
+```
+
+
+
+</div>
+
+---
+
+## Dictionary Attack Variations: Python
+
+<div class="content-center">
+
+Upper-Lower:
+
+```python
+with open("wordlist.txt") as f:
+    for word in f.readlines():
+        if word.lower() == target:             # word.upper() for uppercase
+            print(f"Found: {word.lower()}")
+```
+
+<br/>
+
+
+Leetspeak:
+
+```python
+with open("wordlist.txt") as f:
+    for word in f.read().splitlines():
+        variation = word
+        variation = variation.replace("a", "4")
+        variation = variation.replace("e", "3")
+        variation = variation.replace("i", "1")
+        variation = variation.replace("o", "0")
+        variation = variation.replace("s", "5")
+        variation = variation.replace("t", "7")
+        if variation == target:
+            print(f"Found: {variation}")
+```
+
+
+
+</div>
+
+---
+
+## Dictionary Attack Variations: Python
+
+<div class="content-center">
+
+Capitalize:
+
+```python
+with open("wordlist.txt") as f:
+    for word in f.readlines():
+        if word.capitalize() == target:
+            print(f"Found: {word.capitalize()}")
+```
+
+<br/>
+
+
+Hashed target string:
+
+```python
+import hashlib
+
+target_hash = "..."
+
+with open("wordlist.txt") as f:
+    for word in f.read().splitlines():
+        if hashlib.sha256(word.encode()).hexdigest() == target_hash:
+            print(f"Found: {word}")
+```
+
+
+
+</div>
+
+---
+
+## Time to Cook
+
+<div class="content-center">
+
+<img src="./img/cook.jpg" style="height: 700px;" />
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# theXORacle
+
+<div class="content-center">
+
+Auth Challenge 01
+
+</div>
+
+---
+
+## theXORacle - Reconnaissance
+
+<div class="content-center">
+
+<img src="./img/chal1.png" style="height: 400px;" />
+
+<br/>
+
+
+What can we observe? The challenge...
+- tells us that there's a secret message to break, and that it starts with "Key:"
+- displays an **encoded** message in a speech bubble.
+- asks for a shutdown code to turn off a rogue AI.
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-auto-animate -->
+
+<h2 data-id="title">theXORacle - Hypothesis</h2>
+
+<div class="content-center">
+
+<div class="alert alert-hint">The name of the challenge hints at the XOR operation being used to scramble the shutdown code.</div>
+
+<br/>
+
+
+<img src="./img/c1.png" style="height: 500px;" />
+
+<br/>
+
+
+<div class="alert alert-warning">The scrambled message is composed of integers, BUT the shutdown code accepts alphanumeric characters...</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# InstaFlag
+
+<div class="content-center">
+
+Auth Challenge 02
+
+</div>
+
+---
+
+## InstaFlag - Reconnaissance
+
+<div class="content-center">
+
+<img src="./img/chal2.png" style="height: 400px;" />
+
+<br/>
+
+
+What can we observe? The challenge...
+- provides an instagram-themed web interface, with direct messages and user profile.
+- allows us only to visit Gabbibo's user profile.
+- contains *intriguing* messages from Prof. Ralli, including an hashed password and wordlists to download.
+
+
+
+</div>
+
+---
+
+## InstaFlag - Hypothesis
+
+<div class="content-center">
+
+<div class="alert alert-hint">The majority of Gabibbo's pictures are tv-shows/movies-related.</div>
+
+<br/>
+
+
+<div class="columns-container columns-center">
+
+<div class="col">
+
+<img src="./img/c2.png" style="height: 550px;" />
+
+<br/>
+
+
+</div>
+
+<div class="col">
+
+<img src="./img/c3.png" style="height: 550px;" />
+
+<br/>
+
+
+</div>
+
+</div>
+
+<div class="alert alert-hint">One of the wordlists appears to be filled with passwords referencing movies and tv-shows...</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# R0ckY0urGr4d3
+
+<div class="content-center">
+
+Auth Challenge 03
+
+</div>
+
+---
+
+## R0ckY0urGr4d3 - Reconnaissance
+
+<div class="content-center">
+
+<img src="./img/chal3.png" style="height: 400px;" />
+
+<br/>
+
+
+What can we observe? The challenge...
+- provides a LUISS-themed web interface which displays the students-grading dashboard of Prof. Ralli.
+- displays a sha-256 hashed action password and a wordlist on the sidebar.
+- includes a button that enables changing the grade of **You 🫵** to 30/30.
+
+
+
+</div>
+
+---
+
+## R0ckY0urGr4d3 - Hypothesis
+
+<div class="content-center">
+
+<div class="alert alert-hint">The description of the challenge contains the warning <i>Trying every password won't be enough this time</i> in leetspeak...</div>
+
+<br/>
+
+
+Leet mapping:
+- a → 4
+- e → 3
+- i → 1
+- o → 0
+- s → 5
+- t → 7
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
