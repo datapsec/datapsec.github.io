@@ -1415,6 +1415,689 @@ Containers have become the industry standard for deploying services in cloud env
 
 
 </div>
+
+---
+
+## The Deployment Challenge
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/docker-the-challenge.png" style="width: 85%;">
+
+</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+A typical application stack involves **many different services** (web frontend, database, queue, workers...) each with their own dependencies, deployed across **many different environments** (developer laptop, QA server, production cluster, cloud...).
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> Image source: [pointful.github.io/docker-intro](https://pointful.github.io/docker-intro/#/18)
+
+</div>
+
+---
+
+## Docker: A Shipping Container for Code
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/docker-shipping-container-for-code.png" style="width: 85%;">
+
+</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Just like **shipping containers** standardized global trade by providing a uniform way to transport any goods on any vessel, Docker provides a **standard container format** for software:
+- Package any application with all its dependencies
+- Run it consistently on any machine that has Docker installed
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> Image source: [pointful.github.io/docker-intro](https://pointful.github.io/docker-intro/#/18)
+
+</div>
+
+---
+
+## How Docker Works
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/docker-basics-of-docker-system.png" style="width: 80%;">
+
+</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+1. A **Dockerfile** describes how to build an image
+2. `docker build` creates the image from the Dockerfile
+3. `docker push` uploads the image to a **registry** (e.g., Docker Hub)
+4. On another machine: `docker pull` downloads the image
+5. `docker run` starts a container from the image
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> Image source: [pointful.github.io/docker-intro](https://pointful.github.io/docker-intro/#/18)
+
+</div>
+
+---
+
+## The Dockerfile
+
+<div class="content-center">
+
+A **Dockerfile** is a text file with step-by-step instructions to build a Docker image:
+
+<div class="fragment" data-fragment-index="0">
+
+```dockerfile
+# Start from an official base image
+FROM python:3.11-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy dependency file and install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy the application code
+COPY . .
+
+# Define the command to run when the container starts
+CMD ["python", "app.py"]
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note">Each instruction creates a <b>layer</b> in the image. Layers are cached and reused, making subsequent builds faster.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Dockerfile Directives
+
+<div class="content-center">
+
+| Directive | Purpose | Example |
+|-----------|---------|---------|
+| `FROM` | Base image to start from | `FROM python:3.11-slim` |
+| `WORKDIR` | Set the working directory inside the container | `WORKDIR /app` |
+| `COPY` | Copy files from host into the image | `COPY . /app` |
+| `ADD` | Like `COPY`, but can also extract archives and fetch URLs | `ADD data.tar.gz /data` |
+| `RUN` | Execute a command during the build (e.g., install packages) | `RUN pip install flask` |
+| `ENV` | Set an environment variable | `ENV APP_PORT=8080` |
+| `EXPOSE` | Document which port the container listens on | `EXPOSE 8080` |
+| `CMD` | Default command to run when the container starts | `CMD ["python", "app.py"]` |
+| `ENTRYPOINT` | Like `CMD`, but cannot be easily overridden | `ENTRYPOINT ["python"]` |
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note"><code>CMD</code> vs <code>ENTRYPOINT</code>:
+- <code>CMD</code> provides defaults that can be <b>overridden</b> by passing arguments to <code>docker run</code>
+- <code>ENTRYPOINT</code> sets a fixed executable — arguments from <code>docker run</code> are <b>appended</b> to it
+- They can be combined: <code>ENTRYPOINT ["python"]</code> + <code>CMD ["app.py"]</code> → runs <code>python app.py</code> by default, but <code>docker run myimage script.py</code> runs <code>python script.py</code></div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Building and Sharing Images
+
+<div class="content-center">
+
+`docker build` creates an image from a Dockerfile:
+
+```bash
+# Build an image and tag it with a name
+docker build -t my-app:1.0 .
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+`docker pull` downloads an image from a registry (e.g., Docker Hub):
+
+```bash
+# Download an official image
+docker pull ubuntu:22.04
+
+# Download a community image
+docker pull nginx:latest
+```
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note">Docker Hub hosts <b>thousands of ready-to-use images</b>: databases (PostgreSQL, MySQL), web servers (Nginx, Apache), programming languages (Python, Node.js), and full applications.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Running Containers
+
+<div class="content-center">
+
+`docker run` creates and starts a container from an image:
+
+```bash
+# Run a container interactively with a shell
+docker run -it ubuntu:22.04 /bin/bash
+
+# Run a web server in the background, mapping port 8080
+docker run -d -p 8080:80 --name my-web nginx:latest
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+`docker exec` runs a command inside a **running** container:
+
+```bash
+# Open a shell inside a running container
+docker exec -it my-web /bin/bash
+
+# Run a single command inside the container
+docker exec my-web cat /etc/nginx/nginx.conf
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+## Stopping and Removing Containers
+
+<div class="content-center">
+
+`docker stop` gracefully stops a running container (sends SIGTERM, then SIGKILL after timeout):
+
+```bash
+docker stop my-web
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+`docker kill` immediately terminates a container (sends SIGKILL):
+
+```bash
+docker kill my-web
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+| Command | Effect |
+|---------|--------|
+| `docker stop` | Graceful shutdown (app can clean up) |
+| `docker kill` | Immediate termination (no cleanup) |
+| `docker rm` | Remove a stopped container |
+| `docker rmi` | Remove an image from disk |
+
+</div>
+
+
+
+</div>
+
+---
+
+## Copying Files: `docker cp`
+
+<div class="content-center">
+
+`docker cp` copies files between the host and a container:
+
+```bash
+# Copy a file FROM the container TO the host
+docker cp my-web:/etc/nginx/nginx.conf ./nginx.conf
+
+# Copy a file FROM the host TO the container
+docker cp ./index.html my-web:/usr/share/nginx/html/
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+This is useful for:
+- Extracting logs, data, or configuration files from a container
+- Injecting configuration or data files into a running container
+- Debugging: inspecting files inside a container without `exec`
+
+</div>
+
+
+
+</div>
+
+---
+
+## Docker Compose
+
+<div class="content-center">
+
+Real applications often consist of **multiple services** (web server, database, cache, ...). Managing them one by one with `docker run` is tedious.
+
+<div class="fragment" data-fragment-index="0">
+
+`docker compose` uses a YAML file to define and run **multi-container applications**:
+
+```yaml
+# docker-compose.yml
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+```bash
+# Start all services defined in docker-compose.yml
+docker compose up
+
+# Start in background (detached mode)
+docker compose up -d
+
+# Stop and remove all containers
+docker compose down
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note">With a single command, Docker Compose builds images, creates networks, and starts all containers in the correct order based on their dependencies.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Docker Compose Directives
+
+<div class="content-center">
+
+The `docker-compose.yml` file uses these key directives under each service:
+
+<br/>
+
+
+| Directive | Purpose | Example |
+|-----------|---------|---------|
+| `image` | Use a pre-built image from a registry | `image: postgres:15` |
+| `build` | Build the image from a Dockerfile | `build: .` |
+| `ports` | Map host ports to container ports | `ports: ["8080:80"]` |
+| `volumes` | Mount volumes or bind mounts | `volumes: ["db-data:/var/lib/data"]` |
+| `environment` | Set environment variables | `environment: {DB_HOST: db}` |
+| `depends_on` | Start this service after another | `depends_on: [db]` |
+| `restart` | Restart policy on failure | `restart: unless-stopped` |
+| `networks` | Attach the service to custom networks | `networks: [frontend, backend]` |
+| `command` | Override the default `CMD` of the image | `command: ["--debug"]` |
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+Top-level directives define shared resources across all services:
+
+```yaml
+volumes:
+  db-data:        # named volume, persists across container restarts
+
+networks:
+  frontend:       # custom network for web-facing services
+  backend:        # isolated network for internal services
+```
+
+
+
+</div>
+
+---
+
+## Containers Are Ephemeral
+
+<div class="content-center">
+
+A container is designed to be **ephemeral** — it can be stopped, destroyed, and replaced at any time.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+When a container is removed, **all data written inside it is lost**:
+- Files created during execution
+- Database records
+- User uploads
+- Application logs
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-warning">This is <b>by design</b>: containers should be disposable and reproducible. You should be able to destroy a container and spin up a new one from the same image without losing important data.</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="cell-center">
+
+***So where do we store persistent data?***
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Docker Volumes
+
+<div class="content-center">
+
+**Volumes** are the recommended way to persist data generated by and used by Docker containers. They are stored on the host filesystem, **outside** the container.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+```bash
+# Create a named volume
+docker volume create my-data
+
+# Run a container with a volume mounted at /data
+docker run -d -v my-data:/data --name my-app my-image
+
+# Bind mount: map a host directory into the container
+docker run -d -v /home/user/project:/app my-image
+```
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- **Named volumes** (`-v my-data:/data`): managed by Docker, persist even after the container is removed
+- **Bind mounts** (`-v /host/path:/container/path`): map a specific host directory into the container — useful for development (edit code on the host, run it in the container)
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-note">Volumes are essential for databases, file uploads, logs, and any data that must survive container restarts or replacements.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Updating a Containerized Application
+
+<div class="content-center">
+
+Because containers are ephemeral and data lives in **volumes**, updating an application is straightforward:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+```bash
+# 1. Pull the new version of the image
+docker pull my-app:2.0
+
+# 2. Stop and remove the old container
+docker stop my-app && docker rm my-app
+
+# 3. Start a new container reusing the same volume
+docker run -d -v my-data:/data --name my-app my-app:2.0
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+The **data persists** in the volume across container replacements. The new container picks up exactly where the old one left off — no migration, no manual copy.
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Beyond Docker
+
+---
+
+## Kubernetes
+
+<div class="content-center">
+
+Running a few containers with `docker compose` works fine for small deployments. But what happens when you need to run **hundreds or thousands of containers** across **many machines**?
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Kubernetes** (K8s) is an open-source **container orchestration** platform, originally developed by Google:
+- Automatically **deploys**, **scales**, and **manages** containerized applications across a cluster of machines
+- Handles **load balancing**, **self-healing** (restarts failed containers), and **rolling updates**
+- The de facto standard for running containers in production at scale
+
+</div>
+
+
+
+</div>
+
+---
+
+## Kubernetes: Key Concepts
+
+<div class="content-center">
+
+- **Cluster**: a set of machines (nodes) that run containerized applications managed by Kubernetes
+- **Pod**: the smallest deployable unit — one or more containers that share storage and network
+- **Service**: a stable network endpoint that routes traffic to a set of pods
+- **Deployment**: defines how many replicas of a pod should run and how to update them
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+All major cloud providers offer managed Kubernetes services:
+- **Amazon EKS** (Elastic Kubernetes Service)
+- **Google GKE** (Google Kubernetes Engine)
+- **Azure AKS** (Azure Kubernetes Service)
+
+</div>
+
+
+
+</div>
+
+---
+
+## LXC: System Containers
+
+<div class="content-center">
+
+Docker containers are **application containers**: they typically run a single process or service. But there is another approach:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**LXC** (Linux Containers) provides **system containers** — they behave like a full Linux system:
+- Run a complete **init system** (systemd), multiple services, and background daemons
+- Feel like a lightweight VM but **share the host kernel** (no hypervisor overhead)
+- Have their own network stack, users, processes, and filesystem
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+| | Docker (Application Container) | LXC (System Container) |
+|---|---|---|
+| **Runs** | A single app/process | A full OS environment |
+| **Init system** | No (single `CMD`) | Yes (systemd, cron, sshd...) |
+| **Use case** | Microservices, CI/CD | Lightweight VM replacement |
+| **Persistence** | Ephemeral by design | Persistent by default |
+| **Image ecosystem** | Docker Hub (huge) | OS templates (Ubuntu, Debian...) |
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note">LXC is ideal when you need the <b>flexibility of a full OS</b> (e.g., running multiple services, SSH access, system-level testing) but want the <b>performance and density</b> of containers instead of VMs.</div>
+
+</div>
+
+
+
+</div>
                     </textarea>
                 </section>
             </div>
