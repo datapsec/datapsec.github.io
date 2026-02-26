@@ -772,6 +772,56 @@ What can we observe? The challenge...
 
 ---
 
+## theXORacle - Exploitation
+
+<div class="content-center">
+
+1. **Retrieve scrambled data** from the speech bubble.
+
+<br>
+
+2. **Brute-force the XOR key**: try all 256 possible byte values, looking for outputs starting with "Key"...
+```
+result = ''.join(chr(n ^ key) for n in scrambled)
+if result.startswith("Key: ")
+    ...
+```
+
+<br>
+
+3. **Extract the shutdown code**: the recovered plaintext reveals "Key: XXXXXX"
+
+<br>
+
+4. **Submit the shutdown code** to retrieve the flag.
+
+
+
+</div>
+
+---
+
+## theXORacle - Solution Template
+
+<div class="content-center">
+
+```python
+scrambled = "..."  #put the scrambled data here
+
+for key in range(256):
+    result = ""
+    for n in scrambled:
+        result += chr(n ^ key)
+    if result.startswith("Key:"):
+        print(result)
+```
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # InstaFlag
@@ -843,6 +893,60 @@ What can we observe? The challenge...
 
 ---
 
+## InstaFlag - Exploitation
+
+<div class="content-center">
+
+1. **Retrieve the SHA-256 hash** of Gabbibo's password from the direct messages.
+
+<br>
+
+2. **Identify the correct wordlist** by looking for the one that references movies/tv-shows.
+
+<br>
+
+3. **Brute-force using dictionary attack**
+```
+for word in wordlist:
+if sha256(word) == target_hash:
+print(word)
+```
+<br>
+
+4. **Login as gabibboreal** by using the found password.
+
+<br>
+
+5. **Retrieve the flag** by opening his direct messages.
+
+
+
+</div>
+
+---
+
+## InstaFlag - Solution Template
+
+<div class="content-center">
+
+```python
+import hashlib
+
+target_hash = "..."   #insert password hash here
+
+with open("wordlist3.txt") as f:
+    for word in f.read().splitlines():
+        if hashlib.sha256(word.encode()).hexdigest() == target_hash:
+            print(f"Password found: {word}")
+            break
+```
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # R0ckY0urGr4d3
@@ -891,6 +995,64 @@ Leet mapping:
 - o → 0
 - s → 5
 - t → 7
+
+
+
+</div>
+
+---
+
+## R0ckY0urGr4d3 - Exploitation
+
+<div class="content-center">
+
+1. **Retrieve the SHA-256 hash** of the action password.
+
+<br>
+
+2. **Download the wordlist** displayed in the web page.
+
+<br>
+
+3. **Apply leetspeak transformation and hash each candidate**:
+```
+candidate = word.translate(str.maketrans('aeiost', '431057'))
+if sha256(candidate) == target_hash:
+print(candidate)
+```
+
+<br>
+
+4. **Submit the recovered password** to set the grade to 30 and retrieve the flag.
+
+
+
+</div>
+
+---
+
+## R0ckY0urGr4d3 - Solution Template
+
+<div class="content-center">
+
+```python
+import hashlib
+
+target = "..."  #put hashed action password here
+
+for word in open("wordlist.txt"):
+    for word in f.read().splitlines():
+        variation = word
+        variation = variation.replace("a", "4")
+        variation = variation.replace("e", "3")
+        variation = variation.replace("i", "1")
+        variation = variation.replace("o", "0")
+        variation = variation.replace("s", "5")
+        variation = variation.replace("t", "7")
+        if hashlib.sha256(variation.encode()).hexdigest() == target:
+            print(f"Found: {candidate}")
+            break
+```
 
 
 
