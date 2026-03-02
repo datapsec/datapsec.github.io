@@ -105,8 +105,8 @@ Networks can be classified by their **scale** and **coverage**:
 
 - Local Area Network (**LAN**)
     - *Coverage*: Small geographic area (home, office, building)
-    - *Examples*: Your home WiFi, office network
-    - *Characteristics*: High speed, low cost, private ownership
+    - *Examples*: Your home WiFi, office network, the LUISS campus network
+    - *Characteristics*: Typically 1 Gbps (Ethernet) or less (WiFi), private ownership
 
 <br/>
 
@@ -118,7 +118,7 @@ Networks can be classified by their **scale** and **coverage**:
 - Wide Area Network (**WAN**)
     - *Coverage*: Large geographic area (cities, countries, continents)
     - *Examples*: The Internet, corporate networks across multiple cities
-    - *Characteristics*: Lower speed than LAN, uses public infrastructure
+    - *Characteristics*: High-speed backbone links (10–100 Gbps), uses public infrastructure
 
 <br/>
 
@@ -159,17 +159,13 @@ Networks can be classified by their **scale** and **coverage**:
 
 <div class="content-center">
 
-The **Internet** is the largest WAN, connecting billions of devices worldwide:
+The **Internet** is the largest WAN, connecting billions of devices worldwide.
+
+**Internet Service Provider (ISP)**: Companies that provide internet access and maintain the infrastructure connecting networks together.
 
 <div class="cell-center" style="padding-bottom: 10px;">
 
 <img src="img/lan-lan-wan.drawio.png" style="width: 900px;">
-
-</div>
-
-<div class="fragment" data-fragment-index="0">
-
-**Internet Service Provider (ISP)**: Companies that provide internet access and maintain the infrastructure connecting networks together.
 
 </div>
 
@@ -183,22 +179,19 @@ The **Internet** is the largest WAN, connecting billions of devices worldwide:
 
 <div class="content-center">
 
-Imagine trying to have a conversation where:
-- Everyone speaks at once
-- Messages arrive out of order
-- Some words get lost in transmission
-- No one knows who is speaking
+Imagine two philosophers, one in Greece and one in China, who want to exchange ideas. They don't speak the same language, they live thousands of kilometers apart, and they have no direct way to communicate.
 
 <div class="fragment" data-fragment-index="0">
 
 <div style="padding-bottom: 10px;">
 
-**Protocols** are standardized rules that solve these problems by defining:
-- How to establish connections
-- How to format and transmit data
-- How to detect and correct errors
-- How to manage network traffic
-- How to terminate connections
+They need to agree on:
+- A **common language** (e.g., use a translator)
+- A **means of delivery** (e.g., letters via postal service)
+- A **format** (e.g., write on paper, use envelopes with addresses)
+- **Rules for the conversation** (e.g., wait for a reply before sending the next message)
+
+Each of these is a **layer** of rules — a **protocol** — that makes communication possible.
 
 </div>
 
@@ -206,7 +199,7 @@ Imagine trying to have a conversation where:
 
 <div class="fragment" data-fragment-index="1">
 
-<div class="alert alert-error"><b>NOTE:</b> Without protocols, network communication would be <b>chaos</b>!</div>
+<div class="alert alert-error">Computer networks face the <b>same challenges</b>: devices must agree on shared rules (<b>protocols</b>) to communicate reliably across different technologies and distances.</div>
 
 </div>
 
@@ -250,7 +243,9 @@ The **OSI (Open Systems Interconnection)** model is a conceptual framework with 
 
 ---
 
-## OSI to TCP/IP
+<!-- .slide: data-auto-animate -->
+
+<h2 data-id="title">OSI to TCP/IP</h2>
 
 <div class="content-center">
 
@@ -832,15 +827,16 @@ To check if two IPs are on the same network, apply the subnet mask (bitwise AND)
 
 ---
 
-## Default Gateway
+## Gateway (Router)
 
 <div class="content-center">
 
-The **default gateway** is the router that connects your local network to external networks (e.g., the internet).
+A **gateway** is a device (typically a **router**) that connects two or more different networks and forwards packets between them.
 
-- When a device wants to send data to an IP **outside its subnet**, it forwards the packet to the gateway
-- The gateway then routes the packet toward its destination across the internet
-- Typically the **first** or **last** usable IP in the subnet (e.g., `192.168.1.1`)
+- A router has multiple network interfaces, each connected to a **different network** (LAN)
+- When a device wants to send data to an IP that is **not on its local network**, it forwards the packet to the gateway
+- The gateway examines the destination IP and forwards the packet toward the correct network
+- This process repeats hop-by-hop until the packet reaches its destination
 
 <br/>
 
@@ -850,8 +846,10 @@ The **default gateway** is the router that connects your local network to extern
 <div class="alert alert-hint"><b>EXAMPLE:</b> Device <code>192.168.1.10/24</code> wants to reach <code>8.8.8.8</code> (Google DNS):
 
 1. Device checks: is <code>8.8.8.8</code> on my network (<code>192.168.1.0/24</code>)? <b>No</b>
-2. Device sends the packet to its <b>default gateway</b> (<code>192.168.1.1</code>)
-3. The gateway (router) forwards the packet toward <code>8.8.8.8</code> across the internet</div>
+2. Device sends the packet to its <b>gateway</b> (e.g., <code>192.168.1.1</code>)
+3. The gateway (router) forwards the packet toward <code>8.8.8.8</code> across the internet
+
+The gateway configured on a device is called the <b>default gateway</b> — it is the "exit door" from the local network.</div>
 
 </div>
 
@@ -942,7 +940,8 @@ What DHCP Provides:
 
 - **TCP (Transmission Control Protocol)**:
     - Connection-oriented: Establishes connection before sending data
-    - Reliable: Guarantees delivery, order, and error-free transmission
+    - Reliable: Guarantees delivery and error-free transmission
+    - Packets may arrive out of order, but TCP **reorders** them before delivering to the application
     - Flow control: Manages data rate to prevent overwhelming receiver
     - Use cases: Web browsing, email, file transfer (when reliability matters)
 
@@ -1016,7 +1015,7 @@ To close the connection, a similar process occurs with **FIN** (finish) and **AC
 
 <div class="fragment" data-fragment-index="0">
 
-<div class="alert alert-hint"><b>SOLUTION</b>: <b>Ports</b> and <b>Sockets</b></div>
+<div class="alert alert-hint"><b>SOLUTION</b>: <b>Ports</b></div>
 
 <br/>
 
@@ -1025,10 +1024,11 @@ To close the connection, a similar process occurs with **FIN** (finish) and **AC
 
 <div class="fragment" data-fragment-index="1">
 
-- **Port**: A numerical identifier (0-65535) assigned to a specific application or service
-- **Socket**: The combination of an IP address and a port number, creating a unique endpoint for communication
-  - Format: `IP:Port` (e.g., `192.168.1.10:54321`)
-  - A socket uniquely identifies a specific application on a specific device
+A **port** is a numerical identifier (0–65535) that identifies a specific application or service on a device.
+
+- It is the **address at the Transport Layer** — just as IP addresses identify devices, ports identify applications on a device
+- Each application listens on a specific port (e.g., a web server on port 80)
+- When a packet arrives, the Transport Layer uses the port number to deliver it to the correct application
 
 </div>
 
@@ -1044,16 +1044,15 @@ To close the connection, a similar process occurs with **FIN** (finish) and **AC
 
 **Port numbers** identify specific applications or services on a device:
 
-- Range: 0-65535
-- Combined with IP: creates a unique *socket* (e.g., `192.168.1.1:80`)
+- Range: 0–65535
 
 Port Categories:
 
 | Range | Category | Usage |
 |-------|----------|-------|
-| 0-1023 | Well-known ports | Standard services |
-| 1024-49151 | Registered ports | Application-specific |
-| 49152-65535 | Dynamic/Private ports | Temporary client connections |
+| 0–1023 | Well-known ports | Standard services |
+| 1024–49151 | Registered ports | Application-specific |
+| 49152–65535 | Dynamic/Private ports | Temporary client connections |
 
 
 
@@ -1223,11 +1222,11 @@ DNS is a **hierarchical, distributed** database. No single server knows all doma
 **EXAMPLE:** Resolving `www.example.com`:
 
 1. **Browser cache**: Already resolved recently? Use cached IP
-2. **OS cache**: Operating system checked its local DNS cache
+2. **OS cache**: Operating system checks its local DNS cache
 3. **Recursive resolver** (e.g., your ISP or `8.8.8.8`): Checks its cache; if not found, starts querying the hierarchy:
-    - Asks a **Root Server**: "Where is `.com`?" → Returns TLD server address
-    - Asks the **`.com` TLD Server**: "Where is `example.com`?" → Returns authoritative server address
-    - Asks the **Authoritative Server** for `example.com`: "What is the IP of `www.example.com`?" → Returns `93.184.216.34`
+    - Asks a **Root Server**: "What is the IP of `www.example.com`?" → "I don't know, but ask the `.com` TLD server at this address"
+    - Asks the **`.com` TLD Server**: "What is the IP of `www.example.com`?" → "I don't know, but ask the authoritative server for `example.com` at this address"
+    - Asks the **Authoritative Server** for `example.com`: "What is the IP of `www.example.com`?" → `93.184.216.34`
 4. Recursive resolver **caches** the result and returns it to your computer
 
 <br/>
