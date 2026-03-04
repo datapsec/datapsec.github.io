@@ -639,6 +639,37 @@ A **subnet mask** defines which portion of an IP address identifies the **networ
 
 ---
 
+## Subnet Mask: Bit-Level View
+
+<div class="content-center">
+
+**EXAMPLE:** IP `192.168.1.10` with subnet mask `255.255.255.0`
+
+|  | Decimal | Binary |
+|---|---|---|
+| **IP Address** | `192.168.1.10` | `11000000.10101000.00000001.00001010` |
+| **Subnet Mask** | `255.255.255.0` | `11111111.11111111.11111111.00000000` |
+
+Mask bits = `1` → **network** portion, Mask bits = `0` → **host** portion:
+
+| | Bits 1–8 | Bits 9–16 | Bits 17–24 | Bits 25–32 |
+|---|---|---|---|---|
+| **IP (binary)** | `11000000` | `10101000` | `00000001` | `00001010` |
+| **Mask (binary)** | `11111111` | `11111111` | `11111111` | `00000000` |
+| **Role** | Network | Network | Network | **Host** |
+
+- **Network part**: `192.168.1` → identifies the network
+- **Host part**: `.10` → identifies the device within that network
+
+<br/>
+
+
+
+
+</div>
+
+---
+
 <div class="content-center">
 
 Common subnet mask octets and their binary representation:
@@ -1658,17 +1689,157 @@ With VPN: `Your Device` → ***encrypted tunnel*** → `VPN Server` → `Interne
 
 ---
 
-## VPN: Common Use Cases
+## VPN Use Case 1: Remote Work
 
 <div class="content-center">
 
-- **Privacy**: Prevent ISP, employer, or government from monitoring your browsing
-- **Security on public WiFi**: Encrypt traffic on untrusted networks (airports, cafés, hotels)
-- **Geo-restriction bypass**: Access content restricted to specific countries (e.g., streaming services)
-- **Remote work**: Securely access a company's internal network from home
+A company has internal services (file servers, databases, internal web apps) accessible only from the **office LAN**. Employees working from home are on a **different network** and cannot reach those services directly.
 
 <br/>
 
+
+<div class="fragment" data-fragment-index="0">
+
+With a **corporate VPN**:
+
+1. The employee connects to the company's **VPN server** over the internet
+2. An encrypted tunnel is established between the employee's device and the VPN server
+3. The employee's device gets a **virtual IP address** on the company's internal network
+4. Now the employee can access internal services **as if they were in the office**
+
+The company controls the VPN server and can enforce access policies, logging, and authentication.
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## VPN Use Case 2: Consumer VPN (Privacy)
+
+<div class="content-center">
+
+Ordinary users can subscribe to a **consumer VPN service** (e.g., NordVPN, Mullvad, ProtonVPN) to protect their privacy online.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Goals:
+
+- **Hide browsing activity from the ISP**: The ISP only sees encrypted traffic to the VPN server
+- **Mask your IP address**: Websites see the VPN server's IP, not yours
+- **Bypass geo-restrictions**: Connect through a server in another country to access region-locked content (e.g., streaming services)
+- **Protect on public WiFi**: Encrypt all traffic on untrusted networks (airports, cafés, hotels)
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-warning"><b>WARNING</b>: You are <b>trusting the VPN provider</b> with all your traffic! A dishonest VPN provider can log, inspect, or sell your browsing data. Choose carefully.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## VPN Implementations
+
+<div class="content-center">
+
+Two widely used open-source VPN implementations:
+
+<br/>
+
+
+<div class="columns-container columns-top">
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="0">
+
+**OpenVPN** (2001):
+- Mature, battle-tested, widely supported
+- Uses **OpenSSL** for encryption (TLS-based)
+- Runs in **user space** (no kernel modifications needed)
+- Supports both **UDP** (default, faster) and **TCP** (port 443, for restrictive networks)
+- Large codebase (100,000 lines of C) → harder to audit
+- Used extensively in corporate and consumer VPNs
+
+</div>
+
+</div>
+
+<div class="col">
+
+<div class="fragment" data-fragment-index="1">
+
+**WireGuard** (2018):
+- Modern, minimalist design
+- Uses state-of-the-art cryptography (ChaCha20, Curve25519, BLAKE2s)
+- Runs in **kernel space** → very fast, low latency
+- **UDP only** by default
+- Tiny codebase (4,000 lines of C) → easy to audit and verify
+- Built into the Linux kernel since version 5.6
+- Increasingly adopted by consumer VPN providers
+
+</div>
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## VPN: UDP vs TCP and Detection
+
+<div class="content-center">
+
+Most VPNs use **UDP** by default for performance (lower overhead, no double reliability layer with TCP-over-TCP).
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+However, UDP-based VPN traffic is **easy to detect**:
+- Firewalls and ISPs can identify unusual patterns of UDP traffic on non-standard ports
+- Some countries and corporate networks **block** known VPN protocols entirely
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+To evade detection, some VPN implementations can switch to **TCP port 443** (the same port used by HTTPS):
+- VPN traffic looks like **normal HTTPS traffic** to the network
+- Much harder for firewalls and ISPs to distinguish from regular web browsing
+- Trade-off: **lower performance** due to TCP overhead (and potential TCP-over-TCP issues)
+
+OpenVPN natively supports TCP mode. WireGuard (UDP-only) can be wrapped in TCP using tools like `udp2raw` or `wstunnel`.
+
+<br/>
+
+
+</div>
 
 
 
