@@ -328,6 +328,12 @@ As of 2024: **7,880+ relays** and **1,820+ bridges** operated by volunteers worl
 
 ---
 
+<!-- .slide: data-state="break-green hide-controls" -->
+
+## Demo with Tor Browser
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # How Tor Works: Basic Concepts
@@ -1278,6 +1284,194 @@ Tor provides strong anonymity but is **not perfect**:
 - **Application-level leaks**: DNS leaks, WebRTC leaks, or logging into personal accounts can reveal identity
 
 - **Performance**: Tor is significantly slower than direct connections due to multiple hops and encryption layers
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# The Dark Web
+
+---
+
+## Surface Web, Deep Web, and Dark Web
+
+<div class="content-center">
+
+It is important to distinguish three layers of the Internet:
+
+<br/>
+
+
+- **Surface Web**: the portion of the Web indexed by search engines (Google, Bing, etc.). Accessible via standard browsers. Estimated to be only **5-10%** of the total Web content.
+
+- **Deep Web**: content that is **not indexed** by search engines — e.g., private databases, email inboxes, medical records, banking portals, paywalled content. Accessible via standard browsers but requires authentication or specific URLs.
+
+- **Dark Web**: a small subset of the Deep Web that is **intentionally hidden** and accessible only through specialized software (e.g., Tor Browser). Includes `.onion` sites.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-warning"><b>Dark Web $\neq$ Deep Web</b>: the Dark Web is a tiny fraction of the Deep Web. Most of the Deep Web is perfectly mundane (your email, your bank account, etc.).</div>
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## The Dark Web and Tor
+
+<div class="content-center">
+
+The **Dark Web** is primarily accessed through Tor's hidden services (`.onion` sites). It hosts a wide range of content:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Legitimate uses:**
+- Whistleblowing platforms (SecureDrop, GlobaLeaks)
+- Censorship-resistant news (BBC, Deutsche Welle, ProPublica)
+- Privacy-focused communication (OnionShare, Briar)
+- Academic research and security testing
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Illicit uses:**
+- Dark web marketplaces (drugs, stolen data, counterfeit documents)
+- Ransomware-as-a-Service (RaaS) platforms
+- Forums for hacking, fraud, and exploitation
+- Money laundering via cryptocurrency mixers
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Notable Dark Web Cases
+
+<div class="content-center">
+
+**Silk Road** (2011-2013):
+- First major dark web marketplace, operated by Ross Ulbricht ("Dread Pirate Roberts")
+- Facilitated over **$200 million** in illegal drug sales using Bitcoin
+- FBI seized the site in October 2013; Ulbricht sentenced to **life in prison** without parole
+- Takedown relied on **operational security mistakes**, not breaking Tor: Ulbricht posted his real email on a forum promoting Silk Road, and was caught using his laptop in a public library while logged in as admin
+- In January 2025, Ulbricht was **pardoned** by President Trump after serving 11 years
+
+<br/>
+
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+**AlphaBay & Hansa — Operation Bayonet** (2017):
+- AlphaBay: largest dark web marketplace after Silk Road, **400,000+ users**, **200,000+ listings**
+- In July 2017, Europol and FBI executed a coordinated takedown
+- **Brilliant twist**: Dutch police had secretly taken over **Hansa Market** weeks earlier and ran it as a honeypot
+- When AlphaBay went down, thousands of users migrated to Hansa — unknowingly walking into a police-operated marketplace
+- Law enforcement collected real identities, addresses, orders, and messages for weeks before shutting Hansa down too
+
+
+
+</div>
+
+---
+
+## The Dark Web as a Force for Good
+
+<div class="content-center">
+
+**SecureDrop — Whistleblowing infrastructure:**
+- Open-source platform originally created by Aaron Swartz, now maintained by the Freedom of the Press Foundation
+- Runs as a Tor hidden service, allowing sources to **anonymously submit documents** to journalists
+- Used by **70+ news organizations** worldwide: The New York Times, The Washington Post, The Guardian, BBC, etc.
+- Played a key role in major investigations, including stories based on leaked government and corporate documents
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Arab Spring (2010-2012):**
+- During the uprisings in Egypt, Tunisia, Libya, and Syria, activists used Tor to **organize protests** and communicate while governments monitored and censored the Internet
+- When Egypt shut down the Internet entirely in January 2011, Tor bridges helped some users reconnect
+- Tor was critical for **smuggling footage and reports** out of Syria, where journalists and activists faced imprisonment or death
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+**Facebook's .onion site (2014-present):**
+- Facebook launched `facebookwkhpilnemxj7asaniu7vnjjbiltxjqhye3mhbshg7kx5tfyd.onion` — the first major tech company to offer an official `.onion` address
+- Provides access to Facebook for users in countries where it is **censored** (e.g., China, Iran)
+- Over **1 million users per month** access Facebook via Tor
+- Demonstrates that the Dark Web is not inherently criminal — it can serve mainstream, legitimate purposes
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+**Edward Snowden (2013):**
+- Former NSA contractor who leaked classified documents revealing **mass surveillance programs** (PRISM, XKeyscore, etc.)
+- Used Tor and Tails OS to communicate securely with journalists Glenn Greenwald and Laura Poitras
+- The leaked documents showed that the **NSA itself** acknowledged Tor as a major obstacle: an internal presentation titled *"Tor Stinks"* admitted they could only deanonymize a small fraction of Tor users
+- Snowden's disclosures led to global debates on privacy, surveillance reform, and the importance of encryption
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+**Welcome to Video — Operation Rescue** (2011-2014):
+- One of the largest child exploitation sites on the dark web, hosted on Tor
+- FBI exploited a **vulnerability in the Tor Browser** (a Firefox zero-day) to deploy malware on visitors' machines, collecting their real IP addresses
+- Led to **670+ arrests** across multiple countries and the rescue of **hundreds of children**
+- Controversial: the FBI operated the site for **two weeks** to gather evidence, during which new abuse material was uploaded
 
 
 
