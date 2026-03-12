@@ -45,6 +45,28 @@
 
 ---
 
+## ⚠️ Important Disclaimers
+
+<div class="content-center">
+
+Before we begin, please note:
+
+1. **This lecture focuses on the technology** — we will study how blockchains work from a technical and security perspective
+
+2. **Most blockchain projects are scams** — the vast majority of tokens, NFTs, and DApps are designed to extract money from retail investors (pump & dump, rug pulls)
+
+3. **Cryptocurrencies are extremely volatile** — prices can drop 50%+ in days; they are unsuitable as a store of value or unit of account
+
+4. **You must pay taxes in Italy** — crypto gains are taxable (33% capital gains tax); failure to declare is tax evasion and you have to declare ownership
+
+5. **Labs use testnets only** — we will use Sepolia (Ethereum testnet) with **zero real-world monetary value**. You will never need to spend real money.
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # Motivation
@@ -1448,6 +1470,211 @@ The NFT itself is **on-chain** (the ownership record), but the associated digita
 <div class="fragment" data-fragment-index="0">
 
 **Criticism**: many NFT projects have been criticized for speculation, environmental concerns (PoW-era), and the fact that "owning" an NFT doesn't always grant copyright or exclusive access to the underlying content.
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Interacting with Smart Contracts
+
+---
+
+## Block Explorers: Etherscan
+
+<div class="content-center">
+
+A **block explorer** is a web interface to read blockchain data without running a full node.
+
+**Etherscan** (https://etherscan.io) is the most popular Ethereum block explorer:
+
+- Search for **addresses**, **transactions**, **blocks**, or **contracts**
+- View transaction history, balances, and token holdings
+- Read and write to **verified smart contracts** directly from the browser
+- View contract source code (if verified by the developer)
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+For testnets (Sepolia, Goerli), use:
+- https://sepolia.etherscan.io
+- https://goerli.etherscan.io
+
+</div>
+
+
+
+</div>
+
+---
+
+## NFT Metadata: `tokenURI`
+
+<div class="content-center">
+
+ERC-721 NFTs store metadata (name, description, image, attributes) via the `tokenURI(uint256 tokenId)` function.
+
+The `tokenURI` function returns a **URI** (Uniform Resource Identifier) pointing to the metadata:
+
+- **IPFS**: `ipfs://Qm...` — decentralized storage
+- **HTTP**: `https://example.com/metadata/123.json` — centralized server
+- **Data URI**: `data:application/json;base64,...` — metadata encoded directly on-chain
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The metadata is typically JSON:
+```json
+{
+  "name": "My NFT #123",
+  "description": "...",
+  "image": "ipfs://...",
+  "attributes": [
+    {"trait_type": "Color", "value": "Blue"},
+    {"trait_type": "Rarity", "value": "Legendary"}
+  ]
+}
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+## Calling Contracts Programmatically
+
+<div class="content-center">
+
+You can interact with contracts using libraries like **web3.py** (Python) or **ethers.js** (JavaScript).
+
+**Python example** (reading `tokenURI`):
+
+```python
+from web3 import Web3
+import base64, json
+
+w3 = Web3(Web3.HTTPProvider("https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY"))
+
+# Minimal ABI - only the function you need
+abi = [{"inputs":[{"name":"tokenId","type":"uint256"}],
+        "name":"tokenURI","outputs":[{"name":"","type":"string"}],
+        "stateMutability":"view","type":"function"}]
+
+contract = w3.eth.contract(address="0x...", abi=abi)
+uri = contract.functions.tokenURI(0).call()
+print(uri)
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The ABI (Application Binary Interface) describes the contract's functions and is needed to encode/decode calls.
+
+</div>
+
+
+
+</div>
+
+---
+
+## RPC Providers: Connecting to the Blockchain
+
+<div class="content-center">
+
+To interact with Ethereum from your code, you need to connect to a **node** that has a copy of the blockchain.
+
+<br/>
+
+
+A **Web3.HTTPProvider** (or similar) is a connection to an Ethereum node via HTTP/HTTPS:
+
+```python
+w3 = Web3(Web3.HTTPProvider("https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY"))
+```
+
+<br/>
+<br/>
+
+
+This URL points to an **RPC endpoint** (Remote Procedure Call) — a server that accepts requests like:
+- `eth_call` — read contract state (no transaction)
+- `eth_sendRawTransaction` — submit a signed transaction
+- `eth_getBalance` — check an address's ETH balance
+- `eth_getTransactionReceipt` — check if a transaction succeeded
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+**Why is it needed?**
+
+Running your own Ethereum node requires:
+- Downloading the entire blockchain (~1TB for mainnet)
+- Keeping it synced 24/7
+- Significant CPU, RAM, and bandwidth
+
+Most developers use **RPC providers** instead:
+- **Alchemy** (https://alchemy.com) — free tier available
+- **Infura** (https://infura.io) — popular, free tier
+- **QuickNode**, **Ankr**, **Chainstack** — alternatives
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The provider acts as a **gateway** to the blockchain: your code sends JSON-RPC requests, the provider's node executes them and returns results. You get all the benefits of a full node without running one yourself.
+
+</div>
+
+
+
+</div>
+
+---
+
+## The Frontend is NOT a Security Boundary
+
+<div class="content-center">
+
+A critical principle in blockchain security: **never trust the frontend**.
+
+Any restrictions enforced only in JavaScript (client-side) can be trivially bypassed:
+
+- **Input validation** (e.g., "max 100 tokens") — send 1000 directly to the contract
+- **Button disabling** (e.g., "you can only vote once") — call the vote function multiple times
+
+If the smart contract doesn't enforce a rule, **the rule doesn't exist**.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="cell-center">
+
+> *The blockchain doesn't care about your UI. Only the smart contract logic matters.*
+
+</div>
 
 </div>
 
