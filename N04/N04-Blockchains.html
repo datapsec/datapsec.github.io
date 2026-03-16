@@ -836,11 +836,16 @@ The original consensus mechanism used by Bitcoin (and Ethereum until 2022).
 <br/>
 
 
-The miner must find a **nonce** such that:
+The miner must find a **nonce** such that<sup>*</sup>:
 
 $$
     \\text{hash}(\\text{block\\_header\\_with\\_nonce}) < \\text{difficulty\\_target}
 $$
+
+which is equivalent to say *the hash must start with a certain number of leading zeros*. Smaller is the value for $\\text{difficulty\\_target}$, harder is the puzzle to solve.
+
+<br/>
+
 
 <div class="fragment" data-fragment-index="0">
 
@@ -911,7 +916,7 @@ Bitcoin's energy consumption is comparable to that of **entire countries** (e.g.
 
 An alternative consensus mechanism adopted by Ethereum 2.0 in September 2022 ("The Merge").
 
-**Idea**: instead of competing with computing power, validators are chosen based on how much cryptocurrency they **stake** (lock up as collateral).
+<div class="alert alert-hint"><b>IDEA</b>: instead of competing with computing power, validators are chosen based on how much cryptocurrency they <b>stake</b> (lock up as collateral).</div>
 
 <br/>
 
@@ -1166,6 +1171,12 @@ $$
 
 ---
 
+<!-- .slide: data-state="break-green hide-controls" -->
+
+## Demo of an Ethereum Transaction
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # Smart Contracts
@@ -1256,23 +1267,24 @@ A **DApp** (Decentralized Application) combines:
 
 <div class="cell-center">
 
-<!-- PLACEHOLDER: img/dapp-architecture.drawio.png - Diagram showing: Browser (Web3 Frontend) ↔ MetaMask Wallet ↔ Ethereum Network ↔ Smart Contract -->
-<img src="img/dapp-architecture.drawio.png" style="width: 1000px;">
+<img src="img/dapp-architecture.drawio.png" style="width: 1400px;">
 
 </div>
 
-<div class="fragment" data-fragment-index="0">
 
-Examples of DApps:
+
+</div>
+
+---
+
+## Examples of DApps
+
+<div class="content-center">
+
 - **DeFi** (Decentralized Finance): Uniswap, Aave, Compound
 - **NFT Marketplaces**: OpenSea, Rarible
 - **Games**: CryptoKitties, Axie Infinity
 - **DAOs** (Decentralized Autonomous Organizations)
-
-<br/>
-
-
-</div>
 
 
 
