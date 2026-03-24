@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="front hide-controls" -->
+
+<div id="title">Lab on NMAP and Vuln scanner</div>
+
+<div id="subtitle">Data Privacy and Security</div>
+
+<div id="date">Data Science and Management (DASMA)</div>
+
+---
+
+## Agenda
+
+<div class="content-center">
+
+- What is Nmap
+- Nmap examples
+- Limits of Nmap
+- Vulnerability scanners
+- CVE / CVSS / Zero-day
+- Internet-wide scanning
+- Shodan demo
+- Wrap-up
+
+
+
+</div>
+
+---
+
+## What is Nmap?
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Logo_nmap.png" style="width: 100%;">
+
+</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Nmap (Network Mapper)** is an open-source tool used for:
+
+- Network discovery
+- Port scanning
+- Service detection
+- OS fingerprinting
+
+</div>
+
+
+
+</div>
+
+---
+
+## What Can Nmap Do?
+
+<div class="content-center">
+
+- Discover live hosts
+- Identify open ports
+- Detect running services
+- Guess operating systems
+- Run scripts (NSE)
+
+
+
+</div>
+
+---
+
+## Basic Scan
+
+<div class="content-center">
+
+```bash
+nmap scanme.nmap.org
+```
+
+<div class="fragment" data-fragment-index="1">
+
+```bash
+Nmap scan report for XXXXXXX
+Host is up (0.019s latency).
+Not shown: 987 closed tcp ports (conn-refused)
+PORT     STATE    SERVICE
+22/tcp   open     ssh
+25/tcp   open     smtp
+53/tcp   open     domain
+80/tcp   open     http
+110/tcp  open     pop3
+143/tcp  open     imap
+443/tcp  open     https
+465/tcp  open     smtps
+587/tcp  open     submission
+993/tcp  open     imaps
+995/tcp  open     pop3s
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+## Service Detection
+
+<div class="content-center">
+
+```bash
+nmap -sV scanme.nmap.org
+```
+
+<div class="fragment" data-fragment-index="1">
+
+```bash
+Nmap scan report for XXXXXXX
+Host is up (0.011s latency).
+Not shown: 989 closed tcp ports (conn-refused)
+PORT    STATE SERVICE  VERSION
+22/tcp  open  ssh      OpenSSH 10.0p2 Debian 7 (protocol 2.0)
+25/tcp  open  smtp     Postfix smtpd
+53/tcp  open  domain   dnsmasq 2.92test21 (pi-hole)
+80/tcp  open  http     nginx
+110/tcp open  pop3     Dovecot pop3d
+143/tcp open  imap     Dovecot imapd
+443/tcp open  ssl/http nginx
+465/tcp open  ssl/smtp Postfix smtpd
+587/tcp open  smtp     Postfix smtpd
+993/tcp open  imaps?
+995/tcp open  pop3s?
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+## What Nmap Does NOT Do Well
+
+<div class="content-center">
+
+- No full vulnerability correlation
+
+- Limited automation
+
+- Requires manual analysis
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint">Does OpenSSH 10.0p2 Debian has any vulnerabilities?</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-hint">Does dnsmasq 2.92test21 has vulnerabilities?</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+But the real question is...
+
+</div>
+
+<div class="fragment" data-fragment-index="4">
+
+<div class="alert alert-warning">Is this host vulnerable?</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Enter Vulnerability Scanners
+
+<div class="content-center">
+
+Tools that go beyond Nmap and automatically do:
+
+- Automated vulnerability detection
+- Risk scoring
+- Reporting dashboards
+
+<div class="fragment" data-fragment-index="1">
+
+Commercial Tools:
+- Nessus
+- Qualys
+- Rapid7 InsightVM
+- Intruder
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-hint">Or Open Source tools: OpenVAS</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## What These Tools Do
+
+<div class="content-center">
+
+1. Detect services (like Nmap)
+2. Match them to vulnerabilities
+3. Assign severity scores
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# CVE (Common Vulnerabilities and Exposures)
+
+---
+
+## CVE
+
+<div class="content-center">
+
+- Standardized vulnerability IDs
+- Example: CVE-2024-12345
+- The vulnerabilities are all public!
+
+Managed by MITRE
+
+
+
+</div>
+
+---
+
+## CVSS (Scoring System)
+
+<div class="content-center">
+
+| Score | Severity |
+| ----- | -------- |
+| 0–3   | Low      |
+| 4–6   | Medium   |
+| 7–8   | High     |
+| 9–10  | Critical |
+
+
+
+</div>
+
+---
+
+## Zero-Day vs N-Day
+
+<div class="content-center">
+
+<div class="fragment" data-fragment-index="1">
+
+Zero-day
+
+- Unknown vulnerability
+- No patch available
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+N-day
+
+- Known vulnerability
+- Patch exists
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Internet-Wide Scanning
+
+---
+
+## Platforms
+
+<div class="content-center">
+
+Some platforms scan the entire Internet continuously:
+
+- Shodan
+- Censys
+- ZoomEye
+
+
+
+</div>
+
+---
+
+## What They Index
+
+<div class="content-center">
+
+- Open ports
+- Services
+- Banners
+- Devices
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-warning">If it is exposed to the Internet, it will be found</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Common Risks
+
+<div class="content-center">
+
+- Misconfigured services
+- Default credentials
+- Unpatched systems
+- Shadow IT
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
