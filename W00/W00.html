@@ -1590,38 +1590,6 @@ A page can host contents (ads, scripts, images) coming from other domains...
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-# JurassicCookie
-
-<div class="content-center">
-
-Web Challenge 02
-
-</div>
-
----
-
-## JurassicCookie - Reconnaissance
-
-<div class="content-center">
-
-<img src="./img/chal2.png" style="height: 400px;" />
-
-<br/>
-<br/>
-
-
-What can we observe? The challenge...
-- presents a page with a picture and a visible link to an Admin panel at the bottom of the page;
-- the admin panel shows a video playing in loop with an audio asking for a "magic word".
-
-
-
-</div>
-
----
-
-<!-- .slide: data-state="break-blue hide-controls" -->
-
 # Storage
 
 ---
@@ -1749,29 +1717,288 @@ Same API for sessionStorage.
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-# ExclusivePacman
+# BurpSuite
+
+---
+
+## BurpSuite by PortSwigger
 
 <div class="content-center">
 
-Web Challenge 03
+<img src="img/BurpSuite.jpg" width="800px">
+
+<br/>
+
+
+- Platform for performing security testing of web applications
+- Written in Java. Proprietary and closed source :(
+- Luckily, there is a (free) community edition for Linux, Windows, and Mac OS X [DOWNLOAD]
+- Several functionalities:
+    - HTTP(S) Interceptor
+    - HTTP(S) repeater
+    - Request comparer
+
+
 
 </div>
 
 ---
 
-## ExclusivePacman - Reconnaissance
+<div class="content-center">
+
+<div class="alert alert-note"><b>NOTE</b>: There is no magic behind this tool. hence you can do the same things with other (100% open source) tools. however, this tool can be valuable at the beginning when you are just starting learning about the web.</div>
+
+
+
+</div>
+
+---
+
+## Another valuable resource from the same company...
 
 <div class="content-center">
 
-<img src="./img/chal3.png" style="height: 400px;" />
+<img src="img/webacademy.png" style="width: 900px;">
 
 <br/>
+<br/>
+
+
+<div class="cell-center">
+
+It nicely covers the topics that we will see in the upcoming lectures.  
+The labs may help you prepare for the CTF.
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> https://portswigger.net/web-security
+
+</div>
+
+---
+
+<div class="content-center">
+
+<img src="img/burp-1.png" style="width: 1300px">
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/burp-2.png" style="width: 1100px">
+
+<br>
+
+A temporary project is fine for our goals
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/burp-3.png" style="width: 1100px">
+
+<br>
+
+Default settings are fine for our goals.
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/burp-4.png" style="width: 1100px">
+
+<br>
+
+Dashboard... Use the tabs to switch to specific functionalities
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+Tab: **Proxy** > **Intercept**
+
+<img src="img/burp-5.png" style="width: 1100px">
+
+<br>
+
+Use Open Browser to launch the embedded browser
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/burp-6.png" style="width: 1100px">
+
+<br>
+
+The embedded browser is based on Chromium. This a (clean) browser: use it for the challenges.
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/burp-8b.png" style="width: 900px">
+
+<br>
+
+Burp Suite is messing up with the certificates! This is done to correctly intercept our HTTPS traffic.
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+Tab: **Proxy** > **HTTP History**
+
+<img src="img/burp-9.png" style="width: 1100px">
+
+<br>
+
+We get a history of all network requests. We can easily inspect them...
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/burp-10.png" style="width: 600px">
+
+<br>
+
+If we want to repeat a request, then can use ***Send to Repeater***
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+Tab: **Repeater**
+
+<img src="img/burp-11.png" style="width: 1100px">
+
+<br>
+
+Now we can modify the request (headers and/or the body). After we can **Send** it.
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="img/burp-12.png" style="width: 1200px">
+
+<br>
+
+We get back the response. We can use Render to view the rendered page.
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# DebugModeHackerino
+
+---
+
+## Reconnaissance
+
+<div class="content-center">
+
+<img src="img/chal-1.png" style="width: 900px">
+
 <br/>
 
 
 What can we observe? The challenge...
-- presents a Pac-Man game that the user can play in the browser;
-- has an `ADMIN INTERFACE` link visible in the game panel.
+- presents a login form with username and password
+- if we submit the form, we get an "ERROR: STACCAH! STACCAH!"
+
+<div class="alert alert-hint"><b>NOTE</b>: You must watch the video since it is part of history.</div>
 
 
 
