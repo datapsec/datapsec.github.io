@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="front hide-controls" -->
+
+<div id="title">Server-Side Request Forgery (SSRF)</div>
+
+<div id="subtitle">Data Privacy and Security</div>
+
+<div id="date">Data Science and Management (DASMA)</div>
+
+---
+
+## What is a Server-Side Request?
+
+<div class="content-center">
+
+A server may need to perform some internal/external connections to serve the client request. For instance:
+
+- **services to expose commands**: DNS request, ICMP request
+- **authentication** via, e.g., Single-Sign On (SSO): a request to the identify provider
+- **captcha verification**: a request to validate the user response
+- **REST API**: 
+	- the backend may use some external services
+	- the backend may use some internal services
+
+
+
+</div>
+
+---
+
+## Server-side request forgery (SSRF) in a nutshell
+
+<div class="content-center">
+
+<img src="./img/Picture1.png" style="height: 700px;" />
+
+<br/>
+
+
+
+
+</div>
+
+---
+
+## What is Server-Side Request Forgery (SSRF)?
+
+<div class="content-center">
+
+When the request or some of its aspects can be manipulated by the user then an attacker may be able to forge an “unexpected” request:
+
+- the end target (URI) of the request is under the control of the user:
+	- FROM https://auth.service/ TO https://**attacker.com** [control the response]
+	- FROM https://auth.service/ TO https://**local.ip**/ [map/access the internal network]
+	- FROM https://auth.service/secret-token TO https://**attacker.com**/secret-token [data leak]
+
+- the data sent are under the control of the user:
+	- FROM https://social.com/newpost=AAA TO https ://social.com/newpost=**cat /etc/passwd**
+
+
+
+</div>
+
+---
+
+## Other consequences of SSRF
+
+<div class="content-center">
+
+Some internal services may be sometimes accessible without any authentication when the request is coming from the internal network. Via SSRF, we may thus able to freely access the service. Examples:
+- admin panels
+- databases
+- log handlers
+- infrastructure monitors
+
+<div class="fragment" data-fragment-index="1">
+
+Cloud providers may expose sensitive metadata through specific internal hosts.
+- E.g., AWS exposes instance metadata at http://169.254.169.254 which may leak sensitive information.
+
+</div>
+
+
+
+</div>
+
+---
+
+## Blind SSRF
+
+<div class="content-center">
+
+In some cases, the server will not provide any explicit feedback about the request: e.g., the response of the server-side request is not shown to the user and we are unable to perform external connections.
+
+We can still perform nasty things with a blind SSRF:
+- get a feedback by looking at the time required for the server-side request:  
+	- e.g., the server-side request may take a different time depending on the internal host (invalid or not) and port (open or closed) that we are testing.
+- blindly execute requests/actions in the internal lan
+
+
+
+</div>
+
+---
+
+## Preventing SSRF
+
+<div class="content-center">
+
+- **whitelist approach**: requests are made only towards specific hosts. Hard to do when we want to allow connections even to unexpected hosts.
+
+<div class="fragment" data-fragment-index="1">
+
+- **isolated host**: the host performing the request should be isolated from the rest of the network and should not have access to any sensitive data
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# 302Camo
+
+<div class="content-center">
+
+Web Challenge XX
+
+</div>
+
+---
+
+## 302Camo - Reconnaissance
+
+<div class="content-center">
+
+What can we observe? The challenge...
+- presents a page to sign-up and sign-in into a blog system;
+- allow the user to download the source code of the system.
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint">Maybe the source code can tell us something?</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## 302Camo - Hypothesis
+
+<div class="content-center">
+
+In the source code there is a file called `get_flag.php` and here is the content:
+
+<br/>
+
+
+```php
+<?php
+
+if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
+	echo getenv('FLAG');
+} else {
+	echo 'lol nope';
+}
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-note">Who is authorized to read the flag?</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-hint">Are there any other pages that could be useful?</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# PAAS
+
+<div class="content-center">
+
+Web Challenge 05
+
+</div>
+
+---
+
+## PAAS - Reconnaissance
+
+<div class="content-center">
+
+<img src="./img/chal2.png" style="height: 400px;" />
+
+<br/>
+<br/>
+
+
+What can we observe? The challenge...
+- presents a terminal-like interface in the browser with a single available command: `pi`;
+- the `pi` command accepts a number as argument and returns digits of pi;
+
+
+
+</div>
+
+---
+
+## PAAS - Hypothesis
+
+<div class="content-center">
+
+Inspecting the page source reveals that the input is encoded with `btoa()` (base64) and sent via POST to a `/data` endpoint - could the server be dynamically evaluating our input...?
+
+<br/>
+
+
+<img src="./img/paas1.png" style="height: 600px;" />
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
