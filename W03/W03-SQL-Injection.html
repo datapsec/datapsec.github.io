@@ -1915,6 +1915,87 @@ The password is found in the dictionary, and we can now log in as Collins Hackle
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
+# GOTMe
+
+<div class="content-center">
+
+Web Challenge 07
+
+</div>
+
+---
+
+## GOTMe - Reconnaissance
+
+<div class="content-center">
+
+<img src="./img/chal1.png" style="height: 450px;" />
+
+<br/>
+
+
+What can we observe? The challenge...
+- resents a login form accepting a username and password;
+- returns different error messages depending on whether the username is admin or not;
+- after login, exposes a character search page with a text field whose results are reflected directly on the page.
+
+
+
+</div>
+
+---
+
+## GOTMe - Hypothesis
+
+<div class="content-center">
+
+If we try to input a special character (') in the username field, we get an internal server error.
+
+<br/>
+
+
+<img src="./img/hyp1.png" style="height: 450px;" />
+
+<br/>
+
+
+<div class="alert alert-hint">This could hint at the presence of an <b>unparameterized SQL query</b> being executed directly with our input...</div>
+
+
+
+</div>
+
+---
+
+## GOTMe - Hypothesis (2)
+
+<div class="content-center">
+
+Searching for a letter (e.g. `a`) returns all characters whose name contains it - hinting at a `LIKE`-based query.
+
+<br/>
+
+
+<img src="./img/hyp2.png" style="height: 300px;" />
+
+<br/>
+
+
+E.g. `LIKE "%a%"`
+
+<br/>
+
+
+<div class="alert alert-warning">Since results are reflected directly on the page, could we append our own query to leak data?</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
 # Second-Order SQL Injection
 
 ---
@@ -1923,14 +2004,15 @@ The password is found in the dictionary, and we can now log in as Collins Hackle
 
 <div class="content-center">
 
-In the attacks seen so far, the payload is executed **immediately** when the user input reaches the database.
+In the attacks seen so far, the payload is executed **immediately** when user input reaches the database 
+- Web applications employ input validation to prevent this (sanitization, prepared statements, ...)
 
 <br/>
 
 
 <div class="fragment" data-fragment-index="0">
 
-But some applications validate inputs coming from the **user**, but **not data coming from the database**, which is considered more trusted.
+<div class="alert alert-warning">But what if the payload is <b>first stored</b> inside the database, and only <b>later passed</b> to a new SQL query?</div>
 
 <br/>
 
@@ -1949,8 +2031,8 @@ In **Second-Order SQL injections** (also known as **Stored SQL injections**), th
 <div class="fragment" data-fragment-index="2">
 
 Two phases:
-1. **Storage**: The attacker submits a malicious payload that is safely stored in the database (e.g., during registration)
-2. **Trigger**: The stored data is later retrieved and unsafely embedded in a new SQL query
+1. **Storage**: the attacker submits a malicious payload that is safely stored in the database
+2. **Trigger**: the stored data is later retrieved and unsafely embedded in a new SQL query
 
 </div>
 
@@ -1973,9 +2055,12 @@ The attacker registers a new account using the following malicious **username**:
 '; UPDATE users SET password='newpwd' WHERE user='admin' -- -
 ```
 
+<br/>
+
+
 <div class="fragment" data-fragment-index="0">
 
-The registration form uses **prepared statements** (safe!), so the username is stored **as-is** in the database without causing harm... yet.
+The registration form uses **prepared statements**, so the username is stored **as-is** in the database without causing harm... yet.
 
 <br/>
 
@@ -2002,7 +2087,7 @@ The registration form uses **prepared statements** (safe!), so the username is s
 
 <div class="content-center">
 
-The attacker logs in. The server reads the username from the database and stores it in `$_SESSION["user"]`.
+The attacker logs in → the server reads the username from the database and stores it in `$_SESSION["user"]`.
 
 <br/>
 
@@ -2025,16 +2110,22 @@ $query = "SELECT sender, content FROM messages WHERE
          content LIKE '%" . $_GET["search"] . "%'";
 ```
 
+<br/>
+
+
 </div>
 
 <div class="fragment" data-fragment-index="2">
 
 The resulting query:
 ```sql
-SELECT * FROM messages WHERE receiver = '';
+SELECT sender, content FROM messages WHERE receiver = '';
 UPDATE users SET password='newpwd' WHERE user='admin'
 -- -' AND content LIKE '%%'
 ```
+
+<br/>
+
 
 </div>
 
@@ -2061,10 +2152,13 @@ Second-order SQLi is particularly dangerous because:
 
 <div class="fragment" data-fragment-index="0">
 
-- The **storage** step may be perfectly safe (using prepared statements)
+- The **storage** step may be perfectly safe (thanks to input validation)
 - The **trigger** happens in a **completely different part** of the application
 - Developers often **trust data from the database** because they assume it was already validated
 - It is **harder to detect** because the injection and the exploitation are separated in time and code
+
+<br/>
+
 
 </div>
 
@@ -2090,7 +2184,7 @@ Second-order SQLi is particularly dangerous because:
 
 <div class="content-center">
 
-So far, we assumed the application **shows the query results** on the page (UNION-based) or **allows stacked queries**.
+So far, we assumed the application either shows query results on the page (UNION-based) or executes stored payloads via stacked queries (Second-Order)
 
 <br/>
 
@@ -2115,18 +2209,36 @@ But what if the application is **vulnerable to SQL injection**, but its HTTP res
 
 </div>
 
-<div class="fragment" data-fragment-index="2">
+
+
+</div>
+
+---
+
+## Blind SQL Injection: The Solution
+
+<div class="content-center">
+
+<div class="alert alert-note">In <b>Blind SQL Injection</b>, the attacker infers information from the <b>application's behavior</b> rather than its output.</div>
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
 
 Three main techniques:
 1. **Conditional behavior** (Boolean-based)
 2. **Conditional errors** (Error-based)
 3. **Time delays** (Time-based)
 
+<br/>
+
+
 </div>
 
-<div class="fragment" data-fragment-index="3">
+<div class="fragment" data-fragment-index="2">
 
-<div class="alert alert-note">These techniques extract data <b>one bit at a time</b> by asking the database yes/no questions!</div>
+<div class="alert alert-hint">These techniques extract data <b>one bit at a time</b> by asking the database yes/no questions!</div>
 
 </div>
 
@@ -2176,6 +2288,10 @@ This gives us a **1-bit information channel**: we can ask the database **true/fa
 <div class="content-center">
 
 Assuming we know a valid `id` and the admin username, we can inject:
+
+<br/>
+
+
 ```sql
 xyz' AND SUBSTRING((SELECT Password FROM Users
   WHERE Username = 'Administrator'), 1, 1) > 'k
@@ -2186,7 +2302,7 @@ xyz' AND SUBSTRING((SELECT Password FROM Users
 
 <div class="fragment" data-fragment-index="0">
 
-`SUBSTRING(string, start, length)` extracts a substring. Here it extracts the **1st character** of the admin password.
+`SUBSTRING(string, start, length)` extracts a substring (here the **1st character** of the admin password).
 
 <br/>
 
@@ -2197,22 +2313,17 @@ xyz' AND SUBSTRING((SELECT Password FROM Users
 
 If **"Welcome back"** is shown ➜ the first character of the password is **greater than 'k'**.
 
-We perform a **binary search** to identify the exact character, then move to the next position.
-
 <br/>
 
+
+<div class="alert alert-note">We perform a <b>binary search</b> to identify the exact character, then move to the next position.</div>
 
 </div>
 
 <div class="fragment" data-fragment-index="2">
 
-For a password of length `n` with characters from a set of size `c`, this requires approximately **n × log₂(c)** requests (e.g., ~7 requests per character for alphanumeric).
-
-</div>
-
-<div class="fragment" data-fragment-index="3">
-
-<div class="alert alert-note"><b>NOTE</b>: To leak table/column names, we can exploit a similar technique on the database metadata!</div>
+- For a password of length `n` with characters from a set of size `c`, this requires approximately **n × log₂(c)** requests.
+- Binary search halves the search space at each step ➜ each request eliminates half the remaining candidates ➜ log₂(c) requests per character.
 
 </div>
 
@@ -2257,10 +2368,6 @@ xyz' AND (SELECT CASE
 <br/>
 
 
-</div>
-
-<div class="fragment" data-fragment-index="2">
-
 <div class="alert alert-note">Source: <a href="https://portswigger.net/web-security/sql-injection/blind">PortSwigger - Blind SQL Injection</a></div>
 
 </div>
@@ -2298,7 +2405,7 @@ We can measure the **response time** — introduce a **delay** when a condition 
 
 <div class="fragment" data-fragment-index="1">
 
-- If the condition is **true**: the response takes **~10 seconds**
+- If the condition is **true**: the response takes **10 seconds**
 - If the condition is **false**: the response returns **immediately**
 
 <br/>
@@ -2308,7 +2415,9 @@ We can measure the **response time** — introduce a **delay** when a condition 
 
 <div class="fragment" data-fragment-index="2">
 
-This is the **last resort** technique — very slow but works even with completely "blind" responses.
+Drawbacks:
+- **Slow** - requires many requests to extract each character (same as Boolean-based)
+- **Unreliable** - network latency and server load can skew timing measurements → prone to false positives/negatives
 
 </div>
 
@@ -2327,18 +2436,18 @@ Different database systems have different delay functions:
 <br/>
 
 
-<div class="fragment" data-fragment-index="0">
-
 | DBMS | Delay Function | Example |
 |------|---------------|----------|
 | **MySQL** | `SLEEP(seconds)` | `IF(condition, SLEEP(10), 0)` |
 | **PostgreSQL** | `pg_sleep(seconds)` | `SELECT CASE WHEN (cond) THEN pg_sleep(10) END` |
-| **MS SQL** | `WAITFOR DELAY 'hⓂ️s'` | `IF (cond) WAITFOR DELAY '0:0:10'` |
+| **MS SQL** | `WAITFOR DELAY 'h&#58m&#58s'` | `IF (cond) WAITFOR DELAY '0:0:10'` |
 | **Oracle** | `dbms_pipe.receive_message(...)` | `dbms_pipe.receive_message(('a'),10)` |
 
-</div>
+<br/>
+<br/>
 
-<div class="fragment" data-fragment-index="1">
+
+<div class="fragment" data-fragment-index="0">
 
 <div class="alert alert-note"><b>NOTE</b>: Identifying the DBMS is often one of the first steps in an attack. Techniques vary significantly across databases!</div>
 
@@ -2455,11 +2564,14 @@ With prepared statements, the database processes the query in **two steps**:
 
 Even if the attacker provides `admin' -- ` as input, the database treats it as the **literal string** `admin' -- ` and not as SQL code!
 
+<br/>
+
+
 </div>
 
 <div class="fragment" data-fragment-index="2">
 
-<div class="alert alert-note">This <b>enforces the boundary</b> between code and data that we discussed earlier — the fundamental fix for the injection problem!</div>
+<div class="alert alert-note">This <b>enforces the boundary</b> between code and data that we discussed earlier - the fundamental fix for the injection problem!</div>
 
 </div>
 
@@ -2543,6 +2655,38 @@ Details: [ZDNet article](https://www.zdnet.com/article/hacker-leaks-23-million-u
 - **[SQL Injection Payloads](https://swisskyrepo.github.io/PayloadsAllTheThings/SQL%20Injection/)**
 - [OWASP SQL Injection](https://owasp.org/www-community/attacks/SQL_Injection)
 - [OWASP SQL Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# StorageUnit
+
+<div class="content-center">
+
+Web Challenge 26
+
+</div>
+
+---
+
+## StorageUnit - Reconnaissance
+
+<div class="content-center">
+
+<img src="./img/chal2.png" style="height: 400px;" />
+
+<br/>
+
+
+What can we observe? The challenge...
+- presents a login and registration form accepting a username and password;
+- after login, displays a personal storage unit showing items as name-data pairs;
+- allows adding new items via a form.
 
 
 
