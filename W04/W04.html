@@ -159,17 +159,17 @@ We can still perform nasty things with a blind SSRF:
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-# 302Camo
+# BetterCallSaul
 
 <div class="content-center">
 
-Web Challenge XX
+Web Challenge 32
 
 </div>
 
 ---
 
-## 302Camo - Reconnaissance
+## BetterCallSaul - Reconnaissance
 
 <div class="content-center">
 
@@ -189,7 +189,7 @@ What can we observe? The challenge...
 
 ---
 
-## 302Camo - Hypothesis
+## BetterCallSaul - Hypothesis
 
 <div class="content-center">
 
@@ -231,46 +231,33 @@ if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
 
 <!-- .slide: data-state="break-blue hide-controls" -->
 
-# PAAS
+# DumbWayBackMachine
 
 <div class="content-center">
 
-Web Challenge 05
+Web Challenge 10
 
 </div>
 
 ---
 
-## PAAS - Reconnaissance
+## DumbWayBackMachine - Reconnaissance
 
 <div class="content-center">
 
-<img src="./img/chal2.png" style="height: 400px;" />
+What can we observe?
 
-<br/>
-<br/>
+<div class="fragment" data-fragment-index="1">
 
-
-What can we observe? The challenge...
-- presents a terminal-like interface in the browser with a single available command: `pi`;
-- the `pi` command accepts a number as argument and returns digits of pi;
-
-
+<div class="alert alert-note">The slide here are not helpful! Try to do it on your own</div>
 
 </div>
 
----
+<div class="fragment" data-fragment-index="2">
 
-## PAAS - Hypothesis
+<div class="alert alert-hint">Hint: It is very VERY similar to BetterCallSaul</div>
 
-<div class="content-center">
-
-Inspecting the page source reveals that the input is encoded with `btoa()` (base64) and sent via POST to a `/data` endpoint - could the server be dynamically evaluating our input...?
-
-<br/>
-
-
-<img src="./img/paas1.png" style="height: 600px;" />
+</div>
 
 
 
