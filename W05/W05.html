@@ -202,7 +202,7 @@ The domain attribute widens the scope of a cookie to all subdomains e.g.  a cook
 
 <div class="content-center">
 
-The domain attribute is **different** from the domain in the triplet: the one in the triplet identifies **where the cookie came from**, while the attribute **controls where it gets sent**.
+The domain attribute is **different** from the domain in the triplet: the one in the triplet identifies the cookie in the browser's store, while the attribute controls where it gets sent.
 - if **not set**, the cookie is attached only to requests **to the domain that set it**;
 - if **set**, the cookie is attached to requests **to the specified domain and all its subdomains**:
     - the value can be any suffix of the domain setting the cookie, up to the registrable domain;
@@ -211,7 +211,7 @@ The domain attribute is **different** from the domain in the triplet: the one in
 <br/>
 
 
-| Domain setting the cookie | Domain attribute value | Allowed? | Reason |
+| Cookie set by (origin host) | Domain attribute sent | Allowed? | Reason |
 |---------------------------|----------------------|----------|--------|
 | `a.b.example.com` | `example.com` | ✅ | registrable domain |
 | `www.example.ac.at` | `ac.at` | ❌ | public suffix |
@@ -396,7 +396,7 @@ Which cookies are attached to a cross-site request from `https://www.example.com
 
 | Destination | Cookies sent | Why |
 |-------------|-------------|-----|
-| `http://site.com/` | `lang=en` | `uid` excluded: `Secure` flag requires HTTPS; <br> `sid` excluded: `SameSite=Strict` |
+| `http://site.com/` | `lang=en` | `uid` excluded: `Secure` flag requires HTTPS; <br> `sid` excluded: `Secure` flag + `SameSite=Strict` |
 | `https://site.com/` | `uid=u1; lang=en` | `sid` excluded: `SameSite=Strict` |
 | `https://site.com/admin/` | `uid=u1; lang=en` | `sid` excluded: `SameSite=Strict` |
 | `https://a.site.com/admin/` | `lang=en` | `uid` excluded: domain not set, must match exactly `site.com`; <br> `sid` excluded: `SameSite=Strict` |
@@ -432,6 +432,23 @@ When two cookies share the same name:
 <div class="content-center">
 
 <img src="img/cookieoverwrite.png" style="width: 1800px;">
+
+
+
+</div>
+
+---
+
+## Cookie Overwrite Vulnerability - Chrome Example
+
+<div class="content-center">
+
+Navigate to the Application tab of Chrome's developer tools, and double click on the value you want to change.
+
+<br/>
+
+
+<img src="img/chrome.png" style="width: 1800px;">
 
 
 
