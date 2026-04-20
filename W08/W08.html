@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        
+
+        <link rel="stylesheet" href="../assets/reveal-js/dist/reveal.css" />
+
+        
+            <link rel="stylesheet" href="../assets/css/slides.css" />
+        
+        
+            <link rel="stylesheet" href="../assets/vs.css" />
+        
+
+        
+            
+        
+            
+        
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown
+                
+                    data-separator="^\s*---\s*$"
+                
+                    data-separator-vertical="^\s*-v-\s*$"
+                
+                    data-separator-notes="^Notes?:"
+                
+                >
+                    <!-- The markdown must be placed to the whole left to prevent indentation issues like https://github.com/MartenBE/mkslides/issues/52 -->
+                    <textarea data-template>
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# TheWebHackTimes
+
+<div class="content-center">
+
+Web Challenge 24
+
+</div>
+
+---
+
+## TheWebHackTimes - Reconnaissance
+
+<div class="content-center">
+
+WebHackIT is proud to announce TheWebHackTimes!
+
+This is a new online newspaper. A subset of the content is accessibile only to paying readers.
+
+However, an interal source says that there is an easy way to bypass the restriction and this was due to SEO craziness...
+
+
+
+</div>
+
+---
+
+## SEO
+
+<div class="content-center">
+
+**What it is**: Optimizing a website to rank higher on search engines
+
+<div class="fragment" data-fragment-index="1">
+
+**Why it matters**: More visibility → more traffic → more results
+
+</div>
+
+
+
+</div>
+
+---
+
+## How does SEO works?
+
+<div class="content-center">
+
+1. Crawling – Search engines scan your website
+2. Indexing – Pages are stored in their database
+3. Ranking – Content is ranked based on relevance & quality
+
+What influences ranking:
+
+- Keywords (match search intent)
+- Content quality
+- Website speed & mobile-friendliness
+- Backlinks (trust signals)
+
+
+
+</div>
+
+---
+
+## TheWebHackTimes - Reconnaissance pt.2
+
+<div class="content-center">
+
+What can we observe? The challenge resents a page that shows a newspaper with some areas grayed-out.
+
+Those areas are meant for paying users and not regular users.
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint">How to obtain access to the whole newspaper without paying?</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## SEO and Web Spiders
+
+<div class="content-center">
+
+**How the search engine crawls the pages**? With spiders: Automated bots (crawlers) used by search engines to scan and index webpages
+
+<div class="fragment" data-fragment-index="1">
+
+**How sites treat them**:
+
+- Identified via **user agent**
+- Often allowed full access to content for better indexing (SEO): This ensures full content appears in search results
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+**Important note**:
+
+- This access is intended for search engines, not users
+- Bypassing paywalls manually may violate site terms
+
+</div>
+
+
+
+</div>
+
+---
+
+## TheWebHackTimes - Hypothesis
+
+<div class="content-center">
+
+MAYBE we can bypass the paywall changing the user-agent to the one of a web crawler
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint">Modern browser allow the user to do it without additional plugins or extensions :)</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# SuperSecretEncrypter
+
+<div class="content-center">
+
+Web Challenge 28
+
+</div>
+
+---
+
+## SuperSecretEncrypter - Reconnaissance
+
+<div class="content-center">
+
+What can we observe?
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-recall"><b>NOTE</b>: the flag is located at ./flag.txt</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+This means we need to access the filesystem of the web server to retreive the flag
+
+</div>
+
+
+
+</div>
+
+---
+
+## SuperSecretEncrypter - Reconnaissance pt.2
+
+<div class="content-center">
+
+Are there ways to execute arbitrary user-provided code?
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint">Apparently NO! But maybe...</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+Can you understand how the backend was made?
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+The backend language?
+
+</div>
+
+<div class="fragment" data-fragment-index="4">
+
+The backend framework?
+
+</div>
+
+
+
+</div>
+
+---
+
+## SuperSecretEncrypter - Reconnaissance pt.3
+
+<div class="content-center">
+
+From the source code you can find:
+
+```html
+		<div style="margin: 10%; width: 33%; max-width: 25%; word-wrap: break-word">
+			<!-- jinja2 is so powerful! -->
+			<h5>Your Plaintext:</h5><br>
+```
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint">What is Jinja2?</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Jinja2
+
+<div class="content-center">
+
+A Python templating engine used to generate dynamic HTML
+
+<div class="fragment" data-fragment-index="1">
+
+**How it works**:
+
+- Combines templates + data → final web page
+- Uses placeholders and log
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+**Key features**:
+
+- Variables: `{{ name }}`
+- Control flow: `{% if %}`, `{% for %}`
+- Template inheritance (base layouts)
+
+</div>
+
+<div class="fragment" data-fragment-index="3">
+
+<div class="alert alert-hint">Is it vulnerable to code injection?</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+## Try to hack Jinja2
+
+<div class="content-center">
+
+To check if Jinja2 is vulnerable to template injection, try to encrypt and decrypt some code
+
+```jinja
+{{ 30 + 12 }}
+```
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint">If the output is <code>42</code> this means that we successfully injected some code into the template</div>
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-warning">Now look online for an exploit to either execute <code>cat flag.txt</code> or read the content of the file <code>flag.txt</code></div>
+
+</div>
+
+
+
+</div>
+                    </textarea>
+                </section>
+            </div>
+        </div>
+        <script src="../assets/reveal-js/dist/reveal.js"></script>
+        <script src="../assets/reveal-js/plugin/highlight/highlight.js"></script>
+        <script src="../assets/reveal-js/plugin/markdown/markdown.js"></script>
+        <script src="../assets/reveal-js/plugin/math/math.js"></script>
+        <script src="../assets/reveal-js/plugin/notes/notes.js"></script>
+        <script src="../assets/reveal-js/plugin/search/search.js"></script>
+        <script src="../assets/reveal-js/plugin/zoom/zoom.js"></script>
+
+        
+            
+                <script src="../assets/js/custom.js"></script>
+            
+        
+
+        
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.min.js"></script>
+                    
+                
+            
+                
+                    
+                        <script src="https://cdn.jsdelivr.net/npm/reveal-plantuml/dist/reveal-plantuml.min.js"></script>
+                    
+                
+            
+        
+
+        <script>
+            Reveal.initialize({
+                
+                    
+                        history: true,
+                    
+                        slideNumber: "c/t",
+                    
+                        height: 1080,
+                    
+                        width: 1920,
+                    
+                        transition: "none",
+                    
+                        backgroundTransition: "none",
+                    
+                        pdfSeparateFragments: false,
+                    
+                
+                plugins: [
+                    RevealMarkdown, // Must come before the other plugins so they can hook into the generated HTML.
+                    RevealHighlight,
+                    RevealMath.KaTeX,
+                    RevealNotes,
+                    RevealSearch,
+                    RevealZoom,
+
+                    
+                        
+                            
+                                RevealMermaid,
+                            
+                        
+                            
+                        
+                    
+                ],
+            });
+        </script>
+    </body>
+</html>
