@@ -623,6 +623,54 @@ What can we observe? The challenge...
 
 ---
 
+## JurassicCookie - Exploitation
+
+<div class="content-center">
+
+1. Open Chrome's Developer Tools
+
+<br>
+
+2. Go to `Cookies` in the `Application` tab of Developer Tools
+
+<br>
+
+3. Change the `user` cookie from `guest` to `newman`
+
+<br>
+
+4. Visit the admin panel again, where you'll be greated with a welcome back message.
+
+
+
+</div>
+
+---
+
+## JurassicCookie - Exploitation
+
+<div class="content-center">
+
+5. Go to the `Network` tab in Developer Tools and refresh the page to inspect the request.
+
+<br>
+
+6. There should be a `Set-Cookie` request header that sets the `access` cookie with `/decoy` path.
+
+<br>
+
+7. Visit the `/decoy` path to have the `access` cookie stored in the `Cookies` section of the `Application` tab.
+
+<br>
+
+8. Change the path of the `access` to `/`, and then go back to `/admin/vault` to retrieve the flag!
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # ExclusivePacman
@@ -648,6 +696,86 @@ Web Challenge 03
 What can we observe? The challenge...
 - presents a Pac-Man game that the user can play in the browser;
 - has an `ADMIN INTERFACE` link visible in the game panel.
+
+
+
+</div>
+
+---
+
+## ExclusivePacman - Exploitation
+
+<div class="content-center">
+
+1. Open Chrome's Developer Tools
+
+<br>
+
+2. Go to `Local Storage` in the `Application` tab of Developer Tools
+
+<br>
+
+3. Retrieve the value in the `data` field, and decode it (it is a base64-encoded string)
+
+<br>
+
+4. Brute-force the xor key until it reveals the following json object: <br><br> `{"name": "...", "is_admin": false}`
+
+<br>
+
+5. Change the `is_admin` field to true
+
+
+
+</div>
+
+---
+
+## ExclusivePacman - Exploitation
+
+<div class="content-center">
+
+6. xor the resulting json object with the same key, then base64-encode it
+
+<br>
+
+7. Change the `data` field in `Local Storage` with the produced string
+
+<br>
+
+8. Visit the `ADMIN INTERFACE` to receive the flag!
+
+
+
+</div>
+
+---
+
+## ExclusivePacman - Solution Template
+
+<div class="content-center">
+
+```python
+import base64
+import json
+
+s = 'your_local_storage_string'
+d = base64.b64decode(s)
+
+for key in range(256):
+    res = ''
+    for b in d:
+        res += chr(b ^ key)
+    if res.startswith('{'):
+        print(f'Found key: {key}')
+        print(f'Decoded: {res}')
+        modified = res.replace('"is_admin": false', '"is_admin": true')
+        xored = ''
+        for c in modified:
+            xored += chr(ord(c) ^ key)
+        print(f'Payload: {base64.b64encode(xored.encode()).decode()}')
+        break
+```
 
 
 
