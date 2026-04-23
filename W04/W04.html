@@ -229,6 +229,22 @@ if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
 
 ---
 
+## BetterCallSaul - Exploitation
+
+<div class="content-center">
+
+1. Read and understand the content of file `camo.php`
+
+2. To bypass this checks, use a DNS domain that is pointing to 127.0.0.1, e.g., self.webhack.it or localtest.me
+
+3. Send the URL to the camo page in a GET to obtain the content of the `get_flag.php` page
+
+
+
+</div>
+
+---
+
 <!-- .slide: data-state="break-blue hide-controls" -->
 
 # DumbWayBackMachine
@@ -258,6 +274,23 @@ What can we observe?
 <div class="alert alert-hint">Hint: It is very VERY similar to BetterCallSaul</div>
 
 </div>
+
+
+
+</div>
+
+---
+
+## Exploitation
+
+<div class="content-center">
+
+The idea is to submit an URL like `domain.ext/admin` where `domain.ext` points to `127.0.0.1`.
+
+For instance: `http://self.webhack.it/admin`
+
+**NOTE**: must be http and not https.
+**NOTE**: the server is checking against localhost in host
 
 
 
