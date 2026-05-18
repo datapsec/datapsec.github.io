@@ -710,12 +710,16 @@ Common subnet mask octets and their binary representation:
 <br/>
 
 
-- **Network address**: `192.168.1.0` (all host bits = 0)
-- **Host range**: `192.168.1.1` to `192.168.1.254` (254 usable hosts)
-- **Broadcast address**: `192.168.1.255` (all host bits = 1)
+Every subnet has **two reserved addresses** that cannot be assigned to any device:
 
-<br/>
+- **Network address** (`192.168.1.0`) — all host bits are `0`. It identifies the network itself and is never assigned to a device.
+- **Broadcast address** (`192.168.1.255`) — all host bits are `1`. A packet sent to this address is delivered to **every device** on the network simultaneously (e.g., used by DHCP when a device joins and shouts "Who can give me an IP?").
 
+Because these two addresses are reserved, the number of **usable host addresses** is always:
+
+$$\text{usable hosts} = 2^{\text{host bits}} - 2$$
+
+For a `/24` network (8 host bits): $2^8 - 2 = 256 - 2 = \\mathbf{254}$ usable hosts.
 
 <div class="fragment" data-fragment-index="0">
 
@@ -798,7 +802,10 @@ Common subnet mask octets and their binary representation:
 
 `192.168.1.0/26` — A small office subnet:
 - Subnet mask: `255.255.255.192`
-- Network: `192.168.1.0`
+- `/26` means 26 network bits → **6 host bits** → $2^6 = 64$ total addresses
+- Subtract 2 reserved addresses (network + broadcast): $64 - 2 = \\mathbf{62}$ usable hosts
+- Network address: `192.168.1.0` (host bits all `0`)
+- Broadcast address: `192.168.1.63` (host bits all `1`)
 - Host range: `192.168.1.1` – `192.168.1.62`
 - Usable hosts: **62**
 
